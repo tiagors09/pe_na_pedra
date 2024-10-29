@@ -1,0 +1,93 @@
+@startuml pe-na-pedra
+left to right direction
+
+:Administrador: as adm
+:Trilheiro: as tr
+
+usecase (Banir \n membros) as uc1 <<Única vez>>
+usecase (Mapear \n rotas) as uc2
+usecase (Vizualizar \n trilhas) as uc3
+usecase (Criar \n trilha) as uc4
+usecase (Excluir \n trilha) as uc5
+usecase (Atualizar \n trilha) as uc6
+usecase (Criar calendário \n mensal de \n trilhas) as uc7
+usecase (Vizualizar \n ponto de \n encontro) as uc8
+usecase (Se inscrever \n na trilha) as uc9
+usecase (Ofertar carona) as uc10
+usecase (Pegar carona) as uc11
+usecase (Criar perfil) <<Única vez>> as uc12
+usecase (Definir novos \n administradores) as uc13
+usecase (Ajudar carona) as uc12
+usecase (Pagar pro trilha) as uc13
+usecase (Compartilhar trilha \n nos stories \n do Instagram) as uc14
+usecase (Cancelar inscrição \n em trilha) as uc15
+usecase (Editar perfil) as uc16
+usecase (Apagar conta) as uc17 <<Única vez>>
+usecase (Remover \n administradores) as uc18
+usecase (Definir regras para \n trilhas) as uc19 
+
+note right of uc1
+  Administradores podem ser banidos assim como
+  os trilheiros comuns, caso venham a desrespeitar
+  as normas do grupo.
+end note
+
+note right of uc12
+  Administradores não podem apagar conta, caso
+  o individuo queira sair, sendo administrador, ele 
+  terá que ser removido do grupo de 
+  aministradores e assim remover sua conta.
+end note
+
+note right of uc12
+  Informar nome, email, whatsapp, alergias,
+  dependentes, caso tenha, foto de perfil,
+  data de nascimento, entre outras informações.
+end note
+
+note right of uc13
+  Algumas trilhas ocorrem em localidades privadas,
+  portanto, é necessário uma taxa de inscrição, logo, 
+  um sistema de pagamento prévio seria cabível.
+end note
+
+note left of uc12
+  Realizar uma transferencia pix 
+  ou dinheiro físico caso o 
+  trilheiro queira ajudar sua carona
+  na gasolina, não é obrigatório.
+end note
+
+note right of uc10 
+  Quem concede a carona deve indicar as condições,
+  como, quem vai de moto, normalmente a carona tem
+  que ter um capacete, ou indicar que tem um capacete reserva.
+end note
+
+note left of uc10 
+  Isso se o trilheiro tiver um veículo próprio.
+end note
+
+adm -left-> uc1
+adm -left-> uc2
+adm -left-> uc3
+adm --> uc4
+adm --> uc5
+adm --> uc6
+adm --> uc7
+adm -left-> uc13
+adm --> uc16
+adm --> uc18
+adm --> uc19
+
+tr --> uc3
+tr --> uc8
+tr -left-> uc9
+tr -left-> uc10
+tr -left-> uc11
+tr -left-> uc12
+tr --> uc14
+tr --> uc15
+tr --> uc16
+tr --> uc17
+@enduml
