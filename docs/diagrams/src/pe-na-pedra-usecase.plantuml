@@ -6,40 +6,72 @@ left to right direction
 
 rectangle aplicação {
   rectangle administração {
-    usecase (Banir \n membros) as uc1
-    usecase (Mapear \n rotas) as uc2
-    usecase (Excluir \n trilha) as uc5
-    usecase (Vizualizar \n trilhas) as uc3
-    usecase (Criar \n trilha) as uc4
-    usecase (Atualizar \n trilha) as uc6
-    usecase (Criar calendário \n mensal de \n trilhas) as uc7
-    usecase (Definir ponto \n de encontro) as uc22
-    usecase (Confirmar pagamento \n da trilha) as uc23
-    usecase (Definir novos \n administradores) as uc13
-    usecase (Remover \n administradores) as uc18
-    usecase (Definir regras para \n trilhas) as uc19
-    usecase (Editar ponto de encontro) as uc26
-    usecase (Desbanir membros) as uc28
-    usecase (Ver membros banidos) as uc29
+    usecase uc1 as "Banir \n membros\n 
+      == CU1"
+    usecase uc2 as "Mapear \n rotas\n 
+      == CU2"
+    usecase uc3 as "Vizualizar \n trilhas\n 
+      == CU3"
+    usecase uc4 as "Criar \n trilha\n 
+      == CU4"
+    usecase uc5 as "Excluir \n trilha\n 
+      == CU5"
+    usecase uc6 as "Atualizar \n trilha\n 
+      == CU6"
+    usecase uc7 as "Criar calendário \n mensal de \n trilhas\n 
+      == CU7"
+    usecase uc22 as "Definir ponto \n de encontro\n 
+      == CU22"
+    usecase uc23 as "Confirmar pagamento \n da trilha\n 
+      == CU23"
+    usecase uc13 as "Definir novos \n administradores\n 
+      == CU13"
+    usecase uc18 as "Remover \n administradores\n 
+      == CU18"
+    usecase uc19 as "Definir regras para \n trilhas\n 
+      == CU19"
+    usecase uc26 as "Editar ponto de \n encontro\n 
+      == CU26"
+    usecase uc28 as "Desbanir \n membros\n 
+      == CU28"
+    usecase uc29 as "Ver membros \n banidos\n 
+      == CU29"
+    usecase uc30 as "Ver \n trilheiros\n 
+      == CU30"
   }
   
   rectangle trilheiro {
-    usecase (Vizualizar \n ponto de \n encontro) as uc8
-    usecase (Se inscrever \n em trilha) as uc9
-    usecase (Ofertar carona) as uc10
-    usecase (Pegar carona) as uc11
-    usecase (Criar perfil) <<Única vez>> as uc20
-    usecase (Ajudar carona) as uc12
-    usecase (Compartilhar trilha \n nos stories \n do Instagram) as uc14
-    usecase (Cancelar inscrição \n em trilha) as uc15
-    usecase (Editar perfil) as uc16
-    usecase (Apagar conta) as uc17 <<Única vez>>
-    usecase (Pagar pro trilha) as uc21 
+    usecase uc8 as "Vizualizar \n ponto de \n encontro\n 
+      == CU8"
+    usecase uc9 as "Se inscrever \n em trilha\n 
+      == CU9"
+    usecase uc10 as "Ofertar carona\n 
+      == CU10"
+    usecase uc11 as "Pegar carona\n 
+      == CU11"
+    usecase uc20 as "Criar perfil\n <<Única vez>>\n 
+      == CU20"
+    usecase uc12 as "Ajudar carona\n 
+      == CU12"
+    usecase uc14 as "Compartilhar trilha \n nos stories \n do Instagram\n 
+      == CU14"
+    usecase uc15 as "Cancelar inscrição \n em trilha\n 
+      == CU15"
+    usecase uc16 as "Editar perfil\n 
+      == CU16"
+    usecase uc17 as "Apagar conta\n <<Única vez>>\n 
+      == CU17"
+    usecase uc21 as "Pagar pro trilha\n 
+      == CU21"
   }
 
-  usecase (Atulizar lista \n de \n trilheiros) as uc24
-  usecase (Atulizar número \n de vagas da carona) as uc25
-  usecase (Notificar ADM \n pagamento da taxa de inscrição \n da trilha) as uc27
+  usecase uc24 as "Atulizar lista \n de \n trilheiros\n 
+    == CU24"
+  usecase uc25 as "Atulizar número \n de vagas da carona\n 
+    == CU25"
+  usecase uc27 as "Notificar ADM \n pagamento da taxa de inscrição \n da trilha\n 
+    == CU27"
+
 
   uc15 .. uc24
   uc9 .. uc24
@@ -119,6 +151,7 @@ adm --> uc22
 adm --> uc26
 adm --> uc28
 adm --> uc29
+adm --> uc30
 
 tr --> uc3
 tr --> uc8
