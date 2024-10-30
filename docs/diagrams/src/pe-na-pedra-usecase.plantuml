@@ -6,7 +6,7 @@ left to right direction
 
 rectangle aplicação {
   rectangle administração {
-    usecase (Banir \n membros) as uc1 <<Única vez>>
+    usecase (Banir \n membros) as uc1
     usecase (Mapear \n rotas) as uc2
     usecase (Excluir \n trilha) as uc5
     usecase (Vizualizar \n trilhas) as uc3
@@ -19,6 +19,8 @@ rectangle aplicação {
     usecase (Remover \n administradores) as uc18
     usecase (Definir regras para \n trilhas) as uc19
     usecase (Editar ponto de encontro) as uc26
+    usecase (Desbanir membros) as uc28
+    usecase (Ver membros banidos) as uc29
   }
   
   rectangle trilheiro {
@@ -32,8 +34,7 @@ rectangle aplicação {
     usecase (Cancelar inscrição \n em trilha) as uc15
     usecase (Editar perfil) as uc16
     usecase (Apagar conta) as uc17 <<Única vez>>
-    usecase (Pagar pro trilha) as uc21
-    
+    usecase (Pagar pro trilha) as uc21 
   }
 
   usecase (Atulizar lista \n de \n trilheiros) as uc24
@@ -116,6 +117,8 @@ adm --> uc19
 adm --> uc23
 adm --> uc22
 adm --> uc26
+adm --> uc28
+adm --> uc29
 
 tr --> uc3
 tr --> uc8
