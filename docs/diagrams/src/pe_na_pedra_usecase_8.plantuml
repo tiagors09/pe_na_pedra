@@ -1,0 +1,52 @@
+@startuml pe_na_pedra_usecase_0
+  left to right direction
+  
+  package "Modelo de Caso de Uso- Pé na Pedra" {
+    :Trilheiro: as tr
+
+    rectangle aplicação {
+      usecase uc27 as "Notificar ADM \n pagamento da taxa de inscrição \n da trilha\n 
+        == CU27"
+
+      rectangle administração {
+        usecase uc23 as "Confirmar pagamento \n da trilha\n 
+          == CU23"
+      }
+
+      rectangle trilheiro {
+        usecase uc16 as "Editar perfil\n 
+          == CU16"
+        usecase uc17 as "Apagar conta\n <<Única vez>>\n 
+          == CU17"
+        usecase uc21 as "Pagar pro trilha\n 
+          == CU21"
+      }
+    }
+  }
+
+  note right of uc16
+    Informar nome, email, whatsapp, alergias,
+    dependentes, caso tenha, foto de perfil,
+    data de nascimento, entre outras informações.
+  end note
+
+  note left of uc17
+    Administradores não podem apagar conta, caso
+    o individuo queira sair, sendo administrador, ele 
+    terá que ser removido do grupo de 
+    aministradores e assim remover sua conta.
+  end note
+
+  note left of uc21
+    Algumas trilhas ocorrem em localidades privadas,
+    portanto, é necessário uma taxa de inscrição, logo, 
+    um sistema de pagamento prévio seria cabível.
+  end note
+
+  uc21 .. uc27
+  uc27 .. uc23
+
+  tr --> uc16
+  tr --> uc17
+  tr --> uc21
+@enduml

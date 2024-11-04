@@ -1,0 +1,48 @@
+@startuml pe_na_pedra_usecase_7
+  left to right direction
+
+  package "Modelo de Caso de Uso- Pé na Pedra" {
+    :Trilheiro: as tr
+
+    rectangle aplicação {
+      usecase uc24 as "Atulizar lista \n de \n trilheiros\n 
+        == CU24"
+
+      usecase uc25 as "Atulizar número \n de vagas da carona\n 
+        == CU25"
+
+      rectangle trilheiro {
+        usecase uc3 as "Vizualizar \n trilhas\n 
+          == CU3"
+        usecase uc8 as "Vizualizar \n ponto de \n encontro\n 
+          == CU8"
+        usecase uc9 as "Se inscrever \n em trilha\n 
+          == CU9"
+        usecase uc10 as "Ofertar carona\n 
+          == CU10"
+        usecase uc11 as "Pegar carona\n 
+          == CU11"
+      }
+    }
+  }
+
+  note right of uc10 
+    Quem concede a carona deve indicar as condições,
+    como, quem vai de moto, normalmente a carona tem
+    que ter um capacete, ou indicar que tem um capacete reserva. Deve também indicar quantidades de vagas disponiveis.
+    Isso se o trilheiro tiver um veículo próprio.
+  end note
+
+  note right of uc24
+      No máximo 30 trilheiros.
+    end note
+
+  uc9 .. uc24
+  uc11 .. uc25
+
+  tr --> uc3
+  tr --> uc8
+  tr --> uc9
+  tr --> uc10
+  tr --> uc11
+@enduml

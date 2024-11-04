@@ -1,0 +1,8 @@
+@startuml pe_na_pedra_usecase_1
+  package "Modelo de Caso de Uso- Pé na Pedra - Atores" {
+    :Administrador: as adm
+    :Trilheiro: as tr
+
+    tr <|-- adm
+  }
+@enduml

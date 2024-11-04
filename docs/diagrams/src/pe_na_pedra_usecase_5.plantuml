@@ -1,0 +1,26 @@
+@startuml pe_na_pedra_usecase_6
+  left to right direction
+
+  package "Modelo de Caso de Uso- Pé na Pedra" {
+    
+    :Administrador: as adm
+    
+    rectangle aplicação {
+      rectangle administração {
+        usecase uc26 as "Editar ponto de \n encontro\n 
+          == CU26"
+        usecase uc28 as "Desbanir \n membros\n 
+          == CU28"
+        usecase uc29 as "Ver membros \n banidos\n 
+          == CU29"
+        usecase uc30 as "Ver \n trilheiros\n 
+          == CU30"
+      }
+    }
+  }
+
+  adm --> uc26
+  adm --> uc28
+  adm --> uc29
+  adm --> uc30
+@enduml

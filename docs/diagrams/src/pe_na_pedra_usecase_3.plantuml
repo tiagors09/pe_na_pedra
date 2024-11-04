@@ -1,0 +1,26 @@
+@startuml pe_na_pedra_usecase_4
+  left to right direction
+  
+  package "Modelo de Caso de Uso- Pé na Pedra" {
+    
+    :Administrador: as adm
+    
+    rectangle aplicação {
+      rectangle administração {
+        usecase uc5 as "Excluir \n trilha\n 
+          == CU5"
+        usecase uc6 as "Atualizar \n trilha\n 
+          == CU6"
+        usecase uc7 as "Criar calendário \n mensal de \n trilhas\n 
+          == CU7"
+        usecase uc22 as "Definir ponto \n de encontro\n 
+          == CU22"
+      }
+    }
+  }  
+
+  adm --> uc5
+  adm --> uc6
+  adm --> uc7
+  adm --> uc22 
+@enduml

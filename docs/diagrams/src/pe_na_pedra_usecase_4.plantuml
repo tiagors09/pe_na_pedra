@@ -1,0 +1,34 @@
+@startuml pe_na_pedra_usecase_5
+  package "Modelo de Caso de Uso- Pé na Pedra" {
+    left to right direction
+    
+    :Administrador: as adm
+    
+    rectangle aplicação {
+      usecase uc24 as "Atulizar lista \n de \n trilheiros\n 
+       == CU24"
+
+      rectangle administração {
+        usecase uc23 as "Confirmar pagamento \n da trilha\n 
+          == CU23"
+        usecase uc13 as "Definir novos \n administradores\n 
+          == CU13"
+        usecase uc18 as "Remover \n administradores\n 
+          == CU18"
+        usecase uc19 as "Definir regras para \n trilhas\n 
+          == CU19"
+      }
+    } 
+  }
+
+  note right of uc24
+    No máximo 30 trilheiros.
+  end note
+
+  uc23 .. uc24
+
+  adm --> uc23
+  adm --> uc13
+  adm --> uc18
+  adm --> uc19
+@enduml

@@ -1,0 +1,29 @@
+@startuml pe_na_pedra_usecase_3
+  left to right direction
+  
+  package "Modelo de Caso de Uso- Pé na Pedra" {
+    
+    :Administrador: as adm
+    
+    rectangle aplicação {
+      rectangle administração {
+        usecase uc1 as "Banir \n membros\n 
+          == CU1"
+        usecase uc2 as "Mapear \n rotas\n 
+          == CU2"
+        usecase uc4 as "Criar \n trilha\n 
+          == CU4"
+      }
+    }
+  } 
+
+  note right of uc1
+    Administradores podem ser banidos assim como
+    os trilheiros comuns, caso venham a desrespeitar
+    as normas do grupo.
+  end note
+
+  adm --> uc1
+  adm --> uc2
+  adm --> uc4
+@enduml
