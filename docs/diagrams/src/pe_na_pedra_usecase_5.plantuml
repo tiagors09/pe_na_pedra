@@ -1,4 +1,4 @@
-@startuml pe_na_pedra_usecase_6
+@startuml pe_na_pedra_usecase_5
   left to right direction
 
   package "Modelo de Caso de Uso- Pé na Pedra" {
