@@ -22,5 +22,5 @@
   adm --> uc5
   adm --> uc6
   adm --> uc7
-  adm --> uc22 
+  uc7 .. uc22 
 @enduml
