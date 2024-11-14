@@ -11,8 +11,6 @@
       rectangle trilheiro {
         usecase uc20 as "Criar perfil\n <<Única vez>>\n 
           == CU20"
-        usecase uc12 as "Ajudar carona\n 
-          == CU12"
         usecase uc14 as "Compartilhar trilha \n nos stories \n do Instagram\n 
           == CU14"
         usecase uc15 as "Cancelar inscrição \n em trilha\n 
@@ -20,13 +18,6 @@
       }
     }
   }
-
-  note right of uc12
-    Realizar uma transferencia pix 
-    ou dinheiro físico caso o 
-    trilheiro queira ajudar sua carona
-    na gasolina, não é obrigatório.
-  end note
 
   note right of uc20
     Informar nome, email, whatsapp, alergias,
