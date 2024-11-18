@@ -1,4 +1,11 @@
 @startuml pe_na_pedra_class_diagram_1
+package types {
+  class JsonMap {
+    <<typedef>>
+    Map<String, dynamic>
+  }
+}
+
 package models {
   note "Modelo do trilheiro" as N1
   note "Modelo de coordenadas do mapa" as N2
@@ -10,19 +17,22 @@ package models {
     + DateTime birthday
     + String imageUrl
     + bool isAdm
-    + Map<String, dynamic> toJson()
-    + {static} void fromJson(Map<String, dynamic> res)
+    + JsonMap toJson()
+    + {static} void fromJson(JsonMap res)
   }
 
   class CoordinatesModel {
     + double latitude
     + double longitude
     + String address
-    + Map<String, dynamic> toJson()
-    + {static} void fromJson(Map<String, dynamic> res)
+    + JsonMap toJson()
+    + {static} void fromJson(JsonMap res)
   }
 
   HikerModel .. N1
   CoordinatesModel .. N2
+
+  HikerModel --> JsonMap : use
+  CoordinatesModel --> JsonMap : use
 }
 @enduml
