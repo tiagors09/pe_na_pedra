@@ -1,0 +1,55 @@
+@startuml pe_na_pedra_class_diagram
+package types {
+  class FormData {
+    <<typedef>>
+    Map<String, dynamic>
+  }
+}
+
+package controllers {
+  class AuthFormController {
+    - late String? _userId
+    - String? _token
+    - DateTime? _expiryDate
+    - Timer? _logoutTimer
+
+    - Future<void> _authenticate(FormData formData, String urlSegment)
+    - void _autoLogout()
+    + bool isAuth()
+    + String? userId()
+    + String? token()
+    + Future<void> signup(BuildContext context, FormData formData)
+    + Future<void> signIn(BuildContext context, FormData formData)
+    + Future<void> tryAutoLogin()
+    + void logout()
+  }
+
+  class TrailFormController {
+    + FormData formData
+    + nameValidator(String? value)
+    + difficultyValidator(String? value)
+    + locationValidator(String? value)
+    + nameOnSaved(String? value, FormData formData)
+    + difficultyOnSaved(String? value, FormData formData)
+    + locationOnSaved(String? value, FormData formData)
+    + onSubmit(BuildContext context, FormData formData)
+  }
+  
+  class HikerEditFormController {
+    + FormData formData
+    + fullNameValidator(String? value)
+    + addressValidator(String? value)
+    + birthdayValidator(String? value)
+    + imageUrlValidator(String? value)
+    + fullNameOnSaved(String? value, FormData formData)
+    + addressOnSaved(String? value, FormData formData)
+    + birthdayOnSaved(String? value, FormData formData)
+    + imageUrlOnSaved(String? value, FormData formData)
+    + onSubmit(BuildContext context, FormData formData)
+  }
+}
+
+TrailFormController --> FormData : use
+HikerEditFormController --> FormData : use
+AuthFormController --> FormData : use
+@enduml
