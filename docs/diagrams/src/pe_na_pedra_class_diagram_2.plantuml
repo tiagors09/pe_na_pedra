@@ -1,4 +1,26 @@
 @startuml pe_na_pedra_class_diagram_2
+package types {
+  class JsonMap {
+    <<typedef>>
+    Map<String, dynamic>
+  }
+
+  class TrailList {
+    <<typedef>>
+    List<Map<String, dynamic>>
+  }
+
+  class CoordinatesList {
+    <<typedef>>
+    List<CoordinatesModel>
+  }
+
+  class HikersList {
+    <<typedef>>
+    List<Hiker>
+  }
+}
+
 package models {
   note "Modelo da trilha" as N3
   note "Modelo do calendário mensal de trilhas" as N4
@@ -9,29 +31,39 @@ package models {
     + String name
     + String difficulty
     + String location
-    + List<CoordinatesModel> route
-    + Map<String, dynamic> toJson()
-    + {static} void fromJson(Map<String, dynamic> res)
+    + CoordinatesList route
+    + JsonMap toJson()
+    + {static} void fromJson(JsonMap res)
   }
 
   class MonthlyTrailModel {
-    + List<String, dynamic> trails
-    + Map<String, dynamic> toJson()
-    + {static} void fromJson(Map<String, dynamic> res)
+    + TrailList trails
+    + JsonMap toJson()
+    + {static} void fromJson(JsonMap res)
   }
 
   class EventModel {
-    + List<Hiker> hikers
+    + HikersList hikers
     + TrailModel trail
     + CoordinatesModel meetingPoint
     + DateTime meetingTime
     + DateTime date
-    + Map<String, dynamic> toJson()
-    + {static} void fromJson(Map<String, dynamic> res)
+    + JsonMap toJson()
+    + {static} void fromJson(JsonMap res)
   }
 
   TrailModel .. N3
   MonthlyTrailModel .. N4
   EventModel .. N5
+
+  EventModel --> JsonMap : use
+  MonthlyTrailModel --> JsonMap : use
+  TrailModel --> JsonMap : use
+
+  MonthlyTrailModel --> TrailList : use
+
+  TrailModel --> TrailList : use
+
+  EventModel --> HikersList : use
 }
 @enduml
