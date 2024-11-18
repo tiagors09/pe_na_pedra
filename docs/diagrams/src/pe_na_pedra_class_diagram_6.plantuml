@@ -1,0 +1,6 @@
+@startuml pe_na_pedra_class_diagram_6
+package views {
+  class AdmView
+  class HickerView
+}
+@enduml
