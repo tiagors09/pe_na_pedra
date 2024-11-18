@@ -1,4 +1,4 @@
-@startuml pe_na_pedra_class_digram_1
+@startuml pe_na_pedra_class_diagram_1
 package models {
   note "Modelo do trilheiro" as N1
   note "Modelo de coordenadas do mapa" as N2
