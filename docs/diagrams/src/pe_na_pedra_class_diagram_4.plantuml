@@ -1,4 +1,4 @@
-@startuml pe_na_pedra_class_diagram
+@startuml pe_na_pedra_class_diagram_4
 package types {
   class FormData {
     <<typedef>>
