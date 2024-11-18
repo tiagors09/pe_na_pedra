@@ -1,5 +1,4 @@
 @startuml pe_na_pedra_class_diagram_2
-
 package models {
   note "Modelo da trilha" as N3
   note "Modelo do calendário mensal de trilhas" as N4
@@ -16,22 +15,17 @@ package models {
   }
 
   class MonthlyTrailModel {
-    - List<String, dynamic> _trails
-    + void addTrail(TrailModel trail, DateTime date, CoordinatesModel meetingPoint)
-    + void removeTrail(String trailId)
-    + List<String, dynamic> trails()
+    + List<String, dynamic> trails
     + Map<String, dynamic> toJson()
     + {static} void fromJson(Map<String, dynamic> res)
   }
 
   class EventModel {
-    - List<Hiker> _hikers
+    + List<Hiker> hikers
     + TrailModel trail
     + CoordinatesModel meetingPoint
     + DateTime meetingTime
     + DateTime date
-    + void addHiker(HikerModel hiker)
-    + void removeHiker(String hikerId)
     + Map<String, dynamic> toJson()
     + {static} void fromJson(Map<String, dynamic> res)
   }
