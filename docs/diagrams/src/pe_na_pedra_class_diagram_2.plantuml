@@ -1,0 +1,43 @@
+@startuml pe_na_pedra_class_diagram_2
+
+package models {
+  note "Modelo da trilha" as N3
+  note "Modelo do calendário mensal de trilhas" as N4
+  note "Modelo do evento" as N5
+
+  class TrailModel {
+    + String? id
+    + String name
+    + String difficulty
+    + String location
+    + List<CoordinatesModel> route
+    + Map<String, dynamic> toJson()
+    + {static} void fromJson(Map<String, dynamic> res)
+  }
+
+  class MonthlyTrailModel {
+    - List<String, dynamic> _trails
+    + void addTrail(TrailModel trail, DateTime date, CoordinatesModel meetingPoint)
+    + void removeTrail(String trailId)
+    + List<String, dynamic> trails()
+    + Map<String, dynamic> toJson()
+    + {static} void fromJson(Map<String, dynamic> res)
+  }
+
+  class EventModel {
+    - List<Hiker> _hikers
+    + TrailModel trail
+    + CoordinatesModel meetingPoint
+    + DateTime meetingTime
+    + DateTime date
+    + void addHiker(HikerModel hiker)
+    + void removeHiker(String hikerId)
+    + Map<String, dynamic> toJson()
+    + {static} void fromJson(Map<String, dynamic> res)
+  }
+
+  TrailModel .. N3
+  MonthlyTrailModel .. N4
+  EventModel .. N5
+}
+@enduml

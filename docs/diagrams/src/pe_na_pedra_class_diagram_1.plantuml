@@ -1,0 +1,28 @@
+@startuml pe_na_pedra_class_digram_1
+package models {
+  note "Modelo do trilheiro" as N1
+  note "Modelo de coordenadas do mapa" as N2
+
+  class HikerModel {
+    + String? id
+    + String fullName
+    + String address
+    + DateTime birthday
+    + String imageUrl
+    + bool isAdm
+    + Map<String, dynamic> toJson()
+    + {static} void fromJson(Map<String, dynamic> res)
+  }
+
+  class CoordinatesModel {
+    + double latitude
+    + double longitude
+    + String address
+    + Map<String, dynamic> toJson()
+    + {static} void fromJson(Map<String, dynamic> res)
+  }
+
+  HikerModel .. N1
+  CoordinatesModel .. N2
+}
+@enduml
