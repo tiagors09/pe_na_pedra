@@ -22,6 +22,7 @@
           == CU10"
         usecase uc11 as "Pegar carona\n 
           == CU11"
+        usecase uc31 as "Criar \n conta \n <<Única vez>> \n"
       }
     }
   }
@@ -45,4 +46,5 @@
   tr --> uc9
   tr --> uc10
   tr --> uc11
+  tr --> uc31
 @enduml
