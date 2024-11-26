@@ -1,24 +1,23 @@
 @startuml pe_na_pedra_class_diagram_5
-class StatelessWidget {
-  <<abstract>>
-  + build(context: BuildContext): Widget
+abstract class StatelessWidget {
+  # build(context: BuildContext): Widget
 }
 
 package views {
   class AuthOrHomeView {
-      + build(context: BuildContext): Widget
+    + build(context: BuildContext): Widget
   }
   class AuthView {
-      + build(context: BuildContext): Widget
+    + build(context: BuildContext): Widget
   }
   class HomeView {
-      + build(context: BuildContext): Widget
+    + build(context: BuildContext): Widget
   }
   class SignUpView {
-      + build(context: BuildContext): Widget
+    + build(context: BuildContext): Widget
   }
   class SignInView {
-      + build(context: BuildContext): Widget
+    + build(context: BuildContext): Widget
   }
 }
 
@@ -34,25 +33,25 @@ AuthView *-- SignInView
 
 package controller {
   class AuthFormController {
-    - late String? _userId
-    - String? _token
-    - DateTime? _expiryDate
-    - Timer? _logoutTimer
+    - _userId: String? <<late>>
+    - _token: String?
+    - _expiryDate: DateTime?
+    - _logoutTimer: Timer?
 
-    - Future<void> _authenticate(FormData formData, String urlSegment)
-    - void _autoLogout()
-    + bool isAuth()
-    + String? userId()
-    + String? token()
-    + Future<void> signup(BuildContext context, FormData formData)
-    + Future<void> signIn(BuildContext context, FormData formData)
-    + Future<void> tryAutoLogin()
-    + void logout()
+    - _authenticate(formData: JsonMap, urlSegment: String): Future<void>
+    - _autoLogout(): void
+    + isAuth(): bool
+    + userId(): String?
+    + token(): String?
+    + signup(context: BuildContext, formData: JsonMap): Future<void>
+    + signIn(context: BuildContext, formData: JsonMap): Future<void>
+    + tryAutoLogin(): Future<void>
+    + logout(): void
   }
 }
 
 package types {
-  class FormData {
+  class JsonMap {
     <<typedef>>
     Map<String, dynamic>
   }

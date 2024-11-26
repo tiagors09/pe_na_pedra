@@ -11,22 +11,22 @@ package models {
   note "Modelo de coordenadas do mapa" as N2
 
   class HikerModel {
-    + String? id
-    + String fullName
-    + String address
-    + DateTime birthday
-    + String imageUrl
-    + bool isAdm
-    + JsonMap toJson()
-    + {static} void fromJson(JsonMap res)
+    + id: String?
+    + fullName: String
+    + address: String
+    + birthday: DateTime
+    + imageUrl: String
+    + isAdm: bool
+    + toJson(): JsonMap
+    + {static} fromJson(JsonMap res): void
   }
 
   class CoordinatesModel {
-    + double latitude
-    + double longitude
-    + String address
-    + JsonMap toJson()
-    + {static} void fromJson(JsonMap res)
+    + latitude: double
+    + longitude: double
+    + address: String
+    + toJson(): JsonMap
+    + {static} fromJson(JsonMap res): void
   }
 
   HikerModel .. N1

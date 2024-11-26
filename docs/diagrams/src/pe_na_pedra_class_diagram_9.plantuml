@@ -1,0 +1,63 @@
+@startuml pe_na_pedra_class_diagram_9
+package utils {
+  class Store
+}
+
+package enums {
+  enum Environment
+  
+  enum AppRoutes {
+    + name: String
+
+    AppRoutes(name: String): void
+  }
+
+  enum AuthErrors {
+    INVALID_CUSTOM_TOKEN
+    CREDENTIAL_MISMATCH
+    TOKEN_EXPIRED
+    USER_DISABLED
+    USER_NOT_FOUND
+    INVALID_REFRESH_TOKEN
+    INVALID_GRANT_TYPE
+    MISSING_REFRESH_TOKEN
+    PROJECT_NUMBER_MISMATCH
+    EMAIL_EXISTS
+    OPERATION_NOT_ALLOWED
+    TOO_MANY_ATTEMPTS_TRY_LATER
+    EMAIL_NOT_FOUND
+    INVALID_PASSWORD
+    USER_DISABLED
+    INVALID_IDP_RESPONSE
+    INVALID_EMAIL
+    EXPIRED_OOB_CODE
+    INVALID_coB_CODE
+    USER_DISABLED
+    INVALID_ID_TOKEN
+    WEAK_PASSWORD
+    CREDENTIAL_TOO_OLD_LOGIN_ASURE
+    FEDERATED_USER_ID_ALREADY_LINKED
+
+    + key: String
+    + message: String
+
+    AuthErrors(key: String, message: String): void
+  }
+}
+
+package exceptions {
+  exception AuthException {
+    + key: String
+    + AuthException(key: String): void
+    + toString(): String
+  }
+
+  exception HttpException {
+    + message: String
+    + HttpException(message: String): void
+    + toString(): String
+  }
+}
+
+AuthException --> AuthErrors : use
+@enduml

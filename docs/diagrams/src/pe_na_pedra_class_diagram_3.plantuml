@@ -1,17 +1,17 @@
 @startuml pe_na_pedra_class_diagram_3
 package controllers {
   class EventController {
-    + EventModel event
-    + EventController(EventModel event)
-    + void addHiker(HikerModel hiker)
-    + void removeHiker(String hikerId)
+    + event: EventModel
+    + EventController(event: EventModel): void
+    + addHiker(hiker: HikerModel): void
+    + removeHiker(hikerId: String): void
   }
 
   class MonthlyTrailController{
-    + MonthlyTrailModel monthlyTrail
-    + MonthlyTrailController(MonthlyTrailModel monthlyTrail)
-    + void addTrail(TrailModel trail, DateTime date, CoordinatesModel meetingPoint)
-    + void removeTrail(String trailId)
+    + monthlyTrail: MonthlyTrailModel
+    + MonthlyTrailController(monthlyTrail: MonthlyTrailModel): void
+    + addTrail(trail: TrailModel, date: DateTime, meetingPoint: CoordinatesModel): void
+    + removeTrail(trailId: String): void
   }
 }
 @enduml

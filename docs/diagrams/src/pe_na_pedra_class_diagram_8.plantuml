@@ -1,0 +1,67 @@
+@startuml pe_na_pedra_class_diagram_8
+package types {
+  class JsonMap {
+    <<typedef>>
+    Map<String, dynamic>
+  }
+}
+
+abstract class StatelessWidget {
+  # build(context: BuildContext): Widget
+}
+
+package controller {
+  class TrailFormController {
+    + formData: JsonMap
+  }
+
+  class ProfileEditFormController {
+    + formData: JsonMap
+  }
+}
+
+package views {
+  class AdmView {
+    + build(context: BuildContext): Widget
+  }
+
+  class TrailsView {
+    + build(context: BuildContext): Widget
+  }
+
+  class ProfileView {
+    + build(context: BuildContext): Widget
+  }
+
+  class ProfileEditView {
+    + build(context: BuildContext): Widget
+  }
+
+  class BannedHikersView {
+    + build(context: BuildContext): Widget
+  }
+
+  class HikersView {
+    + build(context: BuildContext): Widget
+  }
+}
+
+StatelessWidget <|-- AdmView
+StatelessWidget <|-- ProfileView
+StatelessWidget <|-- ProfileEditView
+StatelessWidget <|-- TrailsView
+StatelessWidget <|-- BannedHikersView
+StatelessWidget <|-- HikersView
+
+AdmView *-- ProfileView
+ProfileView *-- ProfileEditView
+AdmView *-- TrailsView
+AdmView *-- BannedHikersView
+AdmView *-- HikersView
+
+TrailsView --> TrailFormController : use
+ProfileEditView --> ProfileEditFormController : use
+
+TrailFormController --> JsonMap : use
+ProfileEditFormController --> JsonMap : use
+@enduml

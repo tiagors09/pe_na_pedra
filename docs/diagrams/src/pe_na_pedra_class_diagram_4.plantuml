@@ -8,44 +8,49 @@ package types {
 
 package controllers {
   class AuthFormController {
-    - late String? _userId
-    - String? _token
-    - DateTime? _expiryDate
-    - Timer? _logoutTimer
+    + formData: JsonMap
+    - late _userId: String?
+    - _token: String?
+    - _expiryDate: DateTime?
+    - _logoutTimer: Timer?
 
-    - Future<void> _authenticate(JsonMap formData, String urlSegment)
-    - void _autoLogout()
-    + bool isAuth()
-    + String? userId()
-    + String? token()
-    + Future<void> signup(BuildContext context, JsonMap formData)
-    + Future<void> signIn(BuildContext context, JsonMap formData)
-    + Future<void> tryAutoLogin()
-    + void logout()
+    - _authenticate(formData: JsonMap, urlSegment: String): Future<void>
+    - _autoLogout(): void
+    + isAuth(): bool
+    + userId(): String?
+    + token(): String?
+    + emailValidator(value: String?): String
+    + passwordValidator(value: String?): String
+    + emailOnSaved(value: String?, formData: JsonMap): void
+    + passwordOnSaved(value: String?, formData: JsonMap): void
+    + signup(context: BuildContext, formData: JsonMap): Future<void>
+    + signIn(context: BuildContext, formData: JsonMap): Future<void>
+    + tryAutoLogin(): Future<void>
+    + logout(): void
   }
 
   class TrailFormController {
-    + FormData formData
-    + nameValidator(String? value)
-    + difficultyValidator(String? value)
-    + locationValidator(String? value)
-    + nameOnSaved(String? value, JsonMap formData)
-    + difficultyOnSaved(String? value, JsonMap formData)
-    + locationOnSaved(String? value, JsonMap formData)
-    + onSubmit(BuildContext context, JsonMap formData)
+    + formData: JsonMap
+    + nameValidator(value: String?): String
+    + difficultyValidator(value: String?): String
+    + locationValidator(value: String?): String
+    + nameOnSaved(value: String?, formData: JsonMap): void
+    + difficultyOnSaved(value: String?, formData: JsonMap): void
+    + locationOnSaved(value: String?, formData: JsonMap): void
+    + onSubmit(context: BuildContext, formData: JsonMap): void
   }
-  
+
   class HikerEditFormController {
-    + JsonMap formData
-    + fullNameValidator(String? value)
-    + addressValidator(String? value)
-    + birthdayValidator(String? value)
-    + imageUrlValidator(String? value)
-    + fullNameOnSaved(String? value, JsonMap formData)
-    + addressOnSaved(String? value, JsonMap formData)
-    + birthdayOnSaved(String? value, JsonMap formData)
-    + imageUrlOnSaved(String? value, JsonMap formData)
-    + onSubmit(BuildContext context, JsonMap formData)
+    + formData: JsonMap
+    + fullNameValidator(value: String?): String
+    + addressValidator(value: String?): String
+    + birthdayValidator(value: String?): String
+    + imageUrlValidator(value: String?): String
+    + fullNameOnSaved(value: String?, formData: JsonMap): void
+    + addressOnSaved(value: String?, formData: JsonMap): void
+    + birthdayOnSaved(value: String?, formData: JsonMap): void
+    + imageUrlOnSaved(value: String?, formData: JsonMap): void
+    + onSubmit(context: BuildContext, formData: JsonMap): void
   }
 }
 

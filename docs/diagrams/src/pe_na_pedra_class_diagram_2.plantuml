@@ -27,29 +27,29 @@ package models {
   note "Modelo do evento" as N5
 
   class TrailModel {
-    + String? id
-    + String name
-    + String difficulty
-    + String location
-    + CoordinatesList route
-    + JsonMap toJson()
-    + {static} void fromJson(JsonMap res)
+    + id: String?
+    + name: String
+    + difficulty: String
+    + location: String
+    + route: CoordinatesList
+    + toJson(): JsonMap
+    + {static} fromJson(JsonMap res): void
   }
 
   class MonthlyTrailModel {
-    + TrailList trails
-    + JsonMap toJson()
-    + {static} void fromJson(JsonMap res)
+    + trails: TrailList
+    + toJson(): JsonMap
+    + {static} fromJson(JsonMap res): void
   }
 
   class EventModel {
-    + HikersList hikers
-    + TrailModel trail
-    + CoordinatesModel meetingPoint
-    + DateTime meetingTime
-    + DateTime date
-    + JsonMap toJson()
-    + {static} void fromJson(JsonMap res)
+    + hikers: HikersList
+    + trail: TrailModel
+    + meetingPoint: CoordinatesModel
+    + meetingTime: DateTime
+    + date: DateTime
+    + toJson(): JsonMap
+    + {static} fromJson(res: JsonMap): void
   }
 
   TrailModel .. N3

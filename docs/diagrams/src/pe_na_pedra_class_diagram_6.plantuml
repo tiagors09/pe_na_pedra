@@ -1,6 +1,26 @@
 @startuml pe_na_pedra_class_diagram_6
-package views {
-  class AdmView
-  class HickerView
+abstract class StatelessWidget {
+  # build(context: BuildContext): Widget
 }
+
+package views {
+  class HomeView {
+      + build(context: BuildContext): Widget
+  }
+
+  class AdmView {
+    + build(context: BuildContext): Widget
+  }
+
+  class HickerView {
+    + build(context: BuildContext): Widget
+  }
+}
+
+StatelessWidget <|-- HomeView
+StatelessWidget <|-- AdmView
+StatelessWidget <|-- HickerView
+
+HomeView *-- AdmView
+HomeView *-- HickerView
 @enduml

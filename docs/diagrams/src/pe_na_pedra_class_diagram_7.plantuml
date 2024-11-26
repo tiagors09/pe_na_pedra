@@ -1,0 +1,75 @@
+@startuml pe_na_pedra_class_diagram_7
+package types {
+  class JsonMap {
+    <<typedef>>
+    Map<String, dynamic>
+  }
+}
+
+abstract class StatelessWidget {
+  # build(context: BuildContext): Widget
+}
+
+package controller {
+  class OfferRideFormController {
+    + formData: JsonMap
+  }
+  
+  class ProfileEditFormController {
+    + formData: JsonMap
+  }
+}
+
+package views {
+  class HickerView {
+    + build(context: BuildContext): Widget
+  }
+
+  class MonthlyCalendarView {
+    + build(context: BuildContext): Widget
+  }
+
+  class EventRegistrationView {
+    + build(context: BuildContext): Widget
+  }
+
+  class ProfileView {
+    + build(context: BuildContext): Widget
+  }
+
+  class ProfileEditView {
+    + build(context: BuildContext): Widget
+  }
+
+  class OfferRideView {
+    + build(context: BuildContext): Widget
+  }
+
+  class RideOffersView {
+    + build(context: BuildContext): Widget
+  }
+}
+
+StatelessWidget <|-- HickerView
+StatelessWidget <|-- MonthlyCalendarView
+StatelessWidget <|-- ProfileView
+StatelessWidget <|-- ProfileEditView
+StatelessWidget <|-- OfferRideView
+StatelessWidget <|-- RideOffersView
+
+StatelessWidget <|-- EventRegistrationView
+
+HickerView *-- MonthlyCalendarView
+HickerView *-- ProfileView
+ProfileView *-- ProfileEditView
+HickerView *-- OfferRideView
+HickerView *-- RideOffersView
+
+MonthlyCalendarView *-- EventRegistrationView
+
+ProfileEditView --> ProfileEditFormController : use
+OfferRideView --> OfferRideFormController : use
+
+OfferRideFormController --> JsonMap : use
+ProfileEditFormController --> JsonMap : use
+@enduml
