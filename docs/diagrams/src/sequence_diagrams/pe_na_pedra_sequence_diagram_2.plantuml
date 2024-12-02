@@ -1,0 +1,39 @@
+@startuml pe_na_pedra_sequence_diagram_2
+actor Administrador as adm
+
+participant "Trails View" as trailsView
+participant "Trail Form View" as trailFormView
+participant "Trail Form Controller" as trailFormController
+participant "TrailModel" as trailModel
+participant "Firebase Service" as firebase
+database "Real Time Database" as realTimeDatabase
+
+title Fluxo de Criação de Rotas
+
+adm -> trailsView : Acessa área de trilhas mapeadas
+adm -> trailsView : Seleciona opção de mapeamento de trilhas
+
+adm -> trailFormView : Inicia gravação da trilha
+adm -> trailFormView : Encerra gravação da trilha
+
+trailFormView -> trailFormController : Envia dados: pontos GPS, nome, dificuldade e localização
+trailFormController -> trailModel : Instancia objeto com dados enviados
+trailModel -> trailFormController : Retorna objeto instanciado
+trailFormController -> firebase : Requisita armazenamento do objeto TrailModel
+firebase -> realTimeDatabase : Persiste dados da trilha (usando o modelo)
+realTimeDatabase --> firebase : Confirmação de persistência
+
+trailFormController -> firebase : Finaliza e salva dados consolidados da trilha
+firebase -> realTimeDatabase : Atualiza informações no banco
+realTimeDatabase --> firebase : Confirmação de atualização
+
+alt Sucesso no armazenamento
+    firebase --> trailFormController : Retorna sucesso
+    trailFormController --> trailFormView : Atualiza status no front-end
+    trailFormView --> adm : Exibe feedback (mapeamento concluído)
+else Erro no armazenamento
+    firebase --> trailFormController : Retorna erro
+    trailFormController --> trailFormView : Exibe mensagem de erro
+    trailFormView --> adm : Exibe feedback (erro no mapeamento)
+end
+@enduml
