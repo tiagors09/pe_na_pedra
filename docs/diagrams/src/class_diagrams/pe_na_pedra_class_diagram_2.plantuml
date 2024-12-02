@@ -5,7 +5,7 @@ package types {
     Map<String, dynamic>
   }
 
-  class TrailList {
+  class EventsList {
     <<typedef>>
     List<Map<String, dynamic>>
   }
@@ -36,8 +36,8 @@ package models {
     + {static} fromJson(JsonMap res): void
   }
 
-  class MonthlyTrailModel {
-    + trails: TrailList
+  class MonthlyEventModel {
+    + events: EventsList
     + toJson(): JsonMap
     + {static} fromJson(JsonMap res): void
   }
@@ -53,16 +53,16 @@ package models {
   }
 
   TrailModel .. N3
-  MonthlyTrailModel .. N4
+  MonthlyEventModel .. N4
   EventModel .. N5
 
   EventModel --> JsonMap : use
-  MonthlyTrailModel --> JsonMap : use
+  MonthlyEventModel --> JsonMap : use
   TrailModel --> JsonMap : use
 
-  MonthlyTrailModel --> TrailList : use
+  MonthlyEventModel --> EventsList : use
 
-  TrailModel --> TrailList : use
+  TrailModel --> CoordinatesList : use
 
   EventModel --> HikersList : use
 }
