@@ -1,6 +1,10 @@
 @startuml pe_na_pedra_class_diagram_5
-abstract class StatelessWidget {
-  # build(context: BuildContext): Widget
+package flutter {
+  abstract class StatelessWidget {
+    # build(context: BuildContext): Widget
+  }
+
+  abstract class StatefulWidget
 }
 
 package views {
@@ -24,8 +28,8 @@ package views {
 StatelessWidget <|-- AuthOrHomeView
 StatelessWidget <|-- AuthView
 StatelessWidget <|-- HomeView
-StatelessWidget <|-- SignUpView
-StatelessWidget <|-- SignInView
+StatefulWidget <|-- SignUpView
+StatefulWidget <|-- SignInView
 AuthOrHomeView *-- AuthView
 AuthOrHomeView *-- HomeView
 AuthView *-- SignUpView
@@ -57,7 +61,7 @@ package types {
   }
 }
 
-AuthFormController --> FormData : use
+AuthFormController --> JsonMap : use
 
 SignUpView --> AuthFormController : use
 SignInView --> AuthFormController : use

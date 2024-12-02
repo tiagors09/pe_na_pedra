@@ -6,8 +6,12 @@ package types {
   }
 }
 
-abstract class StatelessWidget {
+package flutter {
+  abstract class StatelessWidget {
   # build(context: BuildContext): Widget
+  }
+
+  abstract class StatefulWidget
 }
 
 package controller {
@@ -18,6 +22,8 @@ package controller {
   class ProfileEditFormController {
     + formData: JsonMap
   }
+
+  class BannedHikersController
 }
 
 package views {
@@ -26,6 +32,10 @@ package views {
   }
 
   class TrailsView {
+    + build(context: BuildContext): Widget
+  }
+
+  class TrailFormView {
     + build(context: BuildContext): Widget
   }
 
@@ -48,7 +58,7 @@ package views {
 
 StatelessWidget <|-- AdmView
 StatelessWidget <|-- ProfileView
-StatelessWidget <|-- ProfileEditView
+StatefulWidget <|-- ProfileEditView
 StatelessWidget <|-- TrailsView
 StatelessWidget <|-- BannedHikersView
 StatelessWidget <|-- HikersView
@@ -59,9 +69,15 @@ AdmView *-- TrailsView
 AdmView *-- BannedHikersView
 AdmView *-- HikersView
 
-TrailsView --> TrailFormController : use
+TrailsView --> TrailFormView : use
 ProfileEditView --> ProfileEditFormController : use
 
 TrailFormController --> JsonMap : use
 ProfileEditFormController --> JsonMap : use
+
+BannedHikersView --> BannedHikersController
+
+TrailFormView --> TrailFormController
+
+StatefulWidget <|-- TrailFormView
 @enduml

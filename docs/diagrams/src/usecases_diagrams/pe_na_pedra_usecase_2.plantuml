@@ -24,6 +24,6 @@
   end note
 
   adm --> uc1
-  adm --> uc2
+  uc4 .. uc2
   adm --> uc4
 @enduml

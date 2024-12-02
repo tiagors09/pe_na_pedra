@@ -1,8 +1,10 @@
 @startuml pe_na_pedra_class_diagram_6
-abstract class StatelessWidget {
+package flutter {
+  abstract class StatelessWidget {
   # build(context: BuildContext): Widget
 }
 
+}
 package views {
   class HomeView {
       + build(context: BuildContext): Widget

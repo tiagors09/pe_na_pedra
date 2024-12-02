@@ -6,10 +6,15 @@ package types {
   }
 }
 
-abstract class StatelessWidget {
+package flutter {
+  abstract class StatefulWidget
+
+  abstract class StatelessWidget {
   # build(context: BuildContext): Widget
 }
 
+
+}
 package controller {
   class OfferRideFormController {
     + formData: JsonMap
@@ -17,6 +22,10 @@ package controller {
   
   class ProfileEditFormController {
     + formData: JsonMap
+  }
+
+  class EventRegistrationController {
+    + build(context: BuildContext): Widget
   }
 }
 
@@ -53,11 +62,11 @@ package views {
 StatelessWidget <|-- HickerView
 StatelessWidget <|-- MonthlyCalendarView
 StatelessWidget <|-- ProfileView
-StatelessWidget <|-- ProfileEditView
+StatefulWidget <|-- ProfileEditView
 StatelessWidget <|-- OfferRideView
 StatelessWidget <|-- RideOffersView
 
-StatelessWidget <|-- EventRegistrationView
+StatefulWidget <|-- EventRegistrationView
 
 HickerView *-- MonthlyCalendarView
 HickerView *-- ProfileView
@@ -72,4 +81,8 @@ OfferRideView --> OfferRideFormController : use
 
 OfferRideFormController --> JsonMap : use
 ProfileEditFormController --> JsonMap : use
+
+EventRegistrationView --> EventRegistrationController : use
+
+EventRegistrationController --> JsonMap : use
 @enduml
