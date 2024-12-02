@@ -5,12 +5,14 @@ title Fluxo de Exclusão de Trilha
 actor Administrador as adm
 
 participant "Trails View" as trailsView
+participant "Trail Form View" as trailFormView
 participant "Trails Controller" as trailsController
 participant "Firebase Service" as firebase
 database "Real Time Database" as realTimeDatabase
 
 adm -> trailsView : Seleciona trilha a ser removida
-trailsView -> trailsController : Informa ID da trilha a ser removida
+trailsView -> trailFormView : Abre formulário de edição da trilha
+trailFormView -> trailsController : Informa ID da trilha a ser removida
 trailsController -> firebase : Chama rota de remoção de trilha
 firebase -> realTimeDatabase : Remove trilha com base no ID
 
