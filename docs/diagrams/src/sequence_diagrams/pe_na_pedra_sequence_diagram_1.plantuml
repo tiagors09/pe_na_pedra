@@ -1,0 +1,30 @@
+@startuml pe_na_pedra_sequence_diagram_1
+actor Administrador as adm
+
+participant "Banned Hikers View" as bannedHikersView
+participant "Banned Hikers Controller" as bannedHikersController
+participant "Firebase Service" as firebase
+database "Real Time Database" as realTimeDatabase
+
+title Fluxo de Banimento de Trilheiros
+
+adm -> bannedHikersView : Acessa área de trilheiros banidos
+adm -> bannedHikersView : Seleciona um trilheiro para banir
+
+bannedHikersView -> bannedHikersController : Envia o ID do trilheiro selecionado
+
+bannedHikersController -> firebase : Solicita adição de trilheiro banido (com ID)
+
+firebase -> realTimeDatabase : Persiste informações do trilheiro banido
+realTimeDatabase --> firebase : Confirmação de persistência
+
+alt Banimento realizado com sucesso
+  firebase --> bannedHikersController : Retorna sucesso
+  bannedHikersController --> bannedHikersView : Atualiza status no front-end
+  bannedHikersView --> adm : Exibe feedback (banimento concluído)
+else Falha no banimento
+  firebase --> bannedHikersController : Retorna erro
+  bannedHikersController --> bannedHikersView : Atualiza status no front-end
+  bannedHikersView --> adm : Exibe feedback (problema no banimento)
+end
+@enduml
