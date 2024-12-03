@@ -18,7 +18,7 @@ package models {
     + imageUrl: String
     + isAdm: bool
     + toJson(): JsonMap
-    + {static} fromJson(JsonMap res): void
+    + {static} HikerModel.fromJson(JsonMap res): void
   }
 
   class CoordinatesModel {
@@ -26,7 +26,7 @@ package models {
     + longitude: double
     + address: String
     + toJson(): JsonMap
-    + {static} fromJson(JsonMap res): void
+    + {static} CoordinatesModel.fromJson(JsonMap res): void
   }
 
   HikerModel .. N1
