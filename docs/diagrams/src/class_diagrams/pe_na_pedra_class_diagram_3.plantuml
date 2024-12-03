@@ -5,13 +5,16 @@ package controllers {
     + EventController(event: EventModel): void
     + addHiker(hiker: HikerModel): void
     + removeHiker(hikerId: String): void
+    + changeMeetingPoint(newMeetingPoint: CoordinatesModel): void
+    + changeMeetingTime(newMeetingTime: DateTime): void
+    + changeDate(newDate: DateTime): void
   }
 
-  class MonthlyTrailController{
-    + monthlyTrail: MonthlyTrailModel
-    + MonthlyTrailController(monthlyTrail: MonthlyTrailModel): void
-    + addTrail(trail: TrailModel, date: DateTime, meetingPoint: CoordinatesModel): void
-    + removeTrail(trailId: String): void
+  class MonthlyEventController{
+    + monthlyEventModel: MonthlyEventModel
+    + MonthlyEventController(monthlyEventModel: MonthlyEventModel): void
+    + addEvent(event: Event): void
+    + removeEvent(eventId: String): void
   }
 }
 @enduml
