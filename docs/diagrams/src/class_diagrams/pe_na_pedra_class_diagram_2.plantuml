@@ -33,23 +33,25 @@ package models {
     + location: String
     + route: CoordinatesList
     + toJson(): JsonMap
-    + {static} fromJson(JsonMap res): void
+    + {static} TrailModel.fromJson(JsonMap res): void
   }
 
   class MonthlyEventModel {
+    + id: String?
     + events: EventsList
     + toJson(): JsonMap
-    + {static} fromJson(JsonMap res): void
+    + {static} MonthlyEventModel.fromJson(JsonMap res): void
   }
 
   class EventModel {
+    + id: String?
     + hikers: HikersList
     + trail: TrailModel
     + meetingPoint: CoordinatesModel
     + meetingTime: DateTime
     + date: DateTime
     + toJson(): JsonMap
-    + {static} fromJson(res: JsonMap): void
+    + {static} EventModel.fromJson(res: JsonMap): void
   }
 
   TrailModel .. N3
