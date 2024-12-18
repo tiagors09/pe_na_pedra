@@ -1,0 +1,35 @@
+@startuml pe_na_pedra_sequence_diagram_5
+
+title Fluxo de atulização de Trilha
+
+actor ADM as adm
+
+participant "Trails View" as trailsView
+participant "Trail Form View" as trailFormView
+participant "Trails Controller" as trailsController
+participant "Firebase Service" as firebase
+database "Real Time Database" as realTimeDatabase
+
+adm -> trailsView : Seleciona trilha a ser removida
+trailsView -> trailFormView : Abre formulário de edição da trilha
+trailFormView -> trailsController : Informa ID da trilha a ser removida
+trailsController -> firebase : Chama rota de remoção de trilha
+firebase -> realTimeDatabase : Remove trilha com base no ID
+
+alt Sucesso na remoção
+  realTimeDatabase -> firebase: Confirma remoção da trilha
+  firebase -> trailsController : Retorna resposta de sucesso
+  trailsController -> trailsView : Retorna mensagem de sucesso
+  trailsView -> adm : Exibe mensagem de sucesso na remoção da trilha
+else Falha na remoção
+  realTimeDatabase -> firebase : Retorna erro de remoção
+  firebase -> trailsController : Retorna resposta de erro
+  trailsController -> trailsView : Retorna mensagem de erro
+  trailsView -> adm : Exibe mensagem de falha na remoção da trilha
+end
+
+note right of trailsView
+  O fluxo garante o feedback 
+  claro para o administrador
+end note
+@enduml
