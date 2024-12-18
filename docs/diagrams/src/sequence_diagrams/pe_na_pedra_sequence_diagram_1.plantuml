@@ -1,5 +1,5 @@
 @startuml pe_na_pedra_sequence_diagram_1
-actor Administrador as adm
+actor ADM as adm
 
 participant "Banned Hikers View" as bannedHikersView
 participant "Banned Hikers Controller" as bannedHikersController
