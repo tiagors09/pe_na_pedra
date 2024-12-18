@@ -1,0 +1,36 @@
+@startuml pe_na_pedra_sequence_diagram_4
+
+title Fluxo de Criação de Evento
+
+actor ADM as adm
+
+participant "EventsView" as eventsView
+participant "Event Registrator Form View" as eventRegistratorFormView
+participant "Event Registrator Controller" as eventRegistratorController
+participant "Firebase Service" as firebase
+database "Real Time Database" as realTimeDatabase
+
+adm --> eventsView : Seleciona opção de criação de um evento novo
+adm --> eventRegistratorFormView : Preenche os campos necessários a cerca do evento
+eventRegistratorFormView -> eventRegistratorController : Informa os dados para a criação de um novo evento
+eventRegistratorController -> firebase: Chama rota de criação de novo evento 
+firebase -> realTimeDatabase : Cria novo evento com base nas informações passadas
+
+alt Sucesso na atualização
+  realTimeDatabase -> firebase: Confirma criação do evento
+  firebase -> eventRegistratorController : Retorna resposta de sucesso
+  eventRegistratorController -> eventsView : Retorna mensagem de sucesso
+  eventsView -> adm : Exibe mensagem de sucesso na criação do evento
+else Falha na atualização
+  realTimeDatabase -> firebase : Retorna erro na criação do evento
+  firebase -> eventRegistratorController : Retorna resposta de erro
+  eventRegistratorController -> eventRegistratorFormView : Retorna mensagem de erro
+  eventsView -> adm : Exibe mensagem de falha na criação do evento
+end
+
+note right of eventsView
+  O fluxo garante o feedback 
+  claro para o administrador
+end note
+
+@enduml
