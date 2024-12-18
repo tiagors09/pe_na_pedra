@@ -23,11 +23,21 @@ package controller {
     + formData: JsonMap
   }
 
-  class BannedHikersController
+  class BannedHikersController {
+    + formData: JsonMap
+  }
+
+  class EventRegistratorController {
+    + formData: JsonMap
+  }
 }
 
 package views {
   class AdmView {
+    + build(context: BuildContext): Widget
+  }
+
+  class EventRegistratorView {
     + build(context: BuildContext): Widget
   }
 
@@ -59,6 +69,7 @@ package views {
 StatelessWidget <|-- AdmView
 StatelessWidget <|-- ProfileView
 StatefulWidget <|-- ProfileEditView
+StatefulWidget <|-- EventRegistratorView
 StatelessWidget <|-- TrailsView
 StatelessWidget <|-- BannedHikersView
 StatelessWidget <|-- HikersView
@@ -68,6 +79,7 @@ ProfileView *-- ProfileEditView
 AdmView *-- TrailsView
 AdmView *-- BannedHikersView
 AdmView *-- HikersView
+AdmView *-- EventRegistratorView
 
 TrailsView --> TrailFormView : use
 ProfileEditView --> ProfileEditFormController : use
@@ -75,9 +87,14 @@ ProfileEditView --> ProfileEditFormController : use
 TrailFormController --> JsonMap : use
 ProfileEditFormController --> JsonMap : use
 
+BannedHikersController --> JsonMap : use
+EventRegistratorController --> JsonMap : use
+
 BannedHikersView --> BannedHikersController
 
 TrailFormView --> TrailFormController
 
 StatefulWidget <|-- TrailFormView
+
+EventRegistratorView --> EventRegistratorController : use
 @enduml
