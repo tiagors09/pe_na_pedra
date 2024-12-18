@@ -2,7 +2,7 @@
 
 title Fluxo de Exclusão de Trilha
 
-actor Administrador as adm
+actor ADM as adm
 
 participant "Trails View" as trailsView
 participant "Trail Form View" as trailFormView
