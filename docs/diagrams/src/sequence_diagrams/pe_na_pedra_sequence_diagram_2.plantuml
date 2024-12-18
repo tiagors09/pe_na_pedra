@@ -1,5 +1,5 @@
 @startuml pe_na_pedra_sequence_diagram_2
-actor Administrador as adm
+actor ADM as adm
 
 participant "Trails View" as trailsView
 participant "Trail Form View" as trailFormView
@@ -8,7 +8,7 @@ participant "TrailModel" as trailModel
 participant "Firebase Service" as firebase
 database "Real Time Database" as realTimeDatabase
 
-title Fluxo de Criação de Rotas
+title Fluxo de Criação de Trilhas
 
 adm -> trailsView : Acessa área de trilhas mapeadas
 adm -> trailsView : Seleciona opção de mapeamento de trilhas
