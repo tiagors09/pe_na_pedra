@@ -6,6 +6,13 @@ package types {
   }
 }
 
+package enums {
+  enum HikerRules {
+    HIKER_ADM
+    HIKER_NORMAL
+  }
+}
+
 package models {
   note "Modelo do trilheiro" as N1
   note "Modelo de coordenadas do mapa" as N2
@@ -16,7 +23,7 @@ package models {
     + address: String
     + birthday: DateTime
     + imageUrl: String
-    + isAdm: bool
+    + rule: HikerRules
     + toJson(): JsonMap
     + {static} HikerModel.fromJson(JsonMap res): void
   }
@@ -34,5 +41,7 @@ package models {
 
   HikerModel --> JsonMap : use
   CoordinatesModel --> JsonMap : use
+
+  HikerModel -> HikerRules : use
 }
 @enduml
