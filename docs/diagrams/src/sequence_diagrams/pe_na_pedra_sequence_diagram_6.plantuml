@@ -1,0 +1,27 @@
+@startuml pe_na_pedra_sequence_diagram_6
+
+title Fluxo de definição de novos administradores
+
+actor ADM as adm
+
+participant "Adm List View" as admListView
+participant "Adm List View Controller" as admListViewController
+participant "Firebase Service" as firebase
+database "Real Time Database" as realTimeDatabase
+
+adm -> admListView : Seleciona um trilheiro para elevar o status para administrador
+admListView -> admListViewController : Informa ID do trilheiro
+admListViewController -> firebase : Solicita rota para mudança de status do trilheiro passando o ID
+firebase -> realTimeDatabase : Altera status do trilheiro
+
+alt Sucesso na alteração do status do trilheiro
+  realTimeDatabase -> firebase : Retorna informação de sucesso
+  firebase -> admListViewController : Confirma sucesso na alteração
+  admListViewController -> admListView : Informa sucesso ao usuário
+else Falha na alteração do status do trilheiro
+  realTimeDatabase -> firebase : Retorna erro
+  firebase -> admListViewController : Informa falha na alteração
+  admListViewController -> admListView : Notifica falha ao usuário
+end
+
+@enduml
