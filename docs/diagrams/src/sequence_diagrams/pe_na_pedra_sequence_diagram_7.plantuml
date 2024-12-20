@@ -1,0 +1,27 @@
+@startuml pe_na_pedra_sequence_diagram_7
+
+title Fluxo de remoção de administradores
+
+actor ADM as adm
+
+participant "Adm List View" as admListView
+participant "Adm List View Controller" as admListViewController
+participant "Firebase Service" as firebase
+database "Real Time Database" as realTimeDatabase
+
+adm -> admListView : Seleciona um administrador para remover o status de administrador
+admListView -> admListViewController : Informa ID do administrador
+admListViewController -> firebase : Solicita rota para remover status de administrador passando o ID
+firebase -> realTimeDatabase : Remove status de administrador
+
+alt Sucesso na remoção do status de administrador
+  realTimeDatabase -> firebase : Retorna informação de sucesso
+  firebase -> admListViewController : Confirma sucesso na remoção
+  admListViewController -> admListView : Informa sucesso ao usuário
+else Falha na remoção do status de administrador
+  realTimeDatabase -> firebase : Retorna erro
+  firebase -> admListViewController : Informa falha na remoção
+  admListViewController -> admListView : Notifica falha ao usuário
+end
+
+@enduml
