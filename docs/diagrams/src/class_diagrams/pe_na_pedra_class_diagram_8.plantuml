@@ -30,10 +30,16 @@ package controller {
   class EventRegistratorController {
     + formData: JsonMap
   }
+
+  class AdmsListViewController
 }
 
 package views {
   class AdmView {
+    + build(context: BuildContext): Widget
+  }
+
+  class AdmsListView {
     + build(context: BuildContext): Widget
   }
 
@@ -69,6 +75,7 @@ package views {
 StatelessWidget <|-- AdmView
 StatelessWidget <|-- ProfileView
 StatefulWidget <|-- ProfileEditView
+StatelessWidget <|-- AdmsListView
 StatefulWidget <|-- EventRegistratorView
 StatelessWidget <|-- TrailsView
 StatelessWidget <|-- BannedHikersView
@@ -80,9 +87,12 @@ AdmView *-- TrailsView
 AdmView *-- BannedHikersView
 AdmView *-- HikersView
 AdmView *-- EventRegistratorView
+AdmView *-- AdmsListView
 
 TrailsView --> TrailFormView : use
 ProfileEditView --> ProfileEditFormController : use
+
+AdmsListView --> AdmsListViewController
 
 TrailFormController --> JsonMap : use
 ProfileEditFormController --> JsonMap : use
