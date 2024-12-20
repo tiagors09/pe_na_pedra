@@ -43,7 +43,11 @@ package views {
     + build(context: BuildContext): Widget
   }
 
-  class EventRegistratorView {
+  class EventsView {
+    + build(context: BuildContext): Widget
+  }
+
+  class EventRegistratorFormView {
     + build(context: BuildContext): Widget
   }
 
@@ -76,7 +80,7 @@ StatelessWidget <|-- AdmView
 StatelessWidget <|-- ProfileView
 StatefulWidget <|-- ProfileEditView
 StatelessWidget <|-- AdmsListView
-StatefulWidget <|-- EventRegistratorView
+StatelessWidget <|-- EventsView
 StatelessWidget <|-- TrailsView
 StatelessWidget <|-- BannedHikersView
 StatelessWidget <|-- HikersView
@@ -86,8 +90,10 @@ ProfileView *-- ProfileEditView
 AdmView *-- TrailsView
 AdmView *-- BannedHikersView
 AdmView *-- HikersView
-AdmView *-- EventRegistratorView
+AdmView *-- EventsView
 AdmView *-- AdmsListView
+
+EventsView *-- EventRegistratorFormView
 
 TrailsView --> TrailFormView : use
 ProfileEditView --> ProfileEditFormController : use
@@ -106,5 +112,5 @@ TrailFormView --> TrailFormController
 
 StatefulWidget <|-- TrailFormView
 
-EventRegistratorView --> EventRegistratorController : use
+EventRegistratorFormView --> EventRegistratorController : use
 @enduml

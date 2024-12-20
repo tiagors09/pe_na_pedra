@@ -1,0 +1,31 @@
+@startuml pe_na_pedra_sequence_diagram_10
+
+title Fluxo de vizualização de membros banidos
+
+actor ADM as adm
+
+participant "Banned Hikers View" as bannedHikersView
+participant "Banned Hikers Controller" as bannedHikersController
+participant "Firebase Service" as firebase
+database "Real Time Database" as realTimeDatabase
+
+adm -> bannedHikersView : Acessa área de trilheiros banidos
+
+bannedHikersView -> bannedHikersController : Solicita lista de trilheiros banidos
+
+bannedHikersController -> firebase : Solicita dados dos trilheiros banidos
+
+firebase -> realTimeDatabase : Recupera lista de trilheiros banidos
+realTimeDatabase --> firebase : Retorna dados dos trilheiros banidos
+
+alt Sucesso na recuperação da lista
+  firebase --> bannedHikersController : Envia lista de trilheiros banidos
+  bannedHikersController --> bannedHikersView : Atualiza lista no front-end
+  bannedHikersView --> adm : Exibe lista de trilheiros banidos
+else Falha na recuperação da lista
+  firebase --> bannedHikersController : Retorna erro na recuperação
+  bannedHikersController --> bannedHikersView : Atualiza front-end com mensagem de erro
+  bannedHikersView --> adm : Exibe mensagem personalizada de falha
+end
+
+@enduml

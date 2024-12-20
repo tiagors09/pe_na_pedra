@@ -1,0 +1,5 @@
+@startuml pe_na_pedra_sequence_diagram_10
+
+title Fluxo de vizualização de trilheiros
+
+@enduml

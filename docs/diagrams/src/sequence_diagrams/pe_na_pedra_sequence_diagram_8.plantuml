@@ -1,0 +1,37 @@
+@startuml pe_na_pedra_sequence_diagram_8
+
+title Editar ponto de encontro
+
+actor ADM as adm
+
+participant "EventsView" as eventsView
+participant "Event Registrator Form View" as eventRegistratorFormView
+participant "Event Registrator Controller" as eventRegistratorController
+participant "Firebase Service" as firebase
+database "Real Time Database" as realTimeDatabase
+
+adm --> eventsView : Seleciona evento para alterar o ponto de encontro
+eventsView -> eventRegistratorFormView : Abre formulário com os dados do evento
+adm --> eventRegistratorFormView : Atualiza o campo do ponto de encontro
+eventRegistratorFormView -> eventRegistratorController : Envia novos dados do ponto de encontro
+eventRegistratorController -> firebase: Chama rota de atualização do evento 
+firebase -> realTimeDatabase : Atualiza o ponto de encontro no evento especificado
+
+alt Sucesso na atualização
+  realTimeDatabase -> firebase: Confirma atualização do ponto de encontro
+  firebase -> eventRegistratorController : Retorna resposta de sucesso
+  eventRegistratorController -> eventsView : Retorna mensagem de sucesso
+  eventsView -> adm : Exibe mensagem de sucesso na alteração do ponto de encontro
+else Falha na atualização
+  realTimeDatabase -> firebase : Retorna erro na atualização
+  firebase -> eventRegistratorController : Retorna resposta de erro
+  eventRegistratorController -> eventRegistratorFormView : Retorna mensagem de erro
+  eventsView -> adm : Exibe mensagem de falha na alteração do ponto de encontro
+end
+
+note right of eventsView
+  O fluxo garante que o administrador
+  receba um feedback claro sobre a alteração.
+end note
+
+@enduml
