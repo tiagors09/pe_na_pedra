@@ -1,0 +1,38 @@
+@startuml pe_na_pedra_sequence_diagram_13
+
+title Fluxo de Cancelamento de Inscrição em Trilha
+
+actor Trilheiro as tr
+participant "Monthly Calendar View" as mcv
+participant "Event Registration View" as erv
+participant "Event Registration Controller" as evc
+participant "Firebase Service" as firebase
+database "Real Time Database" as realTimeDatabase
+
+group Seleção de evento para cancelamento
+    tr -> mcv: Acessar visualização do calendário
+    mcv --> tr: Mostrar eventos inscritos
+    tr -> mcv: Selecionar evento para cancelamento
+    mcv -> erv: Navegar para a tela de detalhes do evento
+    erv --> tr: Exibir informações do evento
+end
+
+group Confirmação do cancelamento
+    tr -> erv: Confirmar cancelamento da inscrição
+    erv -> evc: Enviar solicitação de cancelamento
+    evc -> firebase: Cancelar inscrição
+    firebase -> realTimeDatabase: Remover dados do trilheiro no evento
+    alt Cancelamento bem-sucedido
+        realTimeDatabase --> firebase: Confirmação do cancelamento
+        firebase --> evc: Confirmação da remoção
+        evc --> erv: Atualizar status do evento
+        erv --> tr: Cancelamento confirmado
+    else Falha no cancelamento
+        realTimeDatabase --> firebase: Erro ao processar cancelamento
+        firebase --> evc: Notificar falha no cancelamento
+        evc --> erv: Mostrar erro ao trilheiro
+        erv --> tr: Cancelamento falhou
+    end
+end
+
+@enduml

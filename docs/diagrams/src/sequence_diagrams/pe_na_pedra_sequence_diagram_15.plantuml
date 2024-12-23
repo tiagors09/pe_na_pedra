@@ -1,0 +1,38 @@
+@startuml pe_na_pedra_sequence_diagram_15
+
+title Fluxo de Edição de Perfil
+
+actor Trilheiro as tr
+
+participant "Profile View" as pv
+participant "Profile Edit View" as pev
+participant "Firebase Service" as firebase
+database "Real Time Database" as realTimeDatabase
+
+group Acessar Perfil
+    tr -> pv: Abrir tela de perfil
+    pv --> tr: Exibir informações do perfil
+end
+
+group Iniciar Edição
+    tr -> pv: Solicitar edição do perfil
+    pv -> pev: Navegar para a tela de edição de perfil
+    pev --> tr: Exibir formulário de edição
+end
+
+group Editar e Salvar
+    tr -> pev: Preencher e enviar alterações do perfil
+    pev -> firebase: Enviar alterações para validação e gravação
+    firebase -> realTimeDatabase: Atualizar dados do perfil
+    alt Alterações salvas com sucesso
+        realTimeDatabase --> firebase: Confirmação de gravação
+        firebase --> pev: Confirmação de alterações salvas
+        pev --> tr: Alterações salvas com sucesso
+    else Erro ao salvar alterações
+        realTimeDatabase --> firebase: Notificar falha na gravação
+        firebase --> pev: Notificar erro
+        pev --> tr: Notificar erro ao usuário
+    end
+end
+
+@enduml

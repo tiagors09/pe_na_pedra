@@ -1,0 +1,41 @@
+@startuml pe_na_pedra_sequence_diagram_12
+
+title Fluxo de Inscrição em Trilha
+
+actor Trilheiro as tr
+participant "Monthly Calendar View" as mcv
+participant "Event Registration View" as erv
+participant "Event Registration Controller" as evc
+participant "Firebase Service" as firebase
+database "Real Time Database" as realTimeDatabase
+
+group Visualização do calendário
+    tr -> mcv: Acessar visualização do calendário
+    mcv --> tr: Mostrar eventos disponíveis
+end
+
+group Seleção de evento
+    tr -> mcv: Selecionar evento desejado
+    mcv -> erv: Navegar para a tela de inscrição do evento
+    erv --> tr: Exibir informações do evento
+end
+
+group Confirmação da inscrição
+    tr -> erv: Confirmar inscrição no evento
+    erv -> evc: Enviar solicitação de inscrição
+    evc -> firebase: Registrar inscrição
+    firebase -> realTimeDatabase: Gravar dados do trilheiro no evento
+    alt Registro bem-sucedido
+        realTimeDatabase --> firebase: Confirmação do registro
+        firebase --> evc: Confirmação da inscrição
+        evc --> erv: Atualizar status da inscrição
+        erv --> tr: Inscrição confirmada
+    else Falha no registro
+        realTimeDatabase --> firebase: Erro no registro
+        firebase --> evc: Notificar falha na inscrição
+        evc --> erv: Mostrar erro ao trilheiro
+        erv --> tr: Inscrição falhou
+    end
+end
+
+@enduml

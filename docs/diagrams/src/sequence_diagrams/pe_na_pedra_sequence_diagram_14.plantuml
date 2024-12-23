@@ -1,0 +1,38 @@
+@startuml pe_na_pedra_sequence_diagram_14
+
+title Fluxo de Criação de Perfil
+
+actor Trilheiro as tr
+
+participant "Auth Or Home View" as aohv
+participant "Auth View" as av
+participant "Sign Up View" as suv
+participant "Firebase Service" as firebase
+database "Real Time Database" as realTimeDatabase
+
+alt Usuário não autenticado
+    aohv -> av: Redirecionar para a tela de autenticação
+    av --> tr: Exibir opções de login ou cadastro
+    tr -> av: Selecionar opção de cadastro
+    av -> suv: Navegar para a tela de criação de perfil
+    suv --> tr: Exibir formulário de criação de perfil
+else Usuário já autenticado
+    aohv --> tr: Navegar para a tela inicial
+end
+
+group Criação do Perfil
+    tr -> suv: Preencher e enviar formulário de perfil
+    suv -> firebase: Enviar dados para criação de perfil
+    firebase -> realTimeDatabase: Gravar dados do perfil no banco
+    alt Dados salvos com sucesso
+        realTimeDatabase --> firebase: Confirmação de gravação
+        firebase --> suv: Confirmação de perfil criado
+        suv --> tr: Perfil criado com sucesso
+    else Erro ao salvar dados
+        realTimeDatabase --> firebase: Notificar falha na gravação
+        firebase --> suv: Notificar erro
+        suv --> tr: Notificar falha ao criar perfil
+    end
+end
+
+@enduml
