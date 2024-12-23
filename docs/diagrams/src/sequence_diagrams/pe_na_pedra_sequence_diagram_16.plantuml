@@ -1,0 +1,38 @@
+@startuml pe_na_pedra_sequence_diagram_16
+
+title Fluxo de Exclusão de Perfil
+
+actor Trilheiro as tr
+
+participant "Profile View" as pv
+participant "Profile Edit View" as pev
+participant "Firebase Service" as firebase
+database "Real Time Database" as realTimeDatabase
+
+group Acessar Perfil
+    tr -> pv: Abrir tela de perfil
+    pv --> tr: Exibir informações do perfil
+end
+
+group Solicitar Exclusão
+    tr -> pv: Solicitar exclusão do perfil
+    pv -> pev: Navegar para a tela de edição de perfil
+    pev --> tr: Exibir opções de exclusão
+end
+
+group Confirmar Exclusão
+    tr -> pev: Confirmar exclusão do perfil
+    pev -> firebase: Enviar solicitação de exclusão
+    firebase -> realTimeDatabase: Remover dados do perfil
+    alt Exclusão bem-sucedida
+        realTimeDatabase --> firebase: Confirmação de exclusão
+        firebase --> pev: Confirmação de perfil excluído
+        pev --> tr: Perfil excluído com sucesso
+    else Erro na exclusão
+        realTimeDatabase --> firebase: Notificar falha na exclusão
+        firebase --> pev: Notificar erro
+        pev --> tr: Notificar falha ao excluir perfil
+    end
+end
+
+@enduml
