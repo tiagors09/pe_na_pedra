@@ -27,55 +27,78 @@ class _LoginViewState extends State<LoginView> {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Form(
+                autovalidateMode: AutovalidateMode.disabled,
                 key: _controller.form,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min, // 👈 faz o "HUG"
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(
-                        bottom: 16,
-                        top: 8,
-                      ),
-                      child: TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'E-mail',
+                child: ListenableBuilder(
+                  listenable: _controller,
+                  builder: (ctx, _) => Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(
+                          bottom: 16,
+                          top: 8,
+                        ),
+                        child: TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'E-mail',
+                          ),
+                          validator: _controller.validateEmail,
+                          onSaved: _controller.saveEmail,
                         ),
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                        bottom: 16,
-                      ),
-                      child: TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Senha',
+                      Container(
+                        margin: const EdgeInsets.only(
+                          bottom: 16,
+                        ),
+                        child: TextFormField(
+                          decoration: const InputDecoration(labelText: 'Senha'),
+                          obscureText: true,
+                          validator: _controller.validatePassword,
+                          onSaved: _controller.savePassword,
                         ),
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                        bottom: 16,
-                      ),
-                      child: ElevatedButton(
-                        onPressed: _controller.validate,
-                        child: const Text(
-                          'Login',
+                      Visibility(
+                        visible: _controller.showRegister,
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: 'Confirmar Senha',
+                            ),
+                            obscureText: true,
+                            validator: _controller.validateConfirmPassword,
+                            onSaved: _controller.saveConfirmPassword,
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                        bottom: 8,
-                      ),
-                      child: TextButton(
-                        onPressed: _controller.createAccount,
-                        child: const Text(
-                          'Criar conta',
+                      Container(
+                        margin: const EdgeInsets.only(
+                          bottom: 16,
+                        ),
+                        child: ElevatedButton(
+                          onPressed: _controller.validate,
+                          child: Text(
+                            _controller.showRegister ? 'Registrar' : 'Entrar',
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      Container(
+                        margin: const EdgeInsets.only(
+                          bottom: 8,
+                        ),
+                        child: TextButton(
+                          onPressed: _controller.toggleLoginCard,
+                          child: Text(
+                            _controller.showRegister
+                                ? 'Já possui conta? Entre'
+                                : 'Criar conta',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
