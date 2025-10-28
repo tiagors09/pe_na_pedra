@@ -1,54 +1,42 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:pe_na_pedra/views/login_view.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:pe_na_pedra/app.dart';
+import 'package:pe_na_pedra/providers/global_state.dart';
+import 'package:pe_na_pedra/providers/global_state_provider.dart';
+import 'package:pe_na_pedra/utils/configuration.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Pé na Pedra',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFF5D204),
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFF5D204),
-            foregroundColor: const Color(0xFF745F04),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            foregroundColor: const Color(0xFF745F04),
-          ),
-        ),
-      ),
-      home: const MyHomePage(title: 'Pé na Pedra'),
+  try {
+    log(
+      'Inicializando Supabase...',
+      name: 'Main',
+    );
+    await Supabase.initialize(
+      url: Configuration.supabaseUrl,
+      anonKey: Configuration.supabaseKey,
+    );
+    log(
+      'Supabase inicializado com sucesso!',
+      name: 'Main',
+    );
+  } catch (e, st) {
+    log(
+      'Erro ao inicializar Supabase: $e',
+      stackTrace: st,
+      name: 'Main',
     );
   }
-}
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.title});
+  usePathUrlStrategy();
 
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: LoginView(),
-      ),
-    );
-  }
+  runApp(
+    GlobalStateProvider(
+      notifier: GlobalState(),
+      child: const App(),
+    ),
+  );
 }
