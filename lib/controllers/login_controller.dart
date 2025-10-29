@@ -1,15 +1,20 @@
 import 'dart:developer';
 import 'package:flutter/widgets.dart';
 import 'package:pe_na_pedra/providers/global_state.dart';
+import 'package:pe_na_pedra/utils/app_routes.dart';
+import 'package:pe_na_pedra/utils/form_validator.dart';
+import 'package:pe_na_pedra/views/edit_profile_view.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class LoginController extends ChangeNotifier {
+class LoginController extends ChangeNotifier with FormValidator {
   final form = GlobalKey<FormState>(debugLabel: 'login_form');
+
   final formData = <String, dynamic>{
     'email': '',
     'password': '',
     'confirmPassword': '',
   };
+
   bool showRegister = false;
   bool isLoading = false;
   String errorMessage = '';
@@ -17,7 +22,9 @@ class LoginController extends ChangeNotifier {
   bool _obscureConfirmPassword = true;
   bool get obscurePassword => _obscurePassword;
   bool get obscureConfirmPassword => _obscureConfirmPassword;
+
   final TextEditingController passwordController = TextEditingController();
+
   void toogleObscurePassword() {
     log(
       'Toggling obscure password',
@@ -42,18 +49,91 @@ class LoginController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> submit(BuildContext context, GlobalState globalState) async {
+    log(
+      'Submit iniciado',
+      name: 'LoginView',
+    );
+
+    validate();
+    if (form.currentState?.validate() ?? false) {
+      log(
+        'Formulário válido: $formData',
+        name: 'LoginView',
+      );
+
+      form.currentState!.save();
+
+      bool success;
+
+      if (showRegister) {
+        log(
+          'Tentando criar conta',
+          name: 'LoginView',
+          level: 800,
+        );
+
+        success = await createAccount(globalState);
+      } else {
+        log(
+          'Tentando login',
+          name: 'LoginView',
+          level: 800,
+        );
+
+        success = await login(globalState);
+      }
+      if (success) {
+        log(
+          'Login/Registro bem-sucedido',
+          name: 'LoginView',
+          level: 800,
+        );
+
+        if (context.mounted) {
+          Navigator.of(context).pushReplacementNamed(
+            showRegister ? AppRoutes.editProfile : AppRoutes.home,
+            arguments: showRegister
+                ? EditProfileViewArguments(
+                    userId: globalState.user?.id,
+                    mode: EditProfileMode.completeProfile,
+                  )
+                : null,
+          );
+        }
+      } else {
+        log(
+          'Login/Registro falhou: $errorMessage',
+          name: 'LoginView',
+          level: 900,
+        );
+      }
+    } else {
+      log(
+        'Formulário inválido',
+        name: 'LoginView',
+        level: 900,
+      );
+    }
+  }
+
   void validate() {
-    log('Validating login form', name: 'LoginController');
+    log(
+      'Validando formulário de login',
+      name: 'LoginController',
+    );
+
     final formState = form.currentState;
+
     if (formState != null && formState.validate()) {
       formState.save();
       log(
-        'Form is valid: $formData',
+        'Form válido: $formData',
         name: 'LoginController',
       );
     } else {
       log(
-        'Form is invalid',
+        'Form inválido',
         name: 'LoginController',
       );
     }
@@ -163,35 +243,22 @@ class LoginController extends ChangeNotifier {
     return false;
   }
 
-  String? validateEmail(String? value) {
-    if (value == null || value.isEmpty) return 'O e-mail é obrigatório';
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value)) return 'E-mail inválido';
-    return null;
-  }
-
-  String? validatePassword(String? value) {
-    if (value == null || value.isEmpty) return 'A senha é obrigatória';
-    if (value.length < 6) return 'A senha deve ter ao menos 6 caracteres';
-    return null;
-  }
-
-  String? validateConfirmPassword(String? value) {
+  String? checkConfirmPassword(String? value) {
     if (!showRegister) return null;
-    if (value == null || value.isEmpty) return 'Confirme a senha';
     if (value != passwordController.text) return 'As senhas não coincidem';
+    validateConfirmPasswordField(value);
     return null;
   }
 
-  void saveEmail(String? value) {
-    formData['email'] = value ?? '';
+  void onEmailSaved(String? value) {
+    saveEmail(formData, value);
   }
 
-  void savePassword(String? value) {
-    formData['password'] = value ?? '';
+  void onPasswordSaved(String? value) {
+    savePassword(formData, value);
   }
 
-  void saveConfirmPassword(String? value) {
-    formData['confirmPassword'] = value ?? '';
+  void onConfirmPasswordSaved(String? value) {
+    saveConfirmPassword(formData, value);
   }
 }
