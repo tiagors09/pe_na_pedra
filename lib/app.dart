@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pe_na_pedra/utils/app_routes.dart';
+import 'package:pe_na_pedra/views/edit_profile_view.dart';
 import 'package:pe_na_pedra/views/home_view.dart';
 import 'package:pe_na_pedra/views/login_view.dart';
 
@@ -84,10 +86,11 @@ class App extends StatelessWidget {
           ),
         ),
       ),
-      initialRoute: '/home',
+      initialRoute: AppRoutes.home,
       routes: {
-        '/home': (context) => const HomeView(),
-        '/login': (context) => const LoginView(),
+        AppRoutes.home: (context) => const HomeView(),
+        AppRoutes.login: (context) => const LoginView(),
+        AppRoutes.editProfile: (context) => const EditProfileView(),
       },
     );
   }
