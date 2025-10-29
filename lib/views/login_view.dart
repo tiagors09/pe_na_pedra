@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:pe_na_pedra/controllers/login_controller.dart';
-import 'package:pe_na_pedra/providers/global_state.dart';
 import 'package:pe_na_pedra/providers/global_state_provider.dart';
 
 class LoginView extends StatefulWidget {
@@ -12,64 +11,23 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   late LoginController _controller;
+
   @override
   void initState() {
     _controller = LoginController();
-    log('LoginController iniciado', name: 'LoginView');
+
+    log(
+      'LoginController iniciado',
+      name: 'LoginView',
+    );
+
     super.initState();
-  }
-
-  Future<void> _submit(GlobalState globalState) async {
-    log('Submit iniciado', name: 'LoginView');
-    _controller.validate();
-    if (_controller.form.currentState?.validate() ?? false) {
-      log('Formulário válido: ${_controller.formData}', name: 'LoginView');
-      _controller.form.currentState!.save();
-      bool success;
-      if (_controller.showRegister) {
-        log(
-          'Tentando criar conta',
-          name: 'LoginView',
-          level: 800,
-        );
-        success = await _controller.createAccount(globalState);
-      } else {
-        log(
-          'Tentando login',
-          name: 'LoginView',
-          level: 800,
-        );
-        success = await _controller.login(globalState);
-      }
-      if (success && context.mounted) {
-        log(
-          'Login/Registro bem-sucedido',
-          name: 'LoginView',
-          level: 800,
-        );
-
-        Navigator.of(context).pushReplacementNamed(
-          '/home',
-        );
-      } else {
-        log(
-          'Login/Registro falhou: ${_controller.errorMessage}',
-          name: 'LoginView',
-          level: 900,
-        );
-      }
-    } else {
-      log(
-        'Formulário inválido',
-        name: 'LoginView',
-        level: 900,
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     final globalState = GlobalStateProvider.of(context);
+
     log(
       'Construindo LoginView',
       name: 'LoginView',
@@ -138,8 +96,8 @@ class _LoginViewState extends State<LoginView> {
                                   decoration: const InputDecoration(
                                     labelText: 'E-mail',
                                   ),
-                                  validator: _controller.validateEmail,
-                                  onSaved: _controller.saveEmail,
+                                  validator: _controller.validateEmailField,
+                                  onSaved: _controller.onEmailSaved,
                                   onChanged: (v) => log(
                                     'Email alterado: $v',
                                     name: 'LoginView',
@@ -166,8 +124,8 @@ class _LoginViewState extends State<LoginView> {
                                     ),
                                   ),
                                   obscureText: _controller.obscurePassword,
-                                  validator: _controller.validatePassword,
-                                  onSaved: _controller.savePassword,
+                                  validator: _controller.validatePasswordField,
+                                  onSaved: _controller.onPasswordSaved,
                                   onChanged: (v) => log(
                                     'Senha alterada',
                                     name: 'LoginView',
@@ -194,9 +152,9 @@ class _LoginViewState extends State<LoginView> {
                                     ),
                                     obscureText:
                                         _controller.obscureConfirmPassword,
-                                    validator:
-                                        _controller.validateConfirmPassword,
-                                    onSaved: _controller.saveConfirmPassword,
+                                    validator: _controller
+                                        .validateConfirmPasswordField,
+                                    onSaved: _controller.onConfirmPasswordSaved,
                                     onChanged: (v) => log(
                                       'ConfirmSenha alterada',
                                       name: 'LoginView',
@@ -211,7 +169,10 @@ class _LoginViewState extends State<LoginView> {
                                 child: ElevatedButton(
                                   onPressed: _controller.isLoading
                                       ? null
-                                      : () => _submit(globalState),
+                                      : () => _controller.submit(
+                                            context,
+                                            globalState,
+                                          ),
                                   child: Text(
                                     _controller.showRegister
                                         ? 'Registrar'
