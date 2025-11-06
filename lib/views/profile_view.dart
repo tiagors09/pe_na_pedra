@@ -1,7 +1,7 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:pe_na_pedra/controllers/profile_view_controller.dart';
 import 'package:pe_na_pedra/providers/global_state_provider.dart';
+import 'package:pe_na_pedra/utils/app_routes.dart';
 import 'package:pe_na_pedra/views/edit_profile_view.dart';
 
 class ProfileView extends StatefulWidget {
@@ -11,8 +11,13 @@ class ProfileView extends StatefulWidget {
   State<ProfileView> createState() => _ProfileViewState();
 }
 
-class _ProfileViewState extends State<ProfileView> {
+class _ProfileViewState extends State<ProfileView>
+    with AutomaticKeepAliveClientMixin {
   late ProfileViewController _controller;
+  bool _isInitialized = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -27,22 +32,35 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
     final globalState = GlobalStateProvider.of(context);
 
-    log(
-      'Construindo ProfileView - isLoggedIn: ${globalState.isLoggedIn}',
-      name: 'ProfileView',
-    );
+    if (globalState.isLoggedIn && globalState.user != null && !_isInitialized) {
+      final userId = globalState.user!.id;
+      final userEmail = globalState.user!.email;
+
+      _controller.initializeProfile(
+        userId,
+        userEmail!,
+      );
+
+      _isInitialized = true;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+
+    final globalState = GlobalStateProvider.of(context);
 
     return Center(
       child: globalState.isLoggedIn
           ? ListenableBuilder(
               listenable: _controller,
               builder: (context, child) {
-                if (_controller.isLoading) {
-                  return const CircularProgressIndicator();
-                }
                 return _buildProfileDataColumn(
                   context,
                   globalState,
@@ -68,6 +86,7 @@ class _ProfileViewState extends State<ProfileView> {
             color: Colors.amber,
             size: 40,
           ),
+          const SizedBox(height: 10),
           Text(
             errorMessage,
             textAlign: TextAlign.center,
@@ -75,10 +94,14 @@ class _ProfileViewState extends State<ProfileView> {
               fontSize: 16,
             ),
           ),
+          const SizedBox(height: 10),
           ElevatedButton(
-            onPressed: () => controller.fetchProfileData(
-              globalState.user!.id,
-            ),
+            onPressed: () {
+              controller.invalidateCache();
+              controller.fetchProfileData(
+                globalState.user!.id,
+              );
+            },
             child: const Text(
               'Tentar Novamente',
             ),
@@ -87,11 +110,11 @@ class _ProfileViewState extends State<ProfileView> {
       );
     }
 
-    final fullName = data?['fullName'] ?? 'Não informado';
-    final phone = data?['phone'] ?? 'Não informado';
-    final address = data?['address'] ?? 'Não informado';
-    final birthDate = controller.formatBirthDate(data?['birthDate']);
-    final email = data?['email'] ?? 'Não informado';
+    final fullName = data['fullName'] ?? '';
+    final phone = data['phone'] ?? '';
+    final address = data['address'] ?? '';
+    final birthDate = controller.formatBirthDate(data['birthDate']);
+    final email = data['email'] ?? '';
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(
@@ -117,13 +140,13 @@ class _ProfileViewState extends State<ProfileView> {
               children: [
                 _buildDataItem(
                   context,
-                  Icons.abc,
+                  Icons.person,
                   'Nome Completo',
                   fullName,
                 ),
                 _buildDataItem(
                   context,
-                  Icons.date_range,
+                  Icons.email,
                   'Email',
                   email,
                 ),
@@ -135,13 +158,13 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
                 _buildDataItem(
                   context,
-                  Icons.date_range_outlined,
+                  Icons.calendar_today,
                   'Nascimento',
                   birthDate,
                 ),
                 _buildDataItem(
                   context,
-                  Icons.abc,
+                  Icons.home,
                   'Endereço',
                   address,
                 ),
@@ -153,13 +176,15 @@ class _ProfileViewState extends State<ProfileView> {
               bottom: 4,
             ),
             child: ElevatedButton.icon(
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                  '/edit-profile',
+              onPressed: () async {
+                await Navigator.of(context).pushNamed(
+                  AppRoutes.editProfile,
                   arguments: EditProfileViewArguments(
                     mode: EditProfileMode.editProfile,
                   ),
                 );
+                controller.invalidateCache();
+                controller.fetchProfileData(globalState.user!.id);
               },
               icon: const Icon(Icons.edit),
               label: const Text(
@@ -170,11 +195,6 @@ class _ProfileViewState extends State<ProfileView> {
           TextButton.icon(
             onPressed: () {
               globalState.logout();
-              log(
-                'Usuário deslogado',
-                name: 'ProfileView',
-                level: 800,
-              );
             },
             icon: const Icon(
               Icons.logout,
@@ -188,7 +208,6 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  // Widget auxiliar para exibir um item de dado
   Widget _buildDataItem(
     BuildContext context,
     IconData icon,
@@ -206,7 +225,9 @@ class _ProfileViewState extends State<ProfileView> {
             children: [
               Icon(
                 icon,
+                size: 18,
               ),
+              const SizedBox(width: 8),
               Text(
                 label,
                 style: const TextStyle(
@@ -223,7 +244,6 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  // === Prompt de Login (usuário deslogado) ===
   Widget _buildLoginPrompt(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -235,10 +255,11 @@ class _ProfileViewState extends State<ProfileView> {
             fontSize: 16,
           ),
         ),
+        const SizedBox(height: 16),
         ElevatedButton(
           onPressed: () {
             Navigator.of(context).pushNamed(
-              '/login',
+              AppRoutes.login,
             );
           },
           child: const Text(

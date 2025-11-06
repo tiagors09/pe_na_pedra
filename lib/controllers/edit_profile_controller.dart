@@ -133,6 +133,7 @@ class EditProfileController extends ChangeNotifier with FormValidator {
       if (userId == null) return;
 
       final values = {
+        'id': userId,
         'full_name': formData['fullName'],
         'phone': formData['phone'],
         'birth_date': formData['birthDate'],
@@ -141,14 +142,8 @@ class EditProfileController extends ChangeNotifier with FormValidator {
 
       switch (mode) {
         case EditProfileMode.completeProfile:
-          await supabase
-              .from('profiles')
-              .insert(
+          await supabase.from('profiles').insert(
                 values,
-              )
-              .eq(
-                'id',
-                userId,
               );
           break;
         case EditProfileMode.editProfile:

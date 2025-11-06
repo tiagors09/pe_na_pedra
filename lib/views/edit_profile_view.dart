@@ -92,8 +92,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                       : 'Atualize suas informações de perfil.',
                   style: const TextStyle(fontSize: 16),
                 ),
-
-                // Nome completo
                 Container(
                   margin: const EdgeInsets.only(top: 24),
                   child: TextFormField(
@@ -104,8 +102,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                     validator: _controller.validateName,
                   ),
                 ),
-
-                // Telefone
                 Container(
                   margin: const EdgeInsets.only(top: 16),
                   child: TextFormField(
@@ -116,8 +112,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                     validator: _controller.validatePhone,
                   ),
                 ),
-
-                // Data de nascimento (Com Date Picker)
                 Container(
                   margin: const EdgeInsets.only(
                     top: 16,
@@ -136,8 +130,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                     readOnly: true,
                   ),
                 ),
-
-                // Endereço
                 Container(
                   margin: const EdgeInsets.only(
                     top: 16,
@@ -148,9 +140,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                     onSaved: _controller.onAddressSaved,
                   ),
                 ),
-
                 if (!isCompletingProfile) ...[
-                  // E-mail
                   Container(
                     margin: const EdgeInsets.only(top: 16),
                     child: TextFormField(
@@ -161,8 +151,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                       validator: _controller.validateEmailField,
                     ),
                   ),
-
-                  // Senha
                   Container(
                     margin: const EdgeInsets.only(top: 16),
                     child: TextFormField(
@@ -183,8 +171,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                           : null,
                     ),
                   ),
-
-                  // Confirmar Senha
                   Container(
                     margin: const EdgeInsets.only(top: 16, bottom: 24),
                     child: TextFormField(
@@ -208,7 +194,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                     ),
                   ),
                 ],
-
                 if (isCompletingProfile) const SizedBox(height: 24),
               ],
             ),

@@ -42,6 +42,7 @@ class _LoginViewState extends State<LoginView> {
             maxWidth: MediaQuery.of(context).size.width * (1 / 3),
           ),
           child: Card(
+            elevation: 0,
             color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(16),

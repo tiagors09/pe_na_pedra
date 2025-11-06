@@ -212,7 +212,6 @@ class LoginController extends ChangeNotifier with FormValidator {
           level: 800,
         );
 
-        // Integra com GlobalState para armazenar user + session e agendar renovação
         globalState.setUser(
           user,
           session,

@@ -1,3 +1,5 @@
+// home_view.dart
+
 import 'package:flutter/material.dart';
 import 'package:pe_na_pedra/controllers/home_controller.dart';
 
@@ -20,6 +22,13 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      body: ListenableBuilder(
+        listenable: _controller,
+        builder: (ctx, _) => IndexedStack(
+          index: _controller.currentIndex,
+          children: _controller.views,
+        ),
+      ),
       bottomNavigationBar: ListenableBuilder(
         listenable: _controller,
         builder: (ctx, _) => NavigationBar(
@@ -40,10 +49,6 @@ class _HomeViewState extends State<HomeView> {
             ),
           ],
         ),
-      ),
-      body: ListenableBuilder(
-        listenable: _controller,
-        builder: (ctx, _) => _controller.views[_controller.currentIndex],
       ),
     );
   }
