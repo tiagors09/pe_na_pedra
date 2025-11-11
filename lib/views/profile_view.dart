@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pe_na_pedra/controller/profile_view_controller.dart';
+import 'package:pe_na_pedra/viewmodel/profile_viewmodel.dart';
 import 'package:pe_na_pedra/provider/global_state_provider.dart';
 import 'package:pe_na_pedra/utils/app_routes.dart';
 import 'package:pe_na_pedra/views/edit_profile_view.dart';
@@ -13,7 +13,7 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView>
     with AutomaticKeepAliveClientMixin {
-  late ProfileViewController _controller;
+  late ProfileViewModel _vm;
   bool _isInitialized = false;
 
   @override
@@ -21,33 +21,25 @@ class _ProfileViewState extends State<ProfileView>
 
   @override
   void initState() {
-    _controller = ProfileViewController();
+    _vm = ProfileViewModel();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
     final globalState = GlobalStateProvider.of(context);
 
-    if (globalState.isLoggedIn && globalState.user != null && !_isInitialized) {
-      final userId = globalState.user!.id;
-      final userEmail = globalState.user!.email;
-
-      _controller.initializeProfile(
-        userId,
-        userEmail!,
-      );
-
+    if (globalState.isLoggedIn && !_isInitialized) {
+      _vm.loadProfile(globalState.user!.id, globalState.user!.email!);
       _isInitialized = true;
     }
+  }
+
+  @override
+  void dispose() {
+    _vm.dispose();
+    super.dispose();
   }
 
   @override
@@ -59,186 +51,92 @@ class _ProfileViewState extends State<ProfileView>
     return Center(
       child: globalState.isLoggedIn
           ? ListenableBuilder(
-              listenable: _controller,
-              builder: (context, child) {
-                return _buildProfileDataColumn(
-                  context,
-                  globalState,
-                  _controller,
-                );
-              },
+              listenable: _vm,
+              builder: (context, _) =>
+                  _buildProfileContent(context, globalState),
             )
           : _buildLoginPrompt(context),
     );
   }
 
-  Widget _buildProfileDataColumn(
-      BuildContext context, globalState, ProfileViewController controller) {
-    final data = controller.profileData;
-    final errorMessage = controller.errorMessage;
+  Widget _buildProfileContent(BuildContext context, globalState) {
+    if (_vm.isLoading) {
+      return const CircularProgressIndicator();
+    }
 
-    if (errorMessage != null) {
+    if (_vm.errorMessage != null) {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.warning_amber_rounded,
-            color: Colors.amber,
-            size: 40,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            errorMessage,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 10),
+          Text(_vm.errorMessage!, textAlign: TextAlign.center),
+          const SizedBox(height: 12),
           ElevatedButton(
-            onPressed: () {
-              controller.invalidateCache();
-              controller.fetchProfileData(
-                globalState.user!.id,
-              );
-            },
-            child: const Text(
-              'Tentar Novamente',
+            onPressed: () => _vm.loadProfile(
+              globalState.user!.id,
+              globalState.user!.email!,
             ),
+            child: const Text('Tentar novamente'),
           ),
         ],
       );
     }
 
+    final data = _vm.profileData;
     final fullName = data['fullName'] ?? '';
-    final phone = data['phone'] ?? '';
-    final address = data['address'] ?? '';
-    final birthDate = controller.formatBirthDate(data['birthDate']);
     final email = data['email'] ?? '';
+    final phone = data['phone'] ?? '';
+    final birthDate = _vm.formatBirthDate(data['birthDate']);
+    final address = data['address'] ?? '';
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(
-        24,
-      ),
+      padding: const EdgeInsets.all(24),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            'Bem-vindo, ${fullName.split(' ').first}!',
-            style: Theme.of(context).textTheme.headlineMedium,
-            textAlign: TextAlign.center,
-          ),
-          Container(
-            padding: const EdgeInsets.all(
-              16,
-            ),
-            width: MediaQuery.of(context).size.width * (1 / 2),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildDataItem(
-                  context,
-                  Icons.person,
-                  'Nome Completo',
-                  fullName,
+          Text('Bem-vindo, ${fullName.split(' ').first}!'),
+          const SizedBox(height: 16),
+          _buildItem(Icons.person, 'Nome Completo', fullName),
+          _buildItem(Icons.email, 'Email', email),
+          _buildItem(Icons.phone, 'Telefone', phone),
+          _buildItem(Icons.calendar_today, 'Nascimento', birthDate),
+          _buildItem(Icons.home, 'Endereço', address),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: () async {
+              await Navigator.of(context).pushNamed(
+                AppRoutes.editProfile,
+                arguments: EditProfileViewArguments(
+                  mode: EditProfileMode.editProfile,
                 ),
-                _buildDataItem(
-                  context,
-                  Icons.email,
-                  'Email',
-                  email,
-                ),
-                _buildDataItem(
-                  context,
-                  Icons.phone,
-                  'Telefone',
-                  phone,
-                ),
-                _buildDataItem(
-                  context,
-                  Icons.calendar_today,
-                  'Nascimento',
-                  birthDate,
-                ),
-                _buildDataItem(
-                  context,
-                  Icons.home,
-                  'Endereço',
-                  address,
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(
-              bottom: 4,
-            ),
-            child: ElevatedButton.icon(
-              onPressed: () async {
-                await Navigator.of(context).pushNamed(
-                  AppRoutes.editProfile,
-                  arguments: EditProfileViewArguments(
-                    mode: EditProfileMode.editProfile,
-                  ),
-                );
-                controller.invalidateCache();
-                controller.fetchProfileData(globalState.user!.id);
-              },
-              icon: const Icon(Icons.edit),
-              label: const Text(
-                'Editar Perfil',
-              ),
-            ),
+              );
+              _vm.invalidateCache();
+              _vm.loadProfile(globalState.user!.id, globalState.user!.email!);
+            },
+            icon: const Icon(Icons.edit),
+            label: const Text('Editar Perfil'),
           ),
           TextButton.icon(
-            onPressed: () {
-              globalState.logout();
-            },
-            icon: const Icon(
-              Icons.logout,
-            ),
-            label: const Text(
-              'Sair da Conta',
-            ),
+            onPressed: globalState.logout,
+            icon: const Icon(Icons.logout),
+            label: const Text('Sair'),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDataItem(
-    BuildContext context,
-    IconData icon,
-    String label,
-    String value,
-  ) {
-    return Container(
-      margin: const EdgeInsets.only(
-        bottom: 6,
-      ),
+  Widget _buildItem(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Icon(
-                icon,
-                size: 18,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Text(
-            value,
-          ),
+          Row(children: [
+            Icon(icon, size: 18),
+            const SizedBox(width: 8),
+            Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ]),
+          Flexible(child: Text(value, textAlign: TextAlign.right)),
         ],
       ),
     );
@@ -248,23 +146,11 @@ class _ProfileViewState extends State<ProfileView>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Text(
-          'Você precisa fazer login ou se cadastrar para acessar o perfil.',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-          ),
-        ),
-        const SizedBox(height: 16),
+        const Text('Você precisa fazer login para acessar o perfil.'),
+        const SizedBox(height: 12),
         ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed(
-              AppRoutes.login,
-            );
-          },
-          child: const Text(
-            'Fazer Login / Cadastrar',
-          ),
+          onPressed: () => Navigator.of(context).pushNamed(AppRoutes.login),
+          child: const Text('Fazer Login / Cadastrar'),
         ),
       ],
     );
