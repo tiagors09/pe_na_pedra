@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pe_na_pedra/providers/global_state_provider.dart';
-import 'package:pe_na_pedra/controllers/edit_profile_controller.dart';
+import 'package:pe_na_pedra/provider/global_state_provider.dart';
+import 'package:pe_na_pedra/viewmodel/edit_profile_viewmodel.dart';
 
 enum EditProfileMode {
   completeProfile,
@@ -25,12 +25,12 @@ class EditProfileView extends StatefulWidget {
 }
 
 class _EditProfileViewState extends State<EditProfileView> {
-  late EditProfileController _controller;
+  late EditProfileViewModel _viewModel;
   late final EditProfileViewArguments args;
 
   @override
   void initState() {
-    _controller = EditProfileController();
+    _viewModel = EditProfileViewModel();
     super.initState();
   }
 
@@ -46,7 +46,7 @@ class _EditProfileViewState extends State<EditProfileView> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    _viewModel.dispose();
     super.dispose();
   }
 
@@ -56,21 +56,21 @@ class _EditProfileViewState extends State<EditProfileView> {
     final globalState = GlobalStateProvider.of(context);
 
     return ListenableBuilder(
-      listenable: _controller,
+      listenable: _viewModel,
       builder: (context, child) {
         return Scaffold(
           bottomNavigationBar: Container(
             height: MediaQuery.of(context).size.height * 0.055,
             margin: const EdgeInsets.all(16),
             child: ElevatedButton(
-              onPressed: _controller.isLoading
+              onPressed: _viewModel.isLoading
                   ? null
-                  : () => _controller.submit(
+                  : () => _viewModel.submit(
                         context,
                         globalState,
                         args.mode,
                       ),
-              child: _controller.isLoading
+              child: _viewModel.isLoading
                   ? const CircularProgressIndicator()
                   : const Text('Salvar'),
             ),
@@ -81,7 +81,7 @@ class _EditProfileViewState extends State<EditProfileView> {
             ),
           ),
           body: Form(
-            key: _controller.form,
+            key: _viewModel.form,
             autovalidateMode: AutovalidateMode.disabled,
             child: ListView(
               padding: const EdgeInsets.all(24),
@@ -97,9 +97,9 @@ class _EditProfileViewState extends State<EditProfileView> {
                   child: TextFormField(
                     decoration:
                         const InputDecoration(labelText: 'Nome completo'),
-                    initialValue: _controller.formData['fullName'],
-                    onSaved: _controller.onFullNameSaved,
-                    validator: _controller.validateName,
+                    initialValue: _viewModel.formData['fullName'],
+                    onSaved: _viewModel.onFullNameSaved,
+                    validator: _viewModel.validateName,
                   ),
                 ),
                 Container(
@@ -107,9 +107,9 @@ class _EditProfileViewState extends State<EditProfileView> {
                   child: TextFormField(
                     decoration: const InputDecoration(labelText: 'Telefone'),
                     keyboardType: TextInputType.phone,
-                    initialValue: _controller.formData['phone'],
-                    onSaved: _controller.onPhoneSaved,
-                    validator: _controller.validatePhone,
+                    initialValue: _viewModel.formData['phone'],
+                    onSaved: _viewModel.onPhoneSaved,
+                    validator: _viewModel.validatePhone,
                   ),
                 ),
                 Container(
@@ -122,10 +122,10 @@ class _EditProfileViewState extends State<EditProfileView> {
                       hintText: 'Ex: 01/01/2000',
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.calendar_today),
-                        onPressed: () => _controller.selectBirthDate(context),
+                        onPressed: () => _viewModel.selectBirthDate(context),
                       ),
                     ),
-                    controller: _controller.birthDateController,
+                    controller: _viewModel.birthDateController,
                     keyboardType: TextInputType.datetime,
                     readOnly: true,
                   ),
@@ -136,8 +136,8 @@ class _EditProfileViewState extends State<EditProfileView> {
                   ),
                   child: TextFormField(
                     decoration: const InputDecoration(labelText: 'Endereço'),
-                    initialValue: _controller.formData['address'],
-                    onSaved: _controller.onAddressSaved,
+                    initialValue: _viewModel.formData['address'],
+                    onSaved: _viewModel.onAddressSaved,
                   ),
                 ),
                 if (!isCompletingProfile) ...[
@@ -146,9 +146,9 @@ class _EditProfileViewState extends State<EditProfileView> {
                     child: TextFormField(
                       decoration: const InputDecoration(labelText: 'Email'),
                       keyboardType: TextInputType.emailAddress,
-                      initialValue: _controller.formData['email'],
-                      onSaved: _controller.onEmailSaved,
-                      validator: _controller.validateEmailField,
+                      initialValue: _viewModel.formData['email'],
+                      onSaved: _viewModel.onEmailSaved,
+                      validator: _viewModel.validateEmailField,
                     ),
                   ),
                   Container(
@@ -157,17 +157,17 @@ class _EditProfileViewState extends State<EditProfileView> {
                       decoration: InputDecoration(
                         labelText: 'Senha',
                         suffixIcon: IconButton(
-                          icon: Icon(_controller.obscurePassword
+                          icon: Icon(_viewModel.obscurePassword
                               ? Icons.visibility_off
                               : Icons.visibility),
-                          onPressed: _controller.toggleObscurePassword,
+                          onPressed: _viewModel.toggleObscurePassword,
                         ),
                       ),
-                      controller: _controller.passwordController,
-                      obscureText: _controller.obscurePassword,
-                      onSaved: _controller.onPasswordSaved,
+                      controller: _viewModel.passwordController,
+                      obscureText: _viewModel.obscurePassword,
+                      onSaved: _viewModel.onPasswordSaved,
                       validator: (value) => value!.isNotEmpty
-                          ? _controller.validatePasswordField(value)
+                          ? _viewModel.validatePasswordField(value)
                           : null,
                     ),
                   ),
@@ -178,18 +178,18 @@ class _EditProfileViewState extends State<EditProfileView> {
                         labelText: 'Confirmar Senha',
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _controller.obscureConfirmPassword
+                            _viewModel.obscureConfirmPassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                           ),
-                          onPressed: _controller.toggleObscureConfirmPassword,
+                          onPressed: _viewModel.toggleObscureConfirmPassword,
                         ),
                       ),
-                      obscureText: _controller.obscureConfirmPassword,
-                      onSaved: _controller.onConfirmPasswordSaved,
+                      obscureText: _viewModel.obscureConfirmPassword,
+                      onSaved: _viewModel.onConfirmPasswordSaved,
                       validator: (value) =>
-                          _controller.passwordController.text.isNotEmpty
-                              ? _controller.validateConfirmPassword(value)
+                          _viewModel.passwordController.text.isNotEmpty
+                              ? _viewModel.validateConfirmPassword(value)
                               : null,
                     ),
                   ),

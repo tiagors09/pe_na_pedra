@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pe_na_pedra/controllers/profile_view_controller.dart';
-import 'package:pe_na_pedra/providers/global_state_provider.dart';
+import 'package:pe_na_pedra/controller/profile_view_controller.dart';
+import 'package:pe_na_pedra/provider/global_state_provider.dart';
 import 'package:pe_na_pedra/utils/app_routes.dart';
 import 'package:pe_na_pedra/views/edit_profile_view.dart';
 

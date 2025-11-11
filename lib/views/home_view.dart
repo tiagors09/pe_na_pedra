@@ -1,7 +1,5 @@
-// home_view.dart
-
 import 'package:flutter/material.dart';
-import 'package:pe_na_pedra/controllers/home_controller.dart';
+import 'package:pe_na_pedra/viewmodel/home_viewmodel.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -11,11 +9,11 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  late HomeController _controller;
+  late HomeViewModel _viewModel;
 
   @override
   void initState() {
-    _controller = HomeController();
+    _viewModel = HomeViewModel();
     super.initState();
   }
 
@@ -23,17 +21,17 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListenableBuilder(
-        listenable: _controller,
+        listenable: _viewModel,
         builder: (ctx, _) => IndexedStack(
-          index: _controller.currentIndex,
-          children: _controller.views,
+          index: _viewModel.currentIndex,
+          children: _viewModel.views,
         ),
       ),
       bottomNavigationBar: ListenableBuilder(
-        listenable: _controller,
+        listenable: _viewModel,
         builder: (ctx, _) => NavigationBar(
-          selectedIndex: _controller.currentIndex,
-          onDestinationSelected: _controller.handleNavigationTap,
+          selectedIndex: _viewModel.currentIndex,
+          onDestinationSelected: _viewModel.setCurrentIndex,
           destinations: const [
             NavigationDestination(
               icon: Icon(
@@ -55,7 +53,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    _viewModel.dispose();
     super.dispose();
   }
 }

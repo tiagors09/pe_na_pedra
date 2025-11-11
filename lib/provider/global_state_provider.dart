@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:pe_na_pedra/providers/global_state.dart';
+import 'package:pe_na_pedra/provider/global_state.dart';
 
 class GlobalStateProvider extends InheritedNotifier<GlobalState> {
   const GlobalStateProvider({

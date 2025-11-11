@@ -1,208 +1,145 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:pe_na_pedra/controllers/login_controller.dart';
-import 'package:pe_na_pedra/providers/global_state_provider.dart';
+import 'package:pe_na_pedra/provider/global_state_provider.dart';
+import 'package:pe_na_pedra/viewmodel/login_viewmodel.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
+
   @override
   State<LoginView> createState() => _LoginViewState();
 }
 
 class _LoginViewState extends State<LoginView> {
-  late LoginController _controller;
+  late final LoginViewModel _vm;
 
   @override
   void initState() {
-    _controller = LoginController();
-
-    log(
-      'LoginController iniciado',
-      name: 'LoginView',
-    );
-
     super.initState();
+    _vm = LoginViewModel();
+  }
+
+  @override
+  void dispose() {
+    _vm.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final globalState = GlobalStateProvider.of(context);
 
-    log(
-      'Construindo LoginView',
-      name: 'LoginView',
-    );
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: const Color(0xFFF5D204),
-      child: Center(
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5D204),
+      body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * (1 / 3),
+            maxWidth: MediaQuery.of(context).size.width * 0.33,
           ),
           child: Card(
-            elevation: 0,
             color: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(24),
               child: Form(
-                autovalidateMode: AutovalidateMode.disabled,
-                key: _controller.form,
+                key: _vm.form,
                 child: ListenableBuilder(
-                  listenable: _controller,
-                  builder: (ctx, _) {
-                    log(
-                      'ListenableBuilder rebuild',
-                      name: 'LoginView',
-                    );
+                  listenable: _vm,
+                  builder: (context, _) {
+                    if (_vm.isLoading) {
+                      return const Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircularProgressIndicator(),
+                            SizedBox(height: 12),
+                            Text('Aguarde...'),
+                          ],
+                        ),
+                      );
+                    }
+
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: _controller.isLoading
-                          ? [
-                              Column(
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      vertical: 16,
-                                    ),
-                                    child: const CircularProgressIndicator(),
-                                  ),
-                                  const Text(
-                                    'Aguarde...',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
+                      children: [
+                        if (_vm.errorMessage.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Text(
+                              _vm.errorMessage,
+                              style: const TextStyle(color: Colors.red),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        TextFormField(
+                          decoration:
+                              const InputDecoration(labelText: 'E-mail'),
+                          validator: _vm.validateEmailField,
+                          onSaved: _vm.onEmailSaved,
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _vm.passwordController,
+                          decoration: InputDecoration(
+                            labelText: 'Senha',
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _vm.obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                               ),
-                            ]
-                          : [
-                              Visibility(
-                                visible: _controller.errorMessage.isNotEmpty,
-                                child: Text(
-                                  _controller.errorMessage,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                  ),
-                                  textAlign: TextAlign.center,
+                              onPressed: _vm.toggleObscurePassword,
+                            ),
+                          ),
+                          obscureText: _vm.obscurePassword,
+                          validator: _vm.validatePasswordField,
+                          onSaved: _vm.onPasswordSaved,
+                        ),
+                        if (_vm.showRegister) ...[
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Confirmar Senha',
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _vm.obscureConfirmPassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
                                 ),
+                                onPressed: _vm.toggleObscureConfirmPassword,
                               ),
-                              Container(
-                                margin: const EdgeInsets.only(
-                                  bottom: 16,
-                                  top: 8,
-                                ),
-                                child: TextFormField(
-                                  enabled: !_controller.isLoading,
-                                  decoration: const InputDecoration(
-                                    labelText: 'E-mail',
-                                  ),
-                                  validator: _controller.validateEmailField,
-                                  onSaved: _controller.onEmailSaved,
-                                  onChanged: (v) => log(
-                                    'Email alterado: $v',
-                                    name: 'LoginView',
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(
-                                  bottom: 16,
-                                ),
-                                child: TextFormField(
-                                  controller: _controller.passwordController,
-                                  enabled: !_controller.isLoading,
-                                  decoration: InputDecoration(
-                                    labelText: 'Senha',
-                                    suffixIcon: IconButton(
-                                      onPressed:
-                                          _controller.toogleObscurePassword,
-                                      icon: Icon(
-                                        _controller.obscurePassword
-                                            ? Icons.visibility_off
-                                            : Icons.visibility,
-                                      ),
-                                    ),
-                                  ),
-                                  obscureText: _controller.obscurePassword,
-                                  validator: _controller.validatePasswordField,
-                                  onSaved: _controller.onPasswordSaved,
-                                  onChanged: (v) => log(
-                                    'Senha alterada',
-                                    name: 'LoginView',
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: _controller.showRegister,
-                                child: Container(
-                                  margin: const EdgeInsets.only(bottom: 16),
-                                  child: TextFormField(
-                                    enabled: !_controller.isLoading,
-                                    decoration: InputDecoration(
-                                      labelText: 'Confirmar Senha',
-                                      suffixIcon: IconButton(
-                                        onPressed: _controller
-                                            .toogleObscureConfirmPassword,
-                                        icon: Icon(
-                                          _controller.obscureConfirmPassword
-                                              ? Icons.visibility_off
-                                              : Icons.visibility,
-                                        ),
-                                      ),
-                                    ),
-                                    obscureText:
-                                        _controller.obscureConfirmPassword,
-                                    validator: _controller
-                                        .validateConfirmPasswordField,
-                                    onSaved: _controller.onConfirmPasswordSaved,
-                                    onChanged: (v) => log(
-                                      'ConfirmSenha alterada',
-                                      name: 'LoginView',
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(
-                                  bottom: 16,
-                                ),
-                                child: ElevatedButton(
-                                  onPressed: _controller.isLoading
-                                      ? null
-                                      : () => _controller.submit(
-                                            context,
-                                            globalState,
-                                          ),
-                                  child: Text(
-                                    _controller.showRegister
-                                        ? 'Registrar'
-                                        : 'Entrar',
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(
-                                  bottom: 8,
-                                ),
-                                child: TextButton(
-                                  onPressed: _controller.isLoading
-                                      ? null
-                                      : () {
-                                          _controller.toggleLoginCard();
-                                          log(
-                                            'Toggle login/register: showRegister=${_controller.showRegister}',
-                                            name: 'LoginView',
-                                          );
-                                        },
-                                  child: Text(
-                                    _controller.showRegister
-                                        ? 'Já possui conta? Entre'
-                                        : 'Criar conta',
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
+                            obscureText: _vm.obscureConfirmPassword,
+                            validator: _vm.checkConfirmPassword,
+                            onSaved: _vm.onConfirmPasswordSaved,
+                          ),
+                        ],
+                        const SizedBox(height: 24),
+                        ElevatedButton(
+                          onPressed: () => _vm.submit(context, globalState),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            _vm.showRegister ? 'Registrar' : 'Entrar',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: _vm.toggleRegister,
+                          child: Text(
+                            _vm.showRegister
+                                ? 'Já possui conta? Entrar'
+                                : 'Criar conta',
+                          ),
+                        ),
+                      ],
                     );
                   },
                 ),
@@ -212,12 +149,5 @@ class _LoginViewState extends State<LoginView> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    log('LoginController descartado', name: 'LoginView');
-    super.dispose();
   }
 }

@@ -2,8 +2,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:pe_na_pedra/app.dart';
-import 'package:pe_na_pedra/providers/global_state.dart';
-import 'package:pe_na_pedra/providers/global_state_provider.dart';
+import 'package:pe_na_pedra/provider/global_state.dart';
+import 'package:pe_na_pedra/provider/global_state_provider.dart';
 import 'package:pe_na_pedra/utils/configuration.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
