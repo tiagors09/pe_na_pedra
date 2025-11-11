@@ -2,12 +2,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:pe_na_pedra/provider/global_state.dart';
 import 'package:pe_na_pedra/utils/app_routes.dart';
+import 'package:pe_na_pedra/utils/supabase_service.dart';
 import 'package:pe_na_pedra/viewmodel/edit_profile_viewmodel.dart';
 import 'package:pe_na_pedra/views/edit_profile_view.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class EditProfileController {
-  final SupabaseClient supabase = Supabase.instance.client;
+  final SupabaseClient supabase = SupabaseService.instance.client;
 
   Future<void> submit(
     BuildContext context,

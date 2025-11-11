@@ -1,9 +1,10 @@
 import 'dart:developer';
 import 'package:pe_na_pedra/provider/global_state.dart';
+import 'package:pe_na_pedra/utils/supabase_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginController {
-  final SupabaseClient supabase = Supabase.instance.client;
+  final SupabaseClient supabase = SupabaseService.instance.client;
 
   Future<bool> login({
     required String email,

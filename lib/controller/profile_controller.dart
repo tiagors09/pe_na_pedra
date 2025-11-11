@@ -1,7 +1,8 @@
+import 'package:pe_na_pedra/utils/supabase_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileController {
-  final SupabaseClient supabase = Supabase.instance.client;
+  final SupabaseClient supabase = SupabaseService.instance.client;
 
   Future<Map<String, dynamic>> fetchProfileData(String userId) async {
     try {
