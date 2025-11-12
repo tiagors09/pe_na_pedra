@@ -21,24 +21,27 @@ class _ProfileViewState extends State<ProfileView>
 
   @override
   void initState() {
-    _vm = ProfileViewModel();
     super.initState();
-  }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final globalState = GlobalStateProvider.of(context);
+    _vm = ProfileViewModel();
 
-    if (globalState.isLoggedIn && !_isInitialized) {
-      _vm.loadProfile(globalState.user!.id, globalState.user!.email!);
-      _isInitialized = true;
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final global = GlobalStateProvider.of(context);
+
+      if (global.isLoggedIn && !_isInitialized) {
+        await _vm.loadProfile(
+          global.user!.id,
+          global.user!.email!,
+        );
+        _isInitialized = true;
+      }
+
+      if (!mounted) return; // evita atualizar se o widget foi desmontado
+    });
   }
 
   @override
   void dispose() {
-    _vm.dispose();
     super.dispose();
   }
 

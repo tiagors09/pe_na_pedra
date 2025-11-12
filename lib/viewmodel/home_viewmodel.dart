@@ -4,13 +4,35 @@ import 'package:pe_na_pedra/views/profile_view.dart';
 import 'package:pe_na_pedra/views/trails_view.dart';
 
 class HomeViewModel extends ChangeNotifier {
+  late bool isAdmin = false;
+
   int currentIndex = 0;
 
-  final List<Widget> views = const [
-    TrailsView(),
-    ProfileView(),
-  ];
+  /// Views padrão (sem admin)
+  List<Widget> get baseViews => [
+        const TrailsView(),
+        if (isAdmin) const Placeholder(color: Colors.blue),
+        const ProfileView(),
+      ];
 
+  // 🔹 Monta as opções da barra inferior
+  List<NavigationDestination> get destinations => [
+        const NavigationDestination(
+          icon: Icon(Icons.map),
+          label: 'Trilhas',
+        ),
+        if (isAdmin)
+          const NavigationDestination(
+            icon: Icon(Icons.admin_panel_settings),
+            label: 'Admin',
+          ),
+        const NavigationDestination(
+          icon: Icon(Icons.person),
+          label: 'Perfil',
+        ),
+      ];
+
+  /// Atualiza o índice do menu
   void setCurrentIndex(int index) {
     log('Atualizando índice para $index', name: 'HomeViewModel');
     currentIndex = index;

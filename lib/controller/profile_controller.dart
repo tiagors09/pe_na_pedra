@@ -8,7 +8,7 @@ class ProfileController {
     try {
       final response = await supabase
           .from('profiles')
-          .select('full_name, phone, birth_date, address')
+          .select('full_name, phone, birth_date, address, is_adm')
           .eq('id', userId)
           .single();
 
@@ -17,6 +17,7 @@ class ProfileController {
         'phone': response['phone'],
         'birthDate': response['birth_date'],
         'address': response['address'],
+        'is_adm': response['is_adm'],
       };
     } on PostgrestException {
       throw Exception('Perfil incompleto. Por favor, edite seu perfil.');
