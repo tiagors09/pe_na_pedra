@@ -1,18 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:pe_na_pedra/utils/env.dart';
 
 /// Configure essas constantes via --dart-define em produção
 class FirebaseRestService {
   FirebaseRestService._();
   static final instance = FirebaseRestService._();
 
-  static const String apiKey = String.fromEnvironment(
-    'FIREBASE_API_KEY',
-  );
-  static const String dbUrl = String.fromEnvironment(
-    'FIREBASE_DB_URL',
-  ); // https://PROJECT_ID.firebaseio.com
+  static const String apiKey = Env.apiKey;
+  static const String dbUrl = Env.dbUrl;
 
   final http.Client _client = http.Client();
 
