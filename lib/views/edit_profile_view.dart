@@ -26,7 +26,8 @@ class EditProfileView extends StatefulWidget {
 
 class _EditProfileViewState extends State<EditProfileView> {
   late EditProfileViewModel _viewModel;
-  late final EditProfileViewArguments args;
+  late EditProfileViewArguments args;
+  bool _initialized = false;
 
   @override
   void initState() {
@@ -37,11 +38,19 @@ class _EditProfileViewState extends State<EditProfileView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    args = ModalRoute.of(
-      context,
-    )!
-        .settings
-        .arguments as EditProfileViewArguments;
+    if (_initialized) return;
+    _initialized = true;
+
+    args =
+        ModalRoute.of(context)!.settings.arguments as EditProfileViewArguments;
+
+    final globalState = GlobalStateProvider.of(context);
+
+    // 🔥 Carrega profile no formData antes da primeira renderização
+    _viewModel.loadInitialData(
+      globalState.profile,
+      editing: args.mode == EditProfileMode.editProfile,
+    );
   }
 
   @override
@@ -82,7 +91,6 @@ class _EditProfileViewState extends State<EditProfileView> {
           ),
           body: Form(
             key: _viewModel.form,
-            autovalidateMode: AutovalidateMode.disabled,
             child: ListView(
               padding: const EdgeInsets.all(24),
               children: [
@@ -92,6 +100,10 @@ class _EditProfileViewState extends State<EditProfileView> {
                       : 'Atualize suas informações de perfil.',
                   style: const TextStyle(fontSize: 16),
                 ),
+
+                // -----------------------------
+                // Nome
+                // -----------------------------
                 Container(
                   margin: const EdgeInsets.only(top: 24),
                   child: TextFormField(
@@ -102,6 +114,10 @@ class _EditProfileViewState extends State<EditProfileView> {
                     validator: _viewModel.validateName,
                   ),
                 ),
+
+                // -----------------------------
+                // Telefone
+                // -----------------------------
                 Container(
                   margin: const EdgeInsets.only(top: 16),
                   child: TextFormField(
@@ -112,10 +128,12 @@ class _EditProfileViewState extends State<EditProfileView> {
                     validator: _viewModel.validatePhone,
                   ),
                 ),
+
+                // -----------------------------
+                // Data de nascimento
+                // -----------------------------
                 Container(
-                  margin: const EdgeInsets.only(
-                    top: 16,
-                  ),
+                  margin: const EdgeInsets.only(top: 16),
                   child: TextFormField(
                     decoration: InputDecoration(
                       labelText: 'Data de Nascimento (DD/MM/AAAA)',
@@ -125,21 +143,26 @@ class _EditProfileViewState extends State<EditProfileView> {
                         onPressed: () => _viewModel.selectBirthDate(context),
                       ),
                     ),
-                    controller: _viewModel.birthDateController,
-                    keyboardType: TextInputType.datetime,
                     readOnly: true,
+                    controller: _viewModel.birthDateController,
                   ),
                 ),
+
+                // -----------------------------
+                // Endereço
+                // -----------------------------
                 Container(
-                  margin: const EdgeInsets.only(
-                    top: 16,
-                  ),
+                  margin: const EdgeInsets.only(top: 16),
                   child: TextFormField(
                     decoration: const InputDecoration(labelText: 'Endereço'),
                     initialValue: _viewModel.formData['address'],
                     onSaved: _viewModel.onAddressSaved,
                   ),
                 ),
+
+                // ====================================================
+                // CAMPOS DE LOGIN — APENAS PARA EDITAR PERFIL
+                // ====================================================
                 if (!isCompletingProfile) ...[
                   Container(
                     margin: const EdgeInsets.only(top: 16),
@@ -151,19 +174,22 @@ class _EditProfileViewState extends State<EditProfileView> {
                       validator: _viewModel.validateEmailField,
                     ),
                   ),
+
+                  // senha
                   Container(
                     margin: const EdgeInsets.only(top: 16),
                     child: TextFormField(
                       decoration: InputDecoration(
                         labelText: 'Senha',
                         suffixIcon: IconButton(
-                          icon: Icon(_viewModel.obscurePassword
-                              ? Icons.visibility_off
-                              : Icons.visibility),
+                          icon: Icon(
+                            _viewModel.obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
                           onPressed: _viewModel.toggleObscurePassword,
                         ),
                       ),
-                      controller: _viewModel.passwordController,
                       obscureText: _viewModel.obscurePassword,
                       onSaved: _viewModel.onPasswordSaved,
                       validator: (value) => value!.isNotEmpty
@@ -171,6 +197,8 @@ class _EditProfileViewState extends State<EditProfileView> {
                           : null,
                     ),
                   ),
+
+                  // confirmar senha
                   Container(
                     margin: const EdgeInsets.only(top: 16, bottom: 24),
                     child: TextFormField(
@@ -188,13 +216,12 @@ class _EditProfileViewState extends State<EditProfileView> {
                       obscureText: _viewModel.obscureConfirmPassword,
                       onSaved: _viewModel.onConfirmPasswordSaved,
                       validator: (value) =>
-                          _viewModel.passwordController.text.isNotEmpty
-                              ? _viewModel.validateConfirmPassword(value)
+                          _viewModel.formData['password']?.isNotEmpty == true
+                              ? _viewModel.validateConfirmPasswordField(value)
                               : null,
                     ),
                   ),
                 ],
-                if (isCompletingProfile) const SizedBox(height: 24),
               ],
             ),
           ),
