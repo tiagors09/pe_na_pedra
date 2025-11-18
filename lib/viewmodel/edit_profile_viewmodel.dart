@@ -11,6 +11,7 @@ class EditProfileViewModel extends ChangeNotifier with FormValidator {
 
   final form = GlobalKey<FormState>(debugLabel: 'edit_profile_form');
 
+  /// Dados do formulário
   final formData = <String, dynamic>{
     'fullName': '',
     'phone': '',
@@ -28,9 +29,36 @@ class EditProfileViewModel extends ChangeNotifier with FormValidator {
   bool get obscurePassword => _obscurePassword;
   bool get obscureConfirmPassword => _obscureConfirmPassword;
 
+  /// Apenas data precisa de controller
   final TextEditingController birthDateController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
 
+  // ---------------------------------------------------------
+  // CARREGA DADOS INICIAIS DO PERFIL
+  // ---------------------------------------------------------
+  void loadInitialData(Map<String, dynamic>? profile, {required bool editing}) {
+    if (profile == null) return;
+
+    formData['fullName'] = profile['fullName'] ?? '';
+    formData['phone'] = profile['phone'] ?? '';
+    formData['birthDate'] = profile['birthDate'] ?? '';
+    formData['address'] = profile['address'] ?? '';
+    formData['email'] = profile['email'] ?? '';
+
+    // exibe no campo de data
+    if (profile['birthDate'] != null &&
+        profile['birthDate'].toString().isNotEmpty) {
+      try {
+        final date = DateTime.parse(profile['birthDate']);
+        birthDateController.text = DateFormat('dd/MM/yyyy').format(date);
+      } catch (_) {}
+    }
+
+    notifyListeners();
+  }
+
+  // ---------------------------------------------------------
+  //  VISIBILIDADE SENHA
+  // ---------------------------------------------------------
   void toggleObscurePassword() {
     _obscurePassword = !_obscurePassword;
     notifyListeners();
@@ -41,39 +69,54 @@ class EditProfileViewModel extends ChangeNotifier with FormValidator {
     notifyListeners();
   }
 
-  // Métodos de salvar campos
-  void onFullNameSaved(String? value) => formData['fullName'] = value ?? '';
-  void onPhoneSaved(String? value) => formData['phone'] = value ?? '';
-  void onAddressSaved(String? value) => formData['address'] = value ?? '';
+  // ---------------------------------------------------------
+  //  SALVAR CAMPOS
+  // ---------------------------------------------------------
+  void onFullNameSaved(String? value) =>
+      formData['fullName'] = value?.trim() ?? '';
+  void onPhoneSaved(String? value) => formData['phone'] = value?.trim() ?? '';
+  void onAddressSaved(String? value) =>
+      formData['address'] = value?.trim() ?? '';
   void onEmailSaved(String? value) => saveEmail(formData, value);
   void onPasswordSaved(String? value) => savePassword(formData, value);
-  void onConfirmPasswordSaved(String? value) =>
-      saveConfirmPassword(formData, value);
 
-  // Validações
+  void onConfirmPasswordSaved(String? value) {
+    formData['confirmPassword'] = value ?? '';
+  }
+
+  // ---------------------------------------------------------
+  //  VALIDAÇÕES
+  // ---------------------------------------------------------
   String? validateName(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Informe seu nome completo';
     }
-    if (value.trim().split(' ').length < 2) return 'Digite nome e sobrenome';
+    if (value.trim().split(' ').length < 2) {
+      return 'Digite nome e sobrenome';
+    }
     return null;
   }
 
   String? validatePhone(String? value) {
     if (value == null || value.trim().isEmpty) return 'Informe seu telefone';
-    final phoneRegex = RegExp(r'^\+?[\d\s\(\)\-]{8,}$');
-    if (!phoneRegex.hasMatch(value.trim())) return 'Telefone inválido';
+
+    final regex = RegExp(r'^\+?[\d\s\(\)\-]{8,}$');
+    if (!regex.hasMatch(value)) return 'Telefone inválido';
+
     return null;
   }
 
-  String? validateConfirmPassword(String? value) {
-    if (value != null && value.isNotEmpty && value != passwordController.text) {
+  @override
+  String? validateConfirmPasswordField(String? value) {
+    if (formData['password'].isNotEmpty && value != formData['password']) {
       return 'As senhas não coincidem';
     }
-    validateConfirmPasswordField(value);
     return null;
   }
 
+  // ---------------------------------------------------------
+  //  SELETOR DE DATA
+  // ---------------------------------------------------------
   Future<void> selectBirthDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -83,30 +126,37 @@ class EditProfileViewModel extends ChangeNotifier with FormValidator {
     );
 
     if (picked != null) {
-      final String formattedDisplayDate =
-          DateFormat('dd/MM/yyyy').format(picked);
-      final String formattedSupabaseDate =
-          DateFormat('yyyy-MM-dd').format(picked);
-
-      birthDateController.text = formattedDisplayDate;
-      formData['birthDate'] = formattedSupabaseDate;
-
+      birthDateController.text = DateFormat('dd/MM/yyyy').format(picked);
+      formData['birthDate'] = DateFormat('yyyy-MM-dd').format(picked);
       notifyListeners();
-      log('Data de nascimento selecionada: $formattedSupabaseDate',
+
+      log('Data selecionada: ${formData['birthDate']}',
           name: 'EditProfileViewModel');
     }
   }
 
+  // ---------------------------------------------------------
+  //  LOADING
+  // ---------------------------------------------------------
   void setLoading(bool value) {
     isLoading = value;
     notifyListeners();
   }
 
+  // ---------------------------------------------------------
+  //  SUBMIT
+  // ---------------------------------------------------------
   Future<void> submit(
     BuildContext context,
     GlobalState globalState,
     EditProfileMode mode,
   ) async {
     await _controller.submit(context, globalState, mode, this);
+  }
+
+  @override
+  void dispose() {
+    birthDateController.dispose();
+    super.dispose();
   }
 }
