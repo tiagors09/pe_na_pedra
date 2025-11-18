@@ -31,14 +31,18 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          log(
-            'FAB Pressed',
-            name: 'HomeView',
+      floatingActionButton: ListenableBuilder(
+        listenable: _viewModel,
+        builder: (context, _) {
+          if (!_viewModel.isAdmin) return const SizedBox.shrink();
+
+          return FloatingActionButton(
+            onPressed: () {
+              log('FAB Pressed', name: 'HomeView');
+            },
+            child: const Icon(Icons.add),
           );
         },
-        child: const Icon(Icons.add),
       ),
       body: ListenableBuilder(
         listenable: _viewModel,
