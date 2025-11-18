@@ -48,98 +48,101 @@ class _LoginViewState extends State<LoginView> {
                 child: ListenableBuilder(
                   listenable: _vm,
                   builder: (context, _) {
-                    if (_vm.isLoading) {
-                      return const Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CircularProgressIndicator(),
-                            SizedBox(height: 12),
-                            Text('Aguarde...'),
-                          ],
-                        ),
-                      );
-                    }
-
                     return Column(
                       mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        if (_vm.errorMessage.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Text(
-                              _vm.errorMessage,
-                              style: const TextStyle(color: Colors.red),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        TextFormField(
-                          decoration:
-                              const InputDecoration(labelText: 'E-mail'),
-                          validator: _vm.validateEmailField,
-                          onSaved: _vm.onEmailSaved,
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _vm.passwordController,
-                          decoration: InputDecoration(
-                            labelText: 'Senha',
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _vm.obscurePassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                              onPressed: _vm.toggleObscurePassword,
-                            ),
-                          ),
-                          obscureText: _vm.obscurePassword,
-                          validator: _vm.validatePasswordField,
-                          onSaved: _vm.onPasswordSaved,
-                        ),
-                        if (_vm.showRegister) ...[
-                          const SizedBox(height: 16),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Confirmar Senha',
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _vm.obscureConfirmPassword
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: _vm.isLoading
+                          ? [
+                              const CircularProgressIndicator(),
+                              const SizedBox(height: 12),
+                              const Text('Aguarde...'),
+                            ]
+                          : [
+                              if (_vm.errorMessage.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: Text(
+                                    _vm.errorMessage,
+                                    style: const TextStyle(color: Colors.red),
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
-                                onPressed: _vm.toggleObscureConfirmPassword,
+                              TextFormField(
+                                decoration:
+                                    const InputDecoration(labelText: 'E-mail'),
+                                validator: _vm.validateEmailField,
+                                onSaved: _vm.onEmailSaved,
                               ),
-                            ),
-                            obscureText: _vm.obscureConfirmPassword,
-                            validator: _vm.checkConfirmPassword,
-                            onSaved: _vm.onConfirmPasswordSaved,
-                          ),
-                        ],
-                        const SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed: () => _vm.submit(context, globalState),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            _vm.showRegister ? 'Registrar' : 'Entrar',
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: _vm.toggleRegister,
-                          child: Text(
-                            _vm.showRegister
-                                ? 'Já possui conta? Entrar'
-                                : 'Criar conta',
-                          ),
-                        ),
-                      ],
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _vm.passwordController,
+                                decoration: InputDecoration(
+                                  labelText: 'Senha',
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _vm.obscurePassword
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
+                                    ),
+                                    onPressed: _vm.toggleObscurePassword,
+                                  ),
+                                ),
+                                obscureText: _vm.obscurePassword,
+                                validator: _vm.validatePasswordField,
+                                onSaved: _vm.onPasswordSaved,
+                              ),
+                              if (_vm.showRegister) ...[
+                                const SizedBox(height: 16),
+                                TextFormField(
+                                  decoration: InputDecoration(
+                                    labelText: 'Confirmar Senha',
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _vm.obscureConfirmPassword
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                      ),
+                                      onPressed:
+                                          _vm.toggleObscureConfirmPassword,
+                                    ),
+                                  ),
+                                  obscureText: _vm.obscureConfirmPassword,
+                                  validator: _vm.checkConfirmPassword,
+                                  onSaved: _vm.onConfirmPasswordSaved,
+                                ),
+                              ],
+                              const SizedBox(height: 24),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () =>
+                                      _vm.submit(context, globalState),
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 14),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    _vm.showRegister ? 'Registrar' : 'Entrar',
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              SizedBox(
+                                width: double.infinity,
+                                child: TextButton(
+                                  onPressed: _vm.toggleRegister,
+                                  child: Text(
+                                    _vm.showRegister
+                                        ? 'Já possui conta? Entrar'
+                                        : 'Criar conta',
+                                  ),
+                                ),
+                              ),
+                            ],
                     );
                   },
                 ),
