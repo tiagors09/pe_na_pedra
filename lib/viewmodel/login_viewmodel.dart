@@ -39,7 +39,9 @@ class LoginViewModel extends ChangeNotifier with FormValidator {
 
   String? checkConfirmPassword(String? value) {
     if (!showRegister) return null;
-    if (value != passwordController.text) return 'As senhas não coincidem';
+    if (value != passwordController.text) {
+      return "As senhas não coincidem";
+    }
     return validateConfirmPasswordField(value);
   }
 
@@ -52,6 +54,7 @@ class LoginViewModel extends ChangeNotifier with FormValidator {
     notifyListeners();
 
     bool success;
+
     if (showRegister) {
       success = await _controller.createAccount(
         email: formData['email']!,
@@ -74,12 +77,12 @@ class LoginViewModel extends ChangeNotifier with FormValidator {
         showRegister ? AppRoutes.editProfile : AppRoutes.home,
         arguments: showRegister
             ? EditProfileViewArguments(
-                userId: globalState.user?.id,
+                userId: globalState.userId, // CORRIGIDO
                 mode: EditProfileMode.completeProfile,
               )
             : null,
       );
-    } else if (!success) {
+    } else {
       errorMessage = 'Falha na autenticação';
       notifyListeners();
     }

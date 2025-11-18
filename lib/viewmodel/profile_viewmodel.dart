@@ -14,7 +14,7 @@ class ProfileViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> loadProfile(String userId, String userEmail) async {
+  Future<void> loadProfile(String userId, String idToken) async {
     if (_isProfileCached) return;
 
     _setLoading(true);
@@ -22,12 +22,13 @@ class ProfileViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final data = await _controller.fetchProfileData(userId);
+      final data = await _controller.fetchProfile(userId, idToken);
+
       _profileData = {
         'id': userId,
-        'email': userEmail,
-        ...data,
+        ...(data ?? {}),
       };
+
       _isProfileCached = true;
     } catch (e) {
       _errorMessage = e.toString().replaceFirst('Exception: ', '');
@@ -54,6 +55,5 @@ class ProfileViewModel extends ChangeNotifier {
 
   void _setLoading(bool value) {
     _isLoading = value;
-    notifyListeners();
   }
 }

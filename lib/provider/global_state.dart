@@ -1,112 +1,159 @@
+// lib/provider/global_state.dart
 import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:pe_na_pedra/controller/profile_controller.dart';
+import 'package:pe_na_pedra/services/firebase_auth_service.dart';
+import 'package:pe_na_pedra/services/firebase_rest_service.dart';
+import 'package:pe_na_pedra/storage/secure_storage.dart';
 
 class GlobalState extends ChangeNotifier {
-  User? _user;
-  Session? _session;
+  String? _idToken;
+  String? _refreshToken;
+  String? _userId;
   Map<String, dynamic>? _profile;
   Timer? _refreshTimer;
 
-  User? get user => _user;
-  bool get isLoggedIn => _user != null;
+  String? get idToken => _idToken;
+  String? get refreshToken => _refreshToken;
+  String? get userId => _userId;
   Map<String, dynamic>? get profile => _profile;
+  bool get isLoggedIn => _idToken != null && _userId != null;
 
-  /// Define usuário e sessão globais
-  Future<void> setUser(User user, Session session) async {
-    _user = user;
-    _session = session;
-    log(
-      'Usuário definido: ${user.email}',
-      name: 'GlobalState',
-      level: 800,
-    );
-    _scheduleTokenRefresh();
-    notifyListeners();
-
-    // 🔥 Carrega automaticamente o perfil completo
-    try {
-      final profileController = ProfileController();
-      final data = await profileController.fetchProfileData(user.id);
-      _profile = {
-        'id': user.id,
-        'email': user.email,
-        ...data,
-      };
-      log(
-        'Perfil carregado e armazenado globalmente $profile',
-        name: 'GlobalState',
-      );
-    } catch (e) {
-      log('Erro ao carregar perfil global: $e',
-          name: 'GlobalState', level: 900);
+  Future<void> restoreFromStorage() async {
+    _idToken = await SecureStorage.instance.read('idToken');
+    _refreshToken = await SecureStorage.instance.read('refreshToken');
+    _userId = await SecureStorage.instance.read('userId');
+    if (_idToken != null && _userId != null) {
+      _scheduleRefreshFromStored();
+      await loadProfile(); // attempt load profile
+      notifyListeners();
     }
-    notifyListeners();
   }
 
-  /// Atualiza manualmente o perfil global (caso editado)
-  void setProfile(Map<String, dynamic> profileData) {
-    _profile = profileData;
-    notifyListeners();
+  Future<void> signIn(String email, String password) async {
+    final res = await FirebaseAuthService.instance
+        .signIn(email: email, password: password);
+    if (res['idToken'] != null) {
+      _handleAuthResponse(res);
+      await loadProfile();
+      notifyListeners();
+    } else {
+      throw Exception(res['error'] ?? 'Login failed');
+    }
   }
 
-  /// Faz logout completo
-  Future<void> logout() async {
-    await Supabase.instance.client.auth.signOut();
-    _user = null;
-    _session = null;
-    _profile = null;
+  Future<void> signUp(String email, String password) async {
+    final res = await FirebaseAuthService.instance
+        .signUp(email: email, password: password);
+    if (res['idToken'] != null) {
+      _handleAuthResponse(res);
+      // profile can be created later
+      notifyListeners();
+    } else {
+      throw Exception(res['error'] ?? 'Signup failed');
+    }
+  }
+
+  void _handleAuthResponse(Map<String, dynamic> res) async {
+    _idToken = res['idToken'];
+    _refreshToken = res['refreshToken'];
+    _userId = res['localId'] ?? res['userId'] ?? res['uid'];
+    // Save secure
+    await SecureStorage.instance.write('idToken', _idToken!);
+    if (_refreshToken != null) {
+      await SecureStorage.instance.write(
+        'refreshToken',
+        _refreshToken!,
+      );
+    }
+    if (_userId != null) await SecureStorage.instance.write('userId', _userId!);
+
+    final expiresIn = int.tryParse(res['expiresIn']?.toString() ?? '') ?? 3600;
+
+    _scheduleRefresh(
+      Duration(seconds: expiresIn),
+    );
+  }
+
+  void _scheduleRefresh(Duration expiresIn) {
     _refreshTimer?.cancel();
-    _refreshTimer = null;
-    log('Usuário deslogado', name: 'GlobalState', level: 800);
-    notifyListeners();
+    // refresh 60s before expiry
+    final refreshIn = expiresIn - const Duration(seconds: 60);
+    _refreshTimer = Timer(refreshIn, _refreshAuth);
   }
 
-  /// Agenda a renovação automática do token
-  void _scheduleTokenRefresh() {
+  void _scheduleRefreshFromStored() {
+    // default polling refresh every 50 minutes as we don't know exact expiry
     _refreshTimer?.cancel();
+    _refreshTimer = Timer(const Duration(minutes: 50), _refreshAuth);
+  }
 
-    if (_session?.expiresAt == null) return;
-
-    final now = DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
-    final expiresAt = _session!.expiresAt!;
-    final secondsUntilExpiry = expiresAt - now;
-
-    final refreshIn = Duration(seconds: secondsUntilExpiry - 60);
-    if (refreshIn.isNegative) {
-      log('Token já está próximo da expiração ou expirado',
-          name: 'GlobalState', level: 900);
+  Future<void> _refreshAuth() async {
+    if (_refreshToken == null) {
+      logout();
       return;
     }
-
-    log('Agendando renovação do token em ${refreshIn.inSeconds} segundos',
-        name: 'GlobalState', level: 800);
-    _refreshTimer = Timer(refreshIn, _refreshSession);
-  }
-
-  /// Faz a renovação automática da sessão do Supabase
-  Future<void> _refreshSession() async {
-    log('Tentando renovar sessão...', name: 'GlobalState', level: 800);
     try {
-      final response = await Supabase.instance.client.auth.refreshSession();
-      if (response.session != null) {
-        _session = response.session;
-        _user = response.user;
-        log('Sessão renovada com sucesso para ${_user?.email}',
-            name: 'GlobalState', level: 800);
+      final res = await FirebaseAuthService.instance.refresh(_refreshToken!);
+      if (res['id_token'] != null) {
+        _idToken = res['id_token'];
+        _refreshToken = res['refresh_token'];
+        await SecureStorage.instance.write('idToken', _idToken!);
+        if (_refreshToken != null) {
+          await SecureStorage.instance.write(
+            'refreshToken',
+            _refreshToken!,
+          );
+        }
+        // schedule again using expires_in
+        final expiresIn =
+            int.tryParse(res['expires_in']?.toString() ?? '') ?? 3600;
+        _scheduleRefresh(Duration(seconds: expiresIn));
         notifyListeners();
-        _scheduleTokenRefresh();
       } else {
-        log('Não foi possível renovar a sessão, deslogando',
-            name: 'GlobalState', level: 900);
         logout();
       }
     } catch (e, st) {
-      log('Erro ao renovar sessão: $e',
-          name: 'GlobalState', level: 1000, error: e, stackTrace: st);
+      log('Error refreshing token: $e', stackTrace: st);
       logout();
     }
+  }
+
+  Future<void> loadProfile() async {
+    if (_userId == null || _idToken == null) return;
+    try {
+      final data = await FirebaseRestService.instance.get(
+        'profiles/$_userId',
+        auth: _idToken,
+      );
+      if (data != null) {
+        _profile = Map<String, dynamic>.from(data);
+      }
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  Future<void> setProfile(Map<String, dynamic> profile) async {
+    if (_userId == null || _idToken == null) return;
+    await FirebaseRestService.instance.put(
+      'profiles/$_userId',
+      profile,
+      auth: _idToken,
+    );
+    _profile = profile;
+    notifyListeners();
+  }
+
+  Future<void> logout() async {
+    _idToken = null;
+    _refreshToken = null;
+    _userId = null;
+    _profile = null;
+    _refreshTimer?.cancel();
+    await SecureStorage.instance.delete('idToken');
+    await SecureStorage.instance.delete('refreshToken');
+    await SecureStorage.instance.delete('userId');
+    notifyListeners();
   }
 }

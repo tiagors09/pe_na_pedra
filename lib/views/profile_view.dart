@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pe_na_pedra/provider/global_state.dart';
 import 'package:pe_na_pedra/viewmodel/profile_viewmodel.dart';
 import 'package:pe_na_pedra/provider/global_state_provider.dart';
 import 'package:pe_na_pedra/utils/app_routes.dart';
@@ -22,7 +23,6 @@ class _ProfileViewState extends State<ProfileView>
   @override
   void initState() {
     super.initState();
-
     _vm = ProfileViewModel();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -30,39 +30,32 @@ class _ProfileViewState extends State<ProfileView>
 
       if (global.isLoggedIn && !_isInitialized) {
         await _vm.loadProfile(
-          global.user!.id,
-          global.user!.email!,
+          global.userId!, // OK
+          global.idToken!, // OK
         );
+
         _isInitialized = true;
       }
-
-      if (!mounted) return; // evita atualizar se o widget foi desmontado
     });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
 
-    final globalState = GlobalStateProvider.of(context);
+    final global = GlobalStateProvider.of(context);
 
     return Center(
-      child: globalState.isLoggedIn
+      child: global.isLoggedIn
           ? ListenableBuilder(
               listenable: _vm,
-              builder: (context, _) =>
-                  _buildProfileContent(context, globalState),
+              builder: (_, __) => _buildProfileContent(context, global),
             )
           : _buildLoginPrompt(context),
     );
   }
 
-  Widget _buildProfileContent(BuildContext context, globalState) {
+  Widget _buildProfileContent(BuildContext context, GlobalState global) {
     if (_vm.isLoading) {
       return const CircularProgressIndicator();
     }
@@ -75,8 +68,8 @@ class _ProfileViewState extends State<ProfileView>
           const SizedBox(height: 12),
           ElevatedButton(
             onPressed: () => _vm.loadProfile(
-              globalState.user!.id,
-              globalState.user!.email!,
+              global.userId!,
+              global.idToken!,
             ),
             child: const Text('Tentar novamente'),
           ),
@@ -86,7 +79,6 @@ class _ProfileViewState extends State<ProfileView>
 
     final data = _vm.profileData;
     final fullName = data['fullName'] ?? '';
-    final email = data['email'] ?? '';
     final phone = data['phone'] ?? '';
     final birthDate = _vm.formatBirthDate(data['birthDate']);
     final address = data['address'] ?? '';
@@ -99,7 +91,6 @@ class _ProfileViewState extends State<ProfileView>
           Text('Bem-vindo, ${fullName.split(' ').first}!'),
           const SizedBox(height: 16),
           _buildItem(Icons.person, 'Nome Completo', fullName),
-          _buildItem(Icons.email, 'Email', email),
           _buildItem(Icons.phone, 'Telefone', phone),
           _buildItem(Icons.calendar_today, 'Nascimento', birthDate),
           _buildItem(Icons.home, 'Endereço', address),
@@ -113,13 +104,13 @@ class _ProfileViewState extends State<ProfileView>
                 ),
               );
               _vm.invalidateCache();
-              _vm.loadProfile(globalState.user!.id, globalState.user!.email!);
+              _vm.loadProfile(global.userId!, global.idToken!);
             },
             icon: const Icon(Icons.edit),
             label: const Text('Editar Perfil'),
           ),
           TextButton.icon(
-            onPressed: globalState.logout,
+            onPressed: global.logout,
             icon: const Icon(Icons.logout),
             label: const Text('Sair'),
           ),

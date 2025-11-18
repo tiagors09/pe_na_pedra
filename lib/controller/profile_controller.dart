@@ -1,28 +1,18 @@
-import 'package:pe_na_pedra/utils/supabase_service.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+// lib/controllers/profile_controller.dart
+import 'package:pe_na_pedra/services/firebase_rest_service.dart';
 
 class ProfileController {
-  final SupabaseClient supabase = SupabaseService.instance.client;
+  final FirebaseRestService _db = FirebaseRestService.instance;
 
-  Future<Map<String, dynamic>> fetchProfileData(String userId) async {
-    try {
-      final response = await supabase
-          .from('profiles')
-          .select('full_name, phone, birth_date, address, is_adm')
-          .eq('id', userId)
-          .single();
+  Future<Map<String, dynamic>?> fetchProfile(
+      String userId, String? authToken) async {
+    final data = await _db.get('profiles/$userId', auth: authToken);
+    if (data == null) return null;
+    return Map<String, dynamic>.from(data);
+  }
 
-      return {
-        'fullName': response['full_name'],
-        'phone': response['phone'],
-        'birthDate': response['birth_date'],
-        'address': response['address'],
-        'is_adm': response['is_adm'],
-      };
-    } on PostgrestException {
-      throw Exception('Perfil incompleto. Por favor, edite seu perfil.');
-    } catch (_) {
-      throw Exception('Erro ao carregar dados do perfil.');
-    }
+  Future<void> upsertProfile(
+      String userId, Map<String, dynamic> payload, String? authToken) async {
+    await _db.put('profiles/$userId', payload, auth: authToken);
   }
 }

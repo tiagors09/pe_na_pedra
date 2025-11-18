@@ -1,15 +1,12 @@
+// lib/controllers/edit_profile_controller.dart
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:pe_na_pedra/provider/global_state.dart';
 import 'package:pe_na_pedra/utils/app_routes.dart';
-import 'package:pe_na_pedra/utils/supabase_service.dart';
 import 'package:pe_na_pedra/viewmodel/edit_profile_viewmodel.dart';
 import 'package:pe_na_pedra/views/edit_profile_view.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class EditProfileController {
-  final SupabaseClient supabase = SupabaseService.instance.client;
-
   Future<void> submit(
     BuildContext context,
     GlobalState globalState,
@@ -22,36 +19,26 @@ class EditProfileController {
     try {
       viewModel.setLoading(true);
 
-      final userId = globalState.user?.id;
-      if (userId == null) return;
+      final userId = globalState.userId;
+      final idToken = globalState.idToken;
 
-      final values = {
-        'id': userId,
-        'full_name': viewModel.formData['fullName'],
+      if (userId == null || idToken == null) {
+        throw Exception("Usuário não autenticado.");
+      }
+
+      final profileData = {
+        'fullName': viewModel.formData['fullName'],
         'phone': viewModel.formData['phone'],
-        'birth_date': viewModel.formData['birthDate'],
+        'birthDate': viewModel.formData['birthDate'],
         'address': viewModel.formData['address'],
+        'isAdm': globalState.profile?['isAdm'] ?? false, // mantém admin
       };
 
-      switch (mode) {
-        case EditProfileMode.completeProfile:
-          await supabase.from('profiles').insert(values);
-          break;
-
-        case EditProfileMode.editProfile:
-          await supabase.from('profiles').update(values).eq('id', userId);
-
-          if (viewModel.formData['password'].isNotEmpty) {
-            await supabase.auth.updateUser(
-              UserAttributes(password: viewModel.formData['password']),
-            );
-          }
-          break;
-      }
+      await globalState.setProfile(profileData);
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Perfil atualizado com sucesso!')),
+          const SnackBar(content: Text('Perfil salvo com sucesso!')),
         );
         Navigator.of(context).pushReplacementNamed(AppRoutes.home);
       }
@@ -59,7 +46,8 @@ class EditProfileController {
       log('Perfil atualizado com sucesso', name: 'EditProfileController');
     } catch (e, st) {
       log('Erro ao salvar perfil: $e',
-          name: 'EditProfileController', stackTrace: st);
+          stackTrace: st, name: 'EditProfileController');
+
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Erro ao salvar perfil: $e')),
