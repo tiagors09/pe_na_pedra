@@ -33,7 +33,7 @@ class _LoginViewState extends State<LoginView> {
       body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.33,
+            maxWidth: MediaQuery.of(context).size.width * 0.75,
           ),
           child: Card(
             color: Colors.white,
