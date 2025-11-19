@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:pe_na_pedra/provider/global_state_provider.dart';
 import 'package:pe_na_pedra/viewmodel/home_viewmodel.dart';
@@ -24,26 +23,13 @@ class _HomeViewState extends State<HomeView> {
     super.didChangeDependencies();
     final globalState = GlobalStateProvider.of(context);
 
-    final bool isAdmin = globalState.profile?['is_adm'] ?? false;
+    final bool isAdmin = globalState.profile?['isAdm'] ?? false;
     _viewModel.isAdmin = isAdmin;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: ListenableBuilder(
-        listenable: _viewModel,
-        builder: (context, _) {
-          if (!_viewModel.isAdmin) return const SizedBox.shrink();
-
-          return FloatingActionButton(
-            onPressed: () {
-              log('FAB Pressed', name: 'HomeView');
-            },
-            child: const Icon(Icons.add),
-          );
-        },
-      ),
       body: ListenableBuilder(
         listenable: _viewModel,
         builder: (ctx, _) => IndexedStack(
