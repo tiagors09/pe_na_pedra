@@ -1,4 +1,5 @@
 // lib/views/trails_view.dart
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pe_na_pedra/model/trails.dart';
@@ -13,18 +14,33 @@ class TrailsView extends StatefulWidget {
 }
 
 class _TrailsViewState extends State<TrailsView> {
+  late Future<List<Trail>> _future;
+
   final TrailsViewModel _vm = TrailsViewModel();
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Agora funciona: usa o contexto
     final global = GlobalStateProvider.of(context);
 
+    _future = _vm.fetchOnce(global);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Trilhas"),
       ),
-      body: StreamBuilder<List<Trail>>(
-        stream: _vm.watchTrails(global),
+      body: FutureBuilder<List<Trail>>(
+        future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -57,41 +73,39 @@ class _TrailsViewState extends State<TrailsView> {
     );
   }
 
-  // ----------------------------------------------------------
-  // CARD DE CADA TRILHA
-  // ----------------------------------------------------------
   Widget _buildTrailCard(Trail t) {
+    final dateFormatted = DateFormat('dd/MM/yyyy').format(t.meetingDate);
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
-      elevation: 3,
+      elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // NOME E DIFICULDADE
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  t.name,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    t.name,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 _difficultyChip(t.difficulty),
               ],
             ),
             const SizedBox(height: 12),
-
-            // DATA E HORÁRIO
             Row(
               children: [
                 const Icon(Icons.calendar_today, size: 18),
                 const SizedBox(width: 8),
-                Text(DateFormat('dd/MM/yyyy').format(t.meetingDate)),
+                Text(dateFormatted),
                 const SizedBox(width: 16),
                 const Icon(Icons.access_time, size: 18),
                 const SizedBox(width: 8),
@@ -99,10 +113,9 @@ class _TrailsViewState extends State<TrailsView> {
               ],
             ),
             const SizedBox(height: 12),
-
-            // ENDEREÇO DE ENCONTRO
-            if (t.meetingAddress != null)
+            if (t.meetingAddress != null && t.meetingAddress!.isNotEmpty)
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(Icons.place, size: 18),
                   const SizedBox(width: 8),
@@ -110,8 +123,6 @@ class _TrailsViewState extends State<TrailsView> {
                 ],
               ),
             const SizedBox(height: 12),
-
-            // VAGAS
             Row(
               children: [
                 const Icon(Icons.people, size: 18),
@@ -120,27 +131,19 @@ class _TrailsViewState extends State<TrailsView> {
               ],
             ),
             const SizedBox(height: 16),
-
-            // BOTÃO DETALHES
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () {
-                  // Aqui você depois pode fazer:
-                  // Navigator.pushNamed(context, AppRoutes.trailDetails, arguments: t);
-                },
+                onPressed: () {},
                 child: const Text("Ver detalhes"),
               ),
-            )
+            ),
           ],
         ),
       ),
     );
   }
 
-  // ----------------------------------------------------------
-  // CHIP DE DIFICULDADE
-  // ----------------------------------------------------------
   Widget _difficultyChip(String diff) {
     Color color;
     String label;
@@ -167,7 +170,7 @@ class _TrailsViewState extends State<TrailsView> {
       backgroundColor: color.withOpacity(0.15),
       label: Text(
         label,
-        style: TextStyle(color: color),
+        style: TextStyle(color: color, fontWeight: FontWeight.w600),
       ),
       shape: StadiumBorder(
         side: BorderSide(color: color.withOpacity(0.4)),
