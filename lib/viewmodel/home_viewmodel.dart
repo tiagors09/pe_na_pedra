@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:pe_na_pedra/views/adm_view.dart';
 import 'package:pe_na_pedra/views/profile_view.dart';
 import 'package:pe_na_pedra/views/trails_view.dart';
 
@@ -11,7 +12,7 @@ class HomeViewModel extends ChangeNotifier {
   /// Views padrão (sem admin)
   List<Widget> get baseViews => [
         const TrailsView(),
-        if (isAdmin) const Placeholder(color: Colors.blue),
+        if (isAdmin) const AdmView(),
         const ProfileView(),
       ];
 
