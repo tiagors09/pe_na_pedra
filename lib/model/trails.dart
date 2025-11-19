@@ -31,7 +31,7 @@ class Trail {
   factory Trail.fromMap(String id, Map<String, dynamic> map) {
     List<LatLng> parseRoute(dynamic routeRaw) {
       if (routeRaw == null) return [];
-      final list = (routeRaw as List).cast<dynamic>();
+      final list = (routeRaw as List?) ?? [];
       return list.map((p) {
         final lat = (p['lat'] as num).toDouble();
         final lng = (p['lng'] as num).toDouble();
@@ -45,16 +45,21 @@ class Trail {
     return Trail(
       id: id,
       name: map['name'] ?? '',
-      meetingPoint:
-          LatLng((mp['lat'] as num).toDouble(), (mp['lng'] as num).toDouble()),
+      meetingPoint: LatLng(
+        (mp['lat'] as num).toDouble(),
+        (mp['lng'] as num).toDouble(),
+      ),
       meetingAddress: map['meetingAddress'],
-      trailLocation:
-          LatLng((tl['lat'] as num).toDouble(), (tl['lng'] as num).toDouble()),
+      trailLocation: LatLng(
+        (tl['lat'] as num).toDouble(),
+        (tl['lng'] as num).toDouble(),
+      ),
       trailAddress: map['trailAddress'],
-      meetingDate: DateTime.parse(map['meetingDate']),
-      meetingTime: map['meetingTime'],
-      spots: (map['spots'] as num).toInt(),
-      difficulty: map['difficulty'],
+      meetingDate:
+          DateTime.tryParse(map['meetingDate'] ?? '') ?? DateTime.now(),
+      meetingTime: map['meetingTime'] ?? '00:00',
+      spots: (map['spots'] as num?)?.toInt() ?? 0,
+      difficulty: map['difficulty'] ?? 'easy',
       route: parseRoute(map['route']),
     );
   }
