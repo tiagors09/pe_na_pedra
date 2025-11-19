@@ -25,10 +25,33 @@ class TrailsController {
   Future<List<Trail>> fetchTrails({required String? idToken}) async {
     final data = await _db.get('trails', auth: idToken);
     if (data == null) return [];
-    final map = Map<String, dynamic>.from(data);
-    return map.entries
-        .map((e) => Trail.fromMap(e.key, Map<String, dynamic>.from(e.value)))
-        .toList();
+
+    // 🔥 Caso venha LISTA
+    if (data is List) {
+      return data
+          .asMap()
+          .entries
+          .where((e) => e.value != null)
+          .map((e) => Trail.fromMap(
+                e.key.toString(), // usa índice como ID
+                Map<String, dynamic>.from(e.value),
+              ))
+          .toList();
+    }
+
+    // 🔥 Caso venha MAP (formato ideal do Firebase)
+    if (data is Map) {
+      final map = Map<String, dynamic>.from(data);
+      return map.entries
+          .where((e) => e.value != null)
+          .map((e) => Trail.fromMap(
+                e.key,
+                Map<String, dynamic>.from(e.value),
+              ))
+          .toList();
+    }
+
+    throw Exception("Formato inesperado em /trails: ${data.runtimeType}");
   }
 
   /// Streaming - basic SSE parser wrapper
