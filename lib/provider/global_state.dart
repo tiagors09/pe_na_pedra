@@ -123,7 +123,7 @@ class GlobalState extends ChangeNotifier {
     if (_userId == null || _idToken == null) return;
     try {
       final data = await FirebaseRestService.instance.get(
-        'profiles/$_userId',
+        'hikkers/$_userId',
         auth: _idToken,
       );
       if (data != null) {
@@ -137,7 +137,7 @@ class GlobalState extends ChangeNotifier {
   Future<void> setProfile(Map<String, dynamic> profile) async {
     if (_userId == null || _idToken == null) return;
     await FirebaseRestService.instance.put(
-      'profiles/$_userId',
+      'hikkers/$_userId',
       profile,
       auth: _idToken,
     );

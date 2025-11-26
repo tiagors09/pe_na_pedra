@@ -5,7 +5,7 @@ class HikkersControllers {
   final FirebaseRestService _db = FirebaseRestService.instance;
 
   Future<List<Hikker>> fetchHikkers({required String? idToken}) async {
-    final data = await _db.get('profiles', auth: idToken);
+    final data = await _db.get('hikkers', auth: idToken);
     if (data == null) return [];
 
     // 🔥 Caso venha LISTA

@@ -6,13 +6,13 @@ class ProfileController {
 
   Future<Map<String, dynamic>?> fetchProfile(
       String userId, String? authToken) async {
-    final data = await _db.get('profiles/$userId', auth: authToken);
+    final data = await _db.get('hikkers/$userId', auth: authToken);
     if (data == null) return null;
     return Map<String, dynamic>.from(data);
   }
 
   Future<void> upsertProfile(
       String userId, Map<String, dynamic> payload, String? authToken) async {
-    await _db.put('profiles/$userId', payload, auth: authToken);
+    await _db.put('hikkers/$userId', payload, auth: authToken);
   }
 }
