@@ -25,6 +25,9 @@ class _HomeViewState extends State<HomeView> {
 
     final bool isAdmin = globalState.profile?['isAdm'] ?? false;
     _viewModel.isAdmin = isAdmin;
+
+    // Garante que o índice não ultrapasse o número de páginas
+    _viewModel.setCurrentIndex(_viewModel.currentIndex);
   }
 
   @override

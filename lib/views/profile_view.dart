@@ -143,7 +143,9 @@ class _ProfileViewState extends State<ProfileView>
         const Text('Você precisa fazer login para acessar o perfil.'),
         const SizedBox(height: 12),
         ElevatedButton(
-          onPressed: () => Navigator.of(context).pushNamed(AppRoutes.login),
+          onPressed: () => Navigator.of(context).pushNamed(
+            AppRoutes.login,
+          ),
           child: const Text('Fazer Login / Cadastrar'),
         ),
       ],

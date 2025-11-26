@@ -36,7 +36,7 @@ class HomeViewModel extends ChangeNotifier {
   /// Atualiza o índice do menu
   void setCurrentIndex(int index) {
     log('Atualizando índice para $index', name: 'HomeViewModel');
-    currentIndex = index;
+    currentIndex = index.clamp(0, baseViews.length - 1);
     notifyListeners();
   }
 }

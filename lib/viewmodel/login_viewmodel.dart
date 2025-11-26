@@ -73,8 +73,9 @@ class LoginViewModel extends ChangeNotifier with FormValidator {
     notifyListeners();
 
     if (success && context.mounted) {
-      Navigator.of(context).pushReplacementNamed(
+      Navigator.of(context).pushNamedAndRemoveUntil(
         showRegister ? AppRoutes.editProfile : AppRoutes.home,
+        (route) => false,
         arguments: showRegister
             ? EditProfileViewArguments(
                 userId: globalState.userId, // CORRIGIDO
