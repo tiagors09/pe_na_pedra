@@ -5,6 +5,7 @@ import 'package:pe_na_pedra/views/edit_profile_view.dart';
 import 'package:pe_na_pedra/views/home_view.dart';
 import 'package:pe_na_pedra/views/login_view.dart';
 import 'package:pe_na_pedra/views/hikkers_view.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -21,6 +22,15 @@ class App extends StatelessWidget {
         AppRoutes.editProfile: (context) => const EditProfileView(),
         AppRoutes.users: (context) => const HikkersView(),
       },
+      locale: const Locale('pt', 'BR'),
+      supportedLocales: const [
+        Locale('pt', 'BR'),
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
     );
   }
 }
