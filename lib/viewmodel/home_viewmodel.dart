@@ -1,13 +1,16 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:pe_na_pedra/utils/enums.dart';
 import 'package:pe_na_pedra/views/adm_view.dart';
 import 'package:pe_na_pedra/views/profile_view.dart';
 import 'package:pe_na_pedra/views/trails_view.dart';
 
 class HomeViewModel extends ChangeNotifier {
-  late bool isAdmin = false;
+  String role = UserRoles.hikker.name;
 
   int currentIndex = 0;
+
+  bool get isAdmin => role == UserRoles.adm.name;
 
   /// Views padrão (sem admin)
   List<Widget> get baseViews => [

@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pe_na_pedra/model/trails.dart';
+import 'package:pe_na_pedra/model/trail.dart';
 import 'package:pe_na_pedra/provider/global_state_provider.dart';
 import 'package:pe_na_pedra/viewmodel/trails_viewmodel.dart';
 

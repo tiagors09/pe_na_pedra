@@ -31,7 +31,7 @@ class EditProfileController {
         'phone': viewModel.formData['phone'],
         'birthDate': viewModel.formData['birthDate'],
         'address': viewModel.formData['address'],
-        'isAdm': globalState.profile?['isAdm'] ?? false, // mantém admin
+        'role': globalState.profile?['role'],
       };
 
       await globalState.setProfile(profileData);

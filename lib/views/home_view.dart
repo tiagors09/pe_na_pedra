@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pe_na_pedra/provider/global_state_provider.dart';
+import 'package:pe_na_pedra/utils/enums.dart';
 import 'package:pe_na_pedra/viewmodel/home_viewmodel.dart';
 
 class HomeView extends StatefulWidget {
@@ -23,8 +24,8 @@ class _HomeViewState extends State<HomeView> {
     super.didChangeDependencies();
     final globalState = GlobalStateProvider.of(context);
 
-    final bool isAdmin = globalState.profile?['isAdm'] ?? false;
-    _viewModel.isAdmin = isAdmin;
+    final String role = globalState.profile?['role'] ?? UserRoles.hikker.name;
+    _viewModel.role = role;
 
     // Garante que o índice não ultrapasse o número de páginas
     _viewModel.setCurrentIndex(_viewModel.currentIndex);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pe_na_pedra/utils/app_routes.dart';
 
 class AdmView extends StatelessWidget {
   const AdmView({super.key});
@@ -13,13 +14,17 @@ class AdmView extends StatelessWidget {
       ),
       _AdmButton(
         icon: Icons.calendar_today,
-        label: 'Trilha do Dia',
+        label: 'Calendário de trilhas',
         onTap: () {},
       ),
       _AdmButton(
         icon: Icons.group,
-        label: 'Usuários',
-        onTap: () {},
+        label: 'Trilheiros',
+        onTap: () {
+          Navigator.of(context).pushNamed(
+            AppRoutes.users,
+          );
+        },
       ),
       _AdmButton(
         icon: Icons.settings,

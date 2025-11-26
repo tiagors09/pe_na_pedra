@@ -1,6 +1,6 @@
 // lib/controllers/trails_controller.dart
 import 'dart:async';
-import 'package:pe_na_pedra/model/trails.dart';
+import 'package:pe_na_pedra/model/trail.dart';
 import 'package:pe_na_pedra/services/firebase_rest_service.dart';
 
 class TrailsController {
@@ -52,31 +52,5 @@ class TrailsController {
     }
 
     throw Exception("Formato inesperado em /trails: ${data.runtimeType}");
-  }
-
-  /// Streaming - basic SSE parser wrapper
-  Stream<List<Trail>> watchTrails({required String? idToken}) {
-    final ctrl = StreamController<List<Trail>>.broadcast();
-    _db.stream('trails', auth: idToken).listen((event) {
-      try {
-        // event has 'data' and 'path' keys
-        final data = event['data'];
-        if (data == null) {
-          ctrl.add([]);
-          return;
-        }
-        final map = Map<String, dynamic>.from(data);
-        final list = map.entries
-            .map(
-                (e) => Trail.fromMap(e.key, Map<String, dynamic>.from(e.value)))
-            .toList();
-        ctrl.add(list);
-      } catch (e) {
-        // ignore
-      }
-    }, onError: (e) {
-      ctrl.addError(e);
-    });
-    return ctrl.stream;
   }
 }
