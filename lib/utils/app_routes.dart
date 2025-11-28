@@ -4,6 +4,6 @@ abstract class AppRoutes {
   static const String editProfile = '/edit-profile';
   static const String users = '/users';
   static const String config = '/config';
-  static const String trailDay = '/trailDay';
-  static const String addRoutes = '/addRoutes';
+  static const String calendar = '/calendar';
+  static const String routes = '/routes';
 }

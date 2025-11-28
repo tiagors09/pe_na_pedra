@@ -9,13 +9,21 @@ class AdmView extends StatelessWidget {
     final buttons = [
       _AdmButton(
         icon: Icons.terrain,
-        label: 'Cadastrar Rotas',
-        onTap: () {},
+        label: 'Rotas',
+        onTap: () {
+          Navigator.of(context).pushNamed(
+            AppRoutes.routes,
+          );
+        },
       ),
       _AdmButton(
         icon: Icons.calendar_today,
         label: 'Calendário de trilhas',
-        onTap: () {},
+        onTap: () {
+          Navigator.of(context).pushNamed(
+            AppRoutes.calendar,
+          );
+        },
       ),
       _AdmButton(
         icon: Icons.group,
