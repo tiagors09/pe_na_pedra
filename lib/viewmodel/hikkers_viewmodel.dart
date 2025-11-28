@@ -21,22 +21,39 @@ class HikkersViewmodel with ChangeNotifier {
   //            PROMOVER PARA ADMIN
   // ======================================================
   Future<void> promoteToAdmin(String uid) async {
-    /*
     await _controller.updateRole(
-      idToken: globalState.idToken,
       uid: uid,
       newRole: UserRoles.adm.name,
-    ); */
+    );
   }
 
   // ======================================================
-  //           BANIR / REMOVER USUÁRIO
+  //        REMOVER PODERES DE ADMIN → TRILHEIRO
+  // ======================================================
+  Future<void> demoteAdmin(String uid) async {
+    await _controller.updateRole(
+      uid: uid,
+      newRole: UserRoles.hikker.name,
+    );
+  }
+
+  // ======================================================
+  //               BANIR USUÁRIO
   // ======================================================
   Future<void> banUser(String uid) async {
-    /*
-    await _controller.deleteHikker(
-      idToken: globalState.idToken,
+    await _controller.updateRole(
       uid: uid,
-    );*/
+      newRole: UserRoles.banned.name,
+    );
+  }
+
+  // ======================================================
+  //             DESBANIR USUÁRIO
+  // ======================================================
+  Future<void> unbanUser(String uid) async {
+    await _controller.updateRole(
+      uid: uid,
+      newRole: UserRoles.hikker.name,
+    );
   }
 }

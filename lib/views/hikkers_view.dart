@@ -59,7 +59,7 @@ class _HikkersViewState extends State<HikkersView> {
             return const Center(child: Text('Nenhum trilheiro cadastrado'));
           }
 
-          // Filtra pela busca
+          // -------- FILTRA BUSCA --------
           if (query.isNotEmpty) {
             hikkers = hikkers
                 .where((h) =>
@@ -67,7 +67,7 @@ class _HikkersViewState extends State<HikkersView> {
                 .toList();
           }
 
-          // ------------ ORDENAR LISTA ------------
+          // -------- ORDENAR LISTA --------
           hikkers.sort((a, b) {
             if (a.id == loggedUserId) return -1;
             if (b.id == loggedUserId) return 1;
@@ -78,13 +78,13 @@ class _HikkersViewState extends State<HikkersView> {
             return a.fullName.compareTo(b.fullName);
           });
 
-          // ------------ SEPARAR POR GRUPOS ------------
+          // -------- SEPARAR GRUPOS --------
           final adms = hikkers.where((h) => h.role == UserRoles.adm).toList();
           final users = hikkers.where((h) => h.role != UserRoles.adm).toList();
 
           return Column(
             children: [
-              // ---------------- BUSCA ----------------
+              // -------- BUSCA --------
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: TextField(
@@ -101,11 +101,10 @@ class _HikkersViewState extends State<HikkersView> {
                 ),
               ),
 
-              // ---------------- LISTA ----------------
+              // -------- LISTA --------
               Expanded(
                 child: ListView(
                   children: [
-                    // ---------- HEADER ADM ----------
                     if (adms.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.symmetric(
@@ -118,17 +117,8 @@ class _HikkersViewState extends State<HikkersView> {
                               .copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
-
-                    ...adms.map(
-                      (hikker) => _buildHikkerTile(
-                        context,
-                        hikker,
-                        loggedUserId,
-                        isAdminSection: true,
-                      ),
-                    ),
-
-                    // ---------- HEADER TRILHEIROS ----------
+                    ...adms
+                        .map((h) => _buildHikkerTile(context, h, loggedUserId)),
                     if (users.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.symmetric(
@@ -141,15 +131,8 @@ class _HikkersViewState extends State<HikkersView> {
                               .copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
-
-                    ...users.map(
-                      (hikker) => _buildHikkerTile(
-                        context,
-                        hikker,
-                        loggedUserId,
-                        isAdminSection: false,
-                      ),
-                    ),
+                    ...users
+                        .map((h) => _buildHikkerTile(context, h, loggedUserId)),
                   ],
                 ),
               ),
@@ -161,47 +144,72 @@ class _HikkersViewState extends State<HikkersView> {
   }
 
   // ====================================================
-  //               BUILDER DO TILE COM SWIPE
+  //               TILE DO HIKKER + SWIPE
   // ====================================================
   Widget _buildHikkerTile(
     BuildContext context,
     hikker,
-    String? loggedId, {
-    required bool isAdminSection,
-  }) {
+    String? loggedId,
+  ) {
     final bool isLogged = hikker.id == loggedId;
     final bool isAdmin = hikker.role == UserRoles.adm;
+    final bool isBanned = hikker.role == UserRoles.banned;
+
+    // ================================
+    //        LÓGICA DO SWIPE
+    // ================================
+    final bool allowLeft = !isLogged; // esquerda = banir / desbanir
+    final bool allowRight =
+        !isLogged && !isBanned; // direita = ADM / remover ADM
 
     return Dismissible(
       key: ValueKey(hikker.id),
-      direction: isLogged ? DismissDirection.none : DismissDirection.horizontal,
-      background: Container(
-        color: Colors.blue,
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: 20),
-        child: const Icon(Icons.arrow_upward, color: Colors.white),
-      ),
-      secondaryBackground: Container(
-        color: Colors.red,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        child: const Icon(Icons.block, color: Colors.white),
-      ),
+
+      direction: allowLeft && allowRight
+          ? DismissDirection.horizontal
+          : allowLeft
+              ? DismissDirection.startToEnd // apenas esquerda
+              : allowRight
+                  ? DismissDirection.endToStart // apenas direita
+                  : DismissDirection.none,
+
+      // ================================
+      //   BACKGROUND ESQUERDA = BANIR / DESBANIR
+      // ================================
+      background: allowLeft
+          ? Container(
+              color: isBanned ? Colors.green : Colors.red,
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 20),
+              child: Icon(
+                isBanned ? Icons.undo : Icons.block,
+                color: Colors.white,
+              ),
+            )
+          : null,
+
+      // ================================
+      //   BACKGROUND DIREITA = ADM / REMOVER ADM
+      // ================================
+      secondaryBackground: allowRight
+          ? Container(
+              color: isAdmin ? Colors.orange : Colors.blue,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 20),
+              child: Icon(
+                isAdmin ? Icons.remove_moderator : Icons.arrow_upward,
+                color: Colors.white,
+              ),
+            )
+          : null,
+
       confirmDismiss: (direction) async {
-        if (isLogged) return Future.value(false);
-
-        if (direction == DismissDirection.startToEnd) {
-          await _viewModel.promoteToAdmin(hikker.id);
-        } else {
-          await _viewModel.banUser(hikker.id);
-        }
-
-        setState(() {});
-        return true;
+        return _handleSwipe(direction, hikker);
       },
+
       child: Container(
         decoration: BoxDecoration(
-          color: isLogged ? Colors.blue.withAlpha(15) : null,
+          color: isLogged ? Colors.blue.withAlpha(30) : null,
           border: isLogged
               ? Border(
                   left: BorderSide(
@@ -213,30 +221,46 @@ class _HikkersViewState extends State<HikkersView> {
         ),
         child: ListTile(
           leading: const CircleAvatar(
-            backgroundImage: AssetImage(
-              'assets/images/avatar_placeholder_large.png',
-            ),
+            backgroundImage:
+                AssetImage('assets/images/avatar_placeholder_large.png'),
             radius: 24,
           ),
           title: Text(
             hikker.fullName,
             style: TextStyle(
-                fontWeight: isLogged ? FontWeight.bold : FontWeight.normal),
+              fontWeight: isLogged ? FontWeight.bold : FontWeight.normal,
+            ),
           ),
           subtitle: Text(hikker.address),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                isAdmin ? Icons.star : Icons.person,
-                color: isAdmin ? Colors.orange : Colors.grey,
+                isBanned
+                    ? Icons.block
+                    : isAdmin
+                        ? Icons.star
+                        : Icons.person,
+                color: isBanned
+                    ? Colors.red
+                    : isAdmin
+                        ? Colors.orange
+                        : Colors.grey,
               ),
               const SizedBox(width: 4),
               Text(
-                isAdmin ? "ADM" : "TRILHEIRO",
+                isBanned
+                    ? "BANIDO"
+                    : isAdmin
+                        ? "ADM"
+                        : "TRILHEIRO",
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: isAdmin ? Colors.orange : Colors.grey[700],
+                  color: isBanned
+                      ? Colors.red
+                      : isAdmin
+                          ? Colors.orange
+                          : Colors.grey[700],
                 ),
               ),
             ],
@@ -244,5 +268,179 @@ class _HikkersViewState extends State<HikkersView> {
         ),
       ),
     );
+  }
+
+  Future<bool> _handleSwipe(DismissDirection direction, hikker) async {
+    final bool isAdmin = hikker.role == UserRoles.adm;
+    final bool isBanned = hikker.role == UserRoles.banned;
+
+    // ================================
+    //     ESQUERDA = banir/desbanir
+    // ================================
+    if (direction == DismissDirection.startToEnd) {
+      final bool confirm = await _showConfirmDialog(
+        context,
+        title: isBanned ? "Desbanir usuário" : "Banir usuário",
+        message: isBanned
+            ? "Deseja desbanir ${hikker.fullName}?"
+            : "Deseja banir ${hikker.fullName}?",
+        confirmText: isBanned ? "Desbanir" : "Banir",
+      );
+
+      if (!confirm) return false;
+
+      if (isBanned) {
+        await _viewModel.unbanUser(hikker.id);
+      } else {
+        await _viewModel.banUser(hikker.id);
+      }
+
+      setState(() {});
+      return true;
+    }
+
+    // ================================
+    //     DIREITA = ADM / remover ADM
+    // ================================
+    if (direction == DismissDirection.endToStart) {
+      final bool confirm = await _showConfirmDialog(
+        context,
+        title: isAdmin ? "Remover ADM" : "Promover para ADM",
+        message: isAdmin
+            ? "Deseja remover privilégio de ADM de ${hikker.fullName}?"
+            : "Deseja promover ${hikker.fullName} a administrador?",
+        confirmText: isAdmin ? "Remover" : "Promover",
+      );
+
+      if (!confirm) return false;
+
+      if (isAdmin) {
+        await _viewModel.demoteAdmin(hikker.id);
+      } else {
+        await _viewModel.promoteToAdmin(hikker.id);
+      }
+
+      setState(() {});
+      return true;
+    }
+
+    return false;
+  }
+
+// ====================================================
+//   AÇÕES DO SWIPE (todos os estados) COM DIÁLOGO
+// ====================================================
+  Future<bool> _onSwipeAction(
+      DismissDirection direction, hikker, bool isLogged) async {
+    if (isLogged) return false;
+
+    final bool isLeft = direction == DismissDirection.startToEnd;
+
+    final bool isAdmin = hikker.role == UserRoles.adm;
+    final bool isBanned = hikker.role == UserRoles.banned;
+
+    String title = "";
+    String msg = "";
+    String confirmTxt = "";
+
+    // ---------- LADO ESQUERDO (PROMOVER / DESBANIR) ----------
+    if (isLeft && isBanned) {
+      title = "Desbanir trilheiro";
+      msg = "Deseja realmente desbanir ${hikker.fullName}?";
+      confirmTxt = "Desbanir";
+    } else if (isLeft && !isBanned) {
+      title = "Promover para ADM";
+      msg = "Deseja realmente promover ${hikker.fullName} a administrador?";
+      confirmTxt = "Promover";
+    }
+
+    // ---------- LADO DIREITO (BANIR / REMOVER ADM) ----------
+    if (!isLeft && isAdmin) {
+      title = "Remover privilégio";
+      msg = "Deseja remover poderes de ADM de ${hikker.fullName}?";
+      confirmTxt = "Remover";
+    } else if (!isLeft && !isAdmin) {
+      title = "Banir trilheiro";
+      msg = "Tem certeza que deseja banir ${hikker.fullName}?";
+      confirmTxt = "Banir";
+    }
+
+    final bool ok = await _showConfirmDialog(
+      context,
+      title: title,
+      message: msg,
+      confirmText: confirmTxt,
+    );
+
+    if (!ok) return false;
+
+    // ---------- EXECUÇÃO ----------
+    if (isLeft && isBanned) {
+      await _viewModel.unbanUser(hikker.id);
+    } else if (isLeft && !isBanned) {
+      await _viewModel.promoteToAdmin(hikker.id);
+    } else if (!isLeft && isAdmin) {
+      await _viewModel.demoteAdmin(hikker.id);
+    } else {
+      await _viewModel.banUser(hikker.id);
+    }
+
+    setState(() {});
+    return true;
+  }
+
+  // ====================================================
+  //              DIÁLOGO DE CONFIRMAÇÃO
+  // ====================================================
+  Future<bool> _showConfirmDialog(
+    BuildContext context, {
+    required String title,
+    required String message,
+    required String confirmText,
+  }) async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+              ),
+              title: Text(title),
+              content: Text(message),
+              actionsPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              actions: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side:
+                              const BorderSide(color: Colors.black, width: 1.5),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                          ),
+                        ),
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text(
+                          "Cancelar",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: ElevatedButton(
+                        child: Text(confirmText),
+                        onPressed: () => Navigator.of(context).pop(true),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
   }
 }

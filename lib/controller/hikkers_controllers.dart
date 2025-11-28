@@ -39,4 +39,14 @@ class HikkersControllers {
 
     throw Exception("Formato inesperado em /trails: ${data.runtimeType}");
   }
+
+  Future<void> updateRole({
+    required String uid,
+    required String newRole,
+  }) async {
+    await _db.patch(
+      "hikkers/$uid",
+      {"role": newRole},
+    );
+  }
 }

@@ -64,10 +64,13 @@ class _AdmButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Theme.of(context).colorScheme.surface,
-      borderRadius: BorderRadius.circular(16),
-      elevation: 3,
+    return Card(
+      color: Colors.transparent, // remove background
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Colors.black, width: 1), // outline preta
+      ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: onTap,
@@ -81,7 +84,7 @@ class _AdmButton extends StatelessWidget {
                 Icon(
                   icon,
                   size: 40,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Colors.black,
                 ),
                 const SizedBox(height: 12),
                 Text(

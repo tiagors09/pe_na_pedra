@@ -1,4 +1,1 @@
-enum UserRoles {
-  adm,
-  hikker,
-}
+enum UserRoles { adm, hikker, banned }
