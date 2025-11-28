@@ -17,7 +17,7 @@ class HikkersControllers {
           .map(
             (e) => Hikker.fromMap(
               e.key.toString(), // usa índice como ID
-              Map<String, dynamic>.from(e.value),
+              Map<String, String>.from(e.value),
             ),
           )
           .toList();
