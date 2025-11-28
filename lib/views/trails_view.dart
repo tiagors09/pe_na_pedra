@@ -35,41 +35,36 @@ class _TrailsViewState extends State<TrailsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Trilhas"),
-      ),
-      body: FutureBuilder<List<Trail>>(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return FutureBuilder<List<Trail>>(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                "Erro ao carregar trilhas:\n${snapshot.error}",
-                textAlign: TextAlign.center,
-              ),
-            );
-          }
-
-          final trails = snapshot.data ?? [];
-
-          if (trails.isEmpty) {
-            return const Center(
-              child: Text("Nenhuma trilha cadastrada."),
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: trails.length,
-            itemBuilder: (_, i) => _buildTrailCard(trails[i]),
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              "Erro ao carregar trilhas:\n${snapshot.error}",
+              textAlign: TextAlign.center,
+            ),
           );
-        },
-      ),
+        }
+
+        final trails = snapshot.data ?? [];
+
+        if (trails.isEmpty) {
+          return const Center(
+            child: Text("Nenhuma trilha cadastrada."),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: trails.length,
+          itemBuilder: (_, i) => _buildTrailCard(trails[i]),
+        );
+      },
     );
   }
 

@@ -33,23 +33,18 @@ class AdmView extends StatelessWidget {
       ),
     ];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Painel Administrativo"),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: GridView.builder(
-            itemCount: buttons.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 1, // evita overflow vertical
-            ),
-            itemBuilder: (context, i) => buttons[i],
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: GridView.builder(
+          itemCount: buttons.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 1, // evita overflow vertical
           ),
+          itemBuilder: (context, i) => buttons[i],
         ),
       ),
     );

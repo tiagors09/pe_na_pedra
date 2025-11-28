@@ -25,7 +25,7 @@ class Hikker {
       address: data['address'] ?? '',
       birthDate: data['birthDate'] ?? '',
       phone: data['phone'] ?? '',
-      role: data['role'] ?? false,
+      role: data['role'] ?? UserRoles.hikker.name,
     );
   }
 

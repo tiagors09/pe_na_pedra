@@ -20,6 +20,7 @@ class LoginViewModel extends ChangeNotifier with FormValidator {
 
   void toggleRegister() {
     showRegister = !showRegister;
+    passwordController.clear();
     notifyListeners();
   }
 

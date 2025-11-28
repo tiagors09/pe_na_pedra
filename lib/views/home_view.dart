@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pe_na_pedra/provider/global_state_provider.dart';
 import 'package:pe_na_pedra/utils/enums.dart';
 import 'package:pe_na_pedra/viewmodel/home_viewmodel.dart';
+import 'package:pe_na_pedra/views/profile_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -27,29 +28,37 @@ class _HomeViewState extends State<HomeView> {
     final String role = globalState.profile?['role'] ?? UserRoles.hikker.name;
     _viewModel.role = role;
 
-    // Garante que o índice não ultrapasse o número de páginas
     _viewModel.setCurrentIndex(_viewModel.currentIndex);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListenableBuilder(
-        listenable: _viewModel,
-        builder: (ctx, _) => IndexedStack(
+    return ListenableBuilder(
+      listenable: _viewModel,
+      builder: (ctx, _) => Scaffold(
+        appBar: AppBar(
+          title: Text(_viewModel.title),
+        ),
+        drawer: const Drawer(
+          child: ProfileView(),
+        ),
+        body: IndexedStack(
           index: _viewModel.currentIndex,
           children: _viewModel.baseViews,
         ),
-      ),
-      bottomNavigationBar: ListenableBuilder(
-        listenable: _viewModel,
-        builder: (ctx, _) => NavigationBar(
-          selectedIndex: _viewModel.currentIndex,
-          onDestinationSelected: (index) {
-            _viewModel.setCurrentIndex(index);
-          },
-          destinations: _viewModel.destinations,
-        ),
+        bottomNavigationBar: _viewModel.isAdmin
+            ? NavigationBar(
+                selectedIndex: _viewModel.currentIndex,
+                onDestinationSelected: _viewModel.setCurrentIndex,
+                destinations: _viewModel.destinations,
+              )
+            : const BottomAppBar(
+                color: Color(0xFFF5D204),
+                child: Icon(
+                  Icons.map,
+                  color: Color(0xFF745F04),
+                ),
+              ),
       ),
     );
   }

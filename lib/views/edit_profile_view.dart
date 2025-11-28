@@ -68,20 +68,22 @@ class _EditProfileViewState extends State<EditProfileView> {
       listenable: _viewModel,
       builder: (context, child) {
         return Scaffold(
-          bottomNavigationBar: Container(
-            height: MediaQuery.of(context).size.height * 0.055,
-            margin: const EdgeInsets.all(16),
-            child: ElevatedButton(
-              onPressed: _viewModel.isLoading
-                  ? null
-                  : () => _viewModel.submit(
-                        context,
-                        globalState,
-                        args.mode,
-                      ),
-              child: _viewModel.isLoading
-                  ? const CircularProgressIndicator()
-                  : const Text('Salvar'),
+          bottomNavigationBar: SafeArea(
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.055,
+              margin: const EdgeInsets.all(16),
+              child: ElevatedButton(
+                onPressed: _viewModel.isLoading
+                    ? null
+                    : () => _viewModel.submit(
+                          context,
+                          globalState,
+                          args.mode,
+                        ),
+                child: _viewModel.isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text('Salvar'),
+              ),
             ),
           ),
           appBar: AppBar(
