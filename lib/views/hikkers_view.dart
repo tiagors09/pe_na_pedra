@@ -327,68 +327,6 @@ class _HikkersViewState extends State<HikkersView> {
     return false;
   }
 
-// ====================================================
-//   AÇÕES DO SWIPE (todos os estados) COM DIÁLOGO
-// ====================================================
-  Future<bool> _onSwipeAction(
-      DismissDirection direction, hikker, bool isLogged) async {
-    if (isLogged) return false;
-
-    final bool isLeft = direction == DismissDirection.startToEnd;
-
-    final bool isAdmin = hikker.role == UserRoles.adm;
-    final bool isBanned = hikker.role == UserRoles.banned;
-
-    String title = "";
-    String msg = "";
-    String confirmTxt = "";
-
-    // ---------- LADO ESQUERDO (PROMOVER / DESBANIR) ----------
-    if (isLeft && isBanned) {
-      title = "Desbanir trilheiro";
-      msg = "Deseja realmente desbanir ${hikker.fullName}?";
-      confirmTxt = "Desbanir";
-    } else if (isLeft && !isBanned) {
-      title = "Promover para ADM";
-      msg = "Deseja realmente promover ${hikker.fullName} a administrador?";
-      confirmTxt = "Promover";
-    }
-
-    // ---------- LADO DIREITO (BANIR / REMOVER ADM) ----------
-    if (!isLeft && isAdmin) {
-      title = "Remover privilégio";
-      msg = "Deseja remover poderes de ADM de ${hikker.fullName}?";
-      confirmTxt = "Remover";
-    } else if (!isLeft && !isAdmin) {
-      title = "Banir trilheiro";
-      msg = "Tem certeza que deseja banir ${hikker.fullName}?";
-      confirmTxt = "Banir";
-    }
-
-    final bool ok = await _showConfirmDialog(
-      context,
-      title: title,
-      message: msg,
-      confirmText: confirmTxt,
-    );
-
-    if (!ok) return false;
-
-    // ---------- EXECUÇÃO ----------
-    if (isLeft && isBanned) {
-      await _viewModel.unbanUser(hikker.id);
-    } else if (isLeft && !isBanned) {
-      await _viewModel.promoteToAdmin(hikker.id);
-    } else if (!isLeft && isAdmin) {
-      await _viewModel.demoteAdmin(hikker.id);
-    } else {
-      await _viewModel.banUser(hikker.id);
-    }
-
-    setState(() {});
-    return true;
-  }
-
   // ====================================================
   //              DIÁLOGO DE CONFIRMAÇÃO
   // ====================================================
