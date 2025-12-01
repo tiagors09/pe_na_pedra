@@ -1,3 +1,6 @@
+import 'package:pe_na_pedra/model/route_point.dart';
+import 'package:pe_na_pedra/utils/enums.dart';
+
 mixin FormValidator {
   String? validateEmailField(String? value) {
     if (value == null || value.isEmpty) return 'O e-mail é obrigatório';
@@ -41,5 +44,21 @@ mixin FormValidator {
     String? value,
   ) {
     formData['confirmPassword'] = value ?? '';
+  }
+
+  String? validateNameField(String? value) {
+    if (value == null || value.isEmpty) return 'O nome da trilha é obrigatório';
+    if (value.length < 3) return 'O nome deve ter ao menos 3 caracteres';
+    return null;
+  }
+
+  String? validateDifficultyField(Difficulty? value) {
+    if (value == null) return 'Selecione a dificuldade';
+    return null;
+  }
+
+  String? validateRoutePoints(List<RoutePoint>? points) {
+    if (points == null || points.isEmpty) return 'É necessário gravar a rota';
+    return null;
   }
 }
