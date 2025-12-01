@@ -2,58 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pe_na_pedra/controller/profile_controller.dart';
 
-class ProfileViewModel extends ChangeNotifier {
+class ProfileViewModel {
   final _controller = ProfileController();
 
-  Map<String, dynamic> _profileData = {};
-  bool _isLoading = false;
-  String? _errorMessage;
-  bool _isProfileCached = false;
+  // Notifiers
+  final profileData = ValueNotifier<Map<String, dynamic>>({});
+  final isLoading = ValueNotifier<bool>(false);
+  final errorMessage = ValueNotifier<String?>(null);
 
-  Map<String, dynamic> get profileData => _profileData;
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
+  bool _initialized = false;
 
   Future<void> loadProfile(String userId, String idToken) async {
-    if (_isProfileCached) return;
+    if (_initialized) return;
 
-    _setLoading(true);
-    _errorMessage = null;
-    notifyListeners();
+    isLoading.value = true;
+    errorMessage.value = null;
 
     try {
       final data = await _controller.fetchProfile(userId, idToken);
 
-      _profileData = {
+      profileData.value = {
         'id': userId,
         ...(data ?? {}),
       };
 
-      _isProfileCached = true;
+      _initialized = true;
     } catch (e) {
-      _errorMessage = e.toString().replaceFirst('Exception: ', '');
+      errorMessage.value = e.toString().replaceFirst('Exception: ', '');
     } finally {
-      _setLoading(false);
-      notifyListeners();
+      isLoading.value = false;
     }
   }
 
   void invalidateCache() {
-    _isProfileCached = false;
-    notifyListeners();
+    _initialized = false;
   }
 
-  String formatBirthDate(String? rawDate) {
-    if (rawDate == null || rawDate.isEmpty) return '';
+  String formatBirthDate(String? raw) {
+    if (raw == null || raw.isEmpty) return '';
     try {
-      final date = DateTime.parse(rawDate);
+      final date = DateTime.parse(raw);
       return DateFormat('dd/MM/yyyy').format(date);
     } catch (_) {
-      return rawDate;
+      return raw;
     }
-  }
-
-  void _setLoading(bool value) {
-    _isLoading = value;
   }
 }

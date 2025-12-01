@@ -16,6 +16,7 @@ class HomeViewModel extends ChangeNotifier {
 
   void changeTitle(String label) {
     title = label;
+    notifyListeners();
   }
 
   List<Widget> get baseViews {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pe_na_pedra/utils/app_routes.dart';
 import 'package:pe_na_pedra/utils/dialog_launcher.dart';
 import 'package:pe_na_pedra/viewmodel/routes_viewmodel.dart';
 import 'package:pe_na_pedra/views/route_detail_view.dart';
@@ -28,7 +29,11 @@ class _RoutesViewState extends State<RoutesView> {
         title: const Text('Rotas'),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed(
+                AppRoutes.routeForm,
+              );
+            },
             icon: const Icon(Icons.add),
           ),
         ],
@@ -62,10 +67,18 @@ class _RoutesViewState extends State<RoutesView> {
                     route.id,
                   ),
                   child: ListTile(
-                    title: Text(route.name),
-                    subtitle: Text(route.description),
-                    leading: const Icon(Icons.terrain),
-                    trailing: const Icon(Icons.chevron_right),
+                    title: Text(
+                      route.name,
+                    ),
+                    subtitle: Text(
+                      route.description,
+                    ),
+                    leading: const Icon(
+                      Icons.terrain,
+                    ),
+                    trailing: const Icon(
+                      Icons.chevron_right,
+                    ),
                     onTap: () {
                       Navigator.push(
                         context,

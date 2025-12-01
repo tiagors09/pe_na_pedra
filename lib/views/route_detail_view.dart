@@ -13,8 +13,14 @@ class RouteDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<LatLng> latLngPoints =
-        route.points.map((p) => LatLng(p.lat, p.lng)).toList();
+    final List<LatLng> latLngPoints = route.points
+        .map(
+          (p) => LatLng(
+            p.lat,
+            p.lng,
+          ),
+        )
+        .toList();
 
     return Scaffold(
       appBar: AppBar(

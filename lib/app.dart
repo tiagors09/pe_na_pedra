@@ -7,6 +7,7 @@ import 'package:pe_na_pedra/views/home_view.dart';
 import 'package:pe_na_pedra/views/login_view.dart';
 import 'package:pe_na_pedra/views/hikkers_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:pe_na_pedra/views/route_form_view.dart';
 import 'package:pe_na_pedra/views/routes_view.dart';
 
 class App extends StatelessWidget {
@@ -25,6 +26,7 @@ class App extends StatelessWidget {
         AppRoutes.users: (context) => const HikkersView(),
         AppRoutes.calendar: (context) => const CalendarView(),
         AppRoutes.routes: (context) => const RoutesView(),
+        AppRoutes.routeForm: (context) => const RouteFormView(),
       },
       locale: const Locale('pt', 'BR'),
       supportedLocales: const [

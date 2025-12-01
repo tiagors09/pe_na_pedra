@@ -22,12 +22,13 @@ class EditProfileViewModel extends ChangeNotifier with FormValidator {
     'confirmPassword': '',
   };
 
-  bool isLoading = false;
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
+  final ValueNotifier<bool> _isLoading = ValueNotifier(false);
+  final ValueNotifier<bool> _obscurePassword = ValueNotifier(true);
+  final ValueNotifier<bool> _obscureConfirmPassword = ValueNotifier(true);
 
-  bool get obscurePassword => _obscurePassword;
-  bool get obscureConfirmPassword => _obscureConfirmPassword;
+  ValueNotifier<bool> get isLoading => _isLoading;
+  ValueNotifier<bool> get obscurePassword => _obscurePassword;
+  ValueNotifier<bool> get obscureConfirmPassword => _obscureConfirmPassword;
 
   /// Apenas data precisa de controller
   final TextEditingController birthDateController = TextEditingController();
@@ -60,12 +61,12 @@ class EditProfileViewModel extends ChangeNotifier with FormValidator {
   //  VISIBILIDADE SENHA
   // ---------------------------------------------------------
   void toggleObscurePassword() {
-    _obscurePassword = !_obscurePassword;
+    _obscurePassword.value = !_obscurePassword.value;
     notifyListeners();
   }
 
   void toggleObscureConfirmPassword() {
-    _obscureConfirmPassword = !_obscureConfirmPassword;
+    _obscureConfirmPassword.value = !_obscureConfirmPassword.value;
     notifyListeners();
   }
 
@@ -74,11 +75,21 @@ class EditProfileViewModel extends ChangeNotifier with FormValidator {
   // ---------------------------------------------------------
   void onFullNameSaved(String? value) =>
       formData['fullName'] = value?.trim() ?? '';
+
   void onPhoneSaved(String? value) => formData['phone'] = value?.trim() ?? '';
+
   void onAddressSaved(String? value) =>
       formData['address'] = value?.trim() ?? '';
-  void onEmailSaved(String? value) => saveEmail(formData, value);
-  void onPasswordSaved(String? value) => savePassword(formData, value);
+
+  void onEmailSaved(String? value) => saveEmail(
+        formData,
+        value,
+      );
+
+  void onPasswordSaved(String? value) => savePassword(
+        formData,
+        value,
+      );
 
   void onConfirmPasswordSaved(String? value) {
     formData['confirmPassword'] = value ?? '';
@@ -139,7 +150,7 @@ class EditProfileViewModel extends ChangeNotifier with FormValidator {
   //  LOADING
   // ---------------------------------------------------------
   void setLoading(bool value) {
-    isLoading = value;
+    _isLoading.value = value;
     notifyListeners();
   }
 

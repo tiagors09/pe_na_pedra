@@ -34,15 +34,28 @@ class LoginViewModel extends ChangeNotifier with FormValidator {
     notifyListeners();
   }
 
-  void onEmailSaved(String? v) => saveEmail(formData, v);
-  void onPasswordSaved(String? v) => savePassword(formData, v);
-  void onConfirmPasswordSaved(String? v) => saveConfirmPassword(formData, v);
+  void onEmailSaved(String? v) => saveEmail(
+        formData,
+        v,
+      );
+
+  void onPasswordSaved(String? v) => savePassword(
+        formData,
+        v,
+      );
+
+  void onConfirmPasswordSaved(String? v) => saveConfirmPassword(
+        formData,
+        v,
+      );
 
   String? checkConfirmPassword(String? value) {
     if (!showRegister) return null;
+
     if (value != passwordController.text) {
       return "As senhas não coincidem";
     }
+
     return validateConfirmPasswordField(value);
   }
 

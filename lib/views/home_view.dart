@@ -33,33 +33,33 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: _viewModel,
-      builder: (ctx, _) => Scaffold(
-        appBar: AppBar(
-          title: Text(_viewModel.title),
-        ),
-        drawer: const Drawer(
-          child: ProfileView(),
-        ),
-        body: IndexedStack(
-          index: _viewModel.currentIndex,
-          children: _viewModel.baseViews,
-        ),
-        bottomNavigationBar: _viewModel.isAdmin
-            ? NavigationBar(
-                selectedIndex: _viewModel.currentIndex,
-                onDestinationSelected: _viewModel.setCurrentIndex,
-                destinations: _viewModel.destinations,
-              )
-            : const BottomAppBar(
-                color: Color(0xFFF5D204),
-                child: Icon(
-                  Icons.map,
-                  color: Color(0xFF745F04),
-                ),
-              ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_viewModel.title),
       ),
+      drawer: const Drawer(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+        ),
+        child: ProfileView(),
+      ),
+      body: IndexedStack(
+        index: _viewModel.currentIndex,
+        children: _viewModel.baseViews,
+      ),
+      bottomNavigationBar: _viewModel.isAdmin
+          ? NavigationBar(
+              selectedIndex: _viewModel.currentIndex,
+              onDestinationSelected: _viewModel.setCurrentIndex,
+              destinations: _viewModel.destinations,
+            )
+          : const BottomAppBar(
+              color: Color(0xFFF5D204),
+              child: Icon(
+                Icons.map,
+                color: Color(0xFF745F04),
+              ),
+            ),
     );
   }
 

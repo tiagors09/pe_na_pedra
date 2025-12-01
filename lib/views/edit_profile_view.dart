@@ -64,171 +64,180 @@ class _EditProfileViewState extends State<EditProfileView> {
     final isCompletingProfile = args.mode == EditProfileMode.completeProfile;
     final globalState = GlobalStateProvider.of(context);
 
-    return ListenableBuilder(
-      listenable: _viewModel,
-      builder: (context, child) {
-        return Scaffold(
-          bottomNavigationBar: SafeArea(
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.055,
-              margin: const EdgeInsets.all(16),
-              child: ElevatedButton(
-                onPressed: _viewModel.isLoading
+    return Scaffold(
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.055,
+          margin: const EdgeInsets.all(16),
+          child: ValueListenableBuilder(
+            valueListenable: _viewModel.isLoading,
+            builder: (context, isLoading, _) {
+              return ElevatedButton(
+                onPressed: isLoading
                     ? null
                     : () => _viewModel.submit(
                           context,
                           globalState,
                           args.mode,
                         ),
-                child: _viewModel.isLoading
+                child: isLoading
                     ? const CircularProgressIndicator()
                     : const Text('Salvar'),
+              );
+            },
+          ),
+        ),
+      ),
+      appBar: AppBar(
+        title: Text(
+          isCompletingProfile ? 'Completar Perfil' : 'Editar Perfil',
+        ),
+      ),
+      body: Form(
+        key: _viewModel.form,
+        child: ListView(
+          padding: const EdgeInsets.all(24),
+          children: [
+            Text(
+              isCompletingProfile
+                  ? 'Finalize seu cadastro preenchendo as informações abaixo.'
+                  : 'Atualize suas informações de perfil.',
+              style: const TextStyle(fontSize: 16),
+            ),
+
+            // -----------------------------
+            // Nome
+            // -----------------------------
+            Container(
+              margin: const EdgeInsets.only(top: 24),
+              child: TextFormField(
+                decoration: const InputDecoration(labelText: 'Nome completo'),
+                initialValue: _viewModel.formData['fullName'],
+                onSaved: _viewModel.onFullNameSaved,
+                validator: _viewModel.validateName,
               ),
             ),
-          ),
-          appBar: AppBar(
-            title: Text(
-              isCompletingProfile ? 'Completar Perfil' : 'Editar Perfil',
+
+            // -----------------------------
+            // Telefone
+            // -----------------------------
+            Container(
+              margin: const EdgeInsets.only(top: 16),
+              child: TextFormField(
+                decoration: const InputDecoration(labelText: 'Telefone'),
+                keyboardType: TextInputType.phone,
+                initialValue: _viewModel.formData['phone'],
+                onSaved: _viewModel.onPhoneSaved,
+                validator: _viewModel.validatePhone,
+              ),
             ),
-          ),
-          body: Form(
-            key: _viewModel.form,
-            child: ListView(
-              padding: const EdgeInsets.all(24),
-              children: [
-                Text(
-                  isCompletingProfile
-                      ? 'Finalize seu cadastro preenchendo as informações abaixo.'
-                      : 'Atualize suas informações de perfil.',
-                  style: const TextStyle(fontSize: 16),
-                ),
 
-                // -----------------------------
-                // Nome
-                // -----------------------------
-                Container(
-                  margin: const EdgeInsets.only(top: 24),
-                  child: TextFormField(
-                    decoration:
-                        const InputDecoration(labelText: 'Nome completo'),
-                    initialValue: _viewModel.formData['fullName'],
-                    onSaved: _viewModel.onFullNameSaved,
-                    validator: _viewModel.validateName,
+            // -----------------------------
+            // Data de nascimento
+            // -----------------------------
+            Container(
+              margin: const EdgeInsets.only(top: 16),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Data de Nascimento (DD/MM/AAAA)',
+                  hintText: 'Ex: 01/01/2000',
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.calendar_today),
+                    onPressed: () => _viewModel.selectBirthDate(context),
                   ),
                 ),
+                readOnly: true,
+                controller: _viewModel.birthDateController,
+              ),
+            ),
 
-                // -----------------------------
-                // Telefone
-                // -----------------------------
-                Container(
-                  margin: const EdgeInsets.only(top: 16),
-                  child: TextFormField(
-                    decoration: const InputDecoration(labelText: 'Telefone'),
-                    keyboardType: TextInputType.phone,
-                    initialValue: _viewModel.formData['phone'],
-                    onSaved: _viewModel.onPhoneSaved,
-                    validator: _viewModel.validatePhone,
-                  ),
+            // -----------------------------
+            // Endereço
+            // -----------------------------
+            Container(
+              margin: const EdgeInsets.only(top: 16),
+              child: TextFormField(
+                decoration: const InputDecoration(labelText: 'Endereço'),
+                initialValue: _viewModel.formData['address'],
+                onSaved: _viewModel.onAddressSaved,
+              ),
+            ),
+
+            // ====================================================
+            // CAMPOS DE LOGIN — APENAS PARA EDITAR PERFIL
+            // ====================================================
+            if (!isCompletingProfile) ...[
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                child: TextFormField(
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  keyboardType: TextInputType.emailAddress,
+                  initialValue: _viewModel.formData['email'],
+                  onSaved: _viewModel.onEmailSaved,
+                  validator: _viewModel.validateEmailField,
                 ),
+              ),
 
-                // -----------------------------
-                // Data de nascimento
-                // -----------------------------
-                Container(
-                  margin: const EdgeInsets.only(top: 16),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Data de Nascimento (DD/MM/AAAA)',
-                      hintText: 'Ex: 01/01/2000',
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.calendar_today),
-                        onPressed: () => _viewModel.selectBirthDate(context),
-                      ),
-                    ),
-                    readOnly: true,
-                    controller: _viewModel.birthDateController,
-                  ),
-                ),
-
-                // -----------------------------
-                // Endereço
-                // -----------------------------
-                Container(
-                  margin: const EdgeInsets.only(top: 16),
-                  child: TextFormField(
-                    decoration: const InputDecoration(labelText: 'Endereço'),
-                    initialValue: _viewModel.formData['address'],
-                    onSaved: _viewModel.onAddressSaved,
-                  ),
-                ),
-
-                // ====================================================
-                // CAMPOS DE LOGIN — APENAS PARA EDITAR PERFIL
-                // ====================================================
-                if (!isCompletingProfile) ...[
-                  Container(
-                    margin: const EdgeInsets.only(top: 16),
-                    child: TextFormField(
-                      decoration: const InputDecoration(labelText: 'Email'),
-                      keyboardType: TextInputType.emailAddress,
-                      initialValue: _viewModel.formData['email'],
-                      onSaved: _viewModel.onEmailSaved,
-                      validator: _viewModel.validateEmailField,
-                    ),
-                  ),
-
-                  // senha
-                  Container(
-                    margin: const EdgeInsets.only(top: 16),
-                    child: TextFormField(
+              // senha
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                child: ValueListenableBuilder(
+                  valueListenable: _viewModel.obscurePassword,
+                  builder: (context, obscurePassword, child) {
+                    return TextFormField(
                       decoration: InputDecoration(
                         labelText: 'Senha',
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _viewModel.obscurePassword
+                            obscurePassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                           ),
                           onPressed: _viewModel.toggleObscurePassword,
                         ),
                       ),
-                      obscureText: _viewModel.obscurePassword,
+                      obscureText: obscurePassword,
                       onSaved: _viewModel.onPasswordSaved,
                       validator: (value) => value!.isNotEmpty
                           ? _viewModel.validatePasswordField(value)
                           : null,
-                    ),
-                  ),
+                    );
+                  },
+                ),
+              ),
 
-                  // confirmar senha
-                  Container(
-                    margin: const EdgeInsets.only(top: 16, bottom: 24),
-                    child: TextFormField(
+              // confirmar senha
+              Container(
+                margin: const EdgeInsets.only(top: 16, bottom: 24),
+                child: ValueListenableBuilder(
+                  valueListenable: _viewModel.obscureConfirmPassword,
+                  builder: (context, obscureConfirmPassword, child) {
+                    return TextFormField(
                       decoration: InputDecoration(
                         labelText: 'Confirmar Senha',
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _viewModel.obscureConfirmPassword
+                            obscureConfirmPassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                           ),
                           onPressed: _viewModel.toggleObscureConfirmPassword,
                         ),
                       ),
-                      obscureText: _viewModel.obscureConfirmPassword,
+                      obscureText: obscureConfirmPassword,
                       onSaved: _viewModel.onConfirmPasswordSaved,
                       validator: (value) =>
                           _viewModel.formData['password']?.isNotEmpty == true
                               ? _viewModel.validateConfirmPasswordField(value)
                               : null,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        );
-      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }
