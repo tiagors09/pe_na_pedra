@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pe_na_pedra/provider/global_state.dart';
 import 'package:pe_na_pedra/provider/global_state_provider.dart';
+import 'package:pe_na_pedra/utils/dialog_launcher.dart';
 import 'package:pe_na_pedra/utils/enums.dart';
 import 'package:pe_na_pedra/viewmodel/hikkers_viewmodel.dart';
 
@@ -278,7 +279,7 @@ class _HikkersViewState extends State<HikkersView> {
     //     ESQUERDA = banir/desbanir
     // ================================
     if (direction == DismissDirection.startToEnd) {
-      final bool confirm = await _showConfirmDialog(
+      final bool confirm = await DialogLauncher.showConfirmDialog(
         context,
         title: isBanned ? "Desbanir usuário" : "Banir usuário",
         message: isBanned
@@ -303,7 +304,7 @@ class _HikkersViewState extends State<HikkersView> {
     //     DIREITA = ADM / remover ADM
     // ================================
     if (direction == DismissDirection.endToStart) {
-      final bool confirm = await _showConfirmDialog(
+      final bool confirm = await DialogLauncher.showConfirmDialog(
         context,
         title: isAdmin ? "Remover ADM" : "Promover para ADM",
         message: isAdmin
@@ -325,60 +326,5 @@ class _HikkersViewState extends State<HikkersView> {
     }
 
     return false;
-  }
-
-  // ====================================================
-  //              DIÁLOGO DE CONFIRMAÇÃO
-  // ====================================================
-  Future<bool> _showConfirmDialog(
-    BuildContext context, {
-    required String title,
-    required String message,
-    required String confirmText,
-  }) async {
-    return await showDialog<bool>(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(12)),
-              ),
-              title: Text(title),
-              content: Text(message),
-              actionsPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              actions: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          side:
-                              const BorderSide(color: Colors.black, width: 1.5),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                          ),
-                        ),
-                        onPressed: () => Navigator.of(context).pop(false),
-                        child: const Text(
-                          "Cancelar",
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: ElevatedButton(
-                        child: Text(confirmText),
-                        onPressed: () => Navigator.of(context).pop(true),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
   }
 }
