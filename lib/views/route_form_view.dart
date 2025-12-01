@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:pe_na_pedra/model/route_point.dart';
+import 'package:pe_na_pedra/provider/global_state.dart';
+import 'package:pe_na_pedra/provider/global_state_provider.dart';
 import 'package:pe_na_pedra/utils/app_routes.dart';
 import 'package:pe_na_pedra/utils/enums.dart';
 import 'package:pe_na_pedra/utils/form_validator.dart';
@@ -16,17 +18,23 @@ class RouteFormView extends StatefulWidget {
 
 class _RouteFormViewState extends State<RouteFormView> with FormValidator {
   late final RouteFormViewModel _vm;
+  late final GlobalState globalState;
 
   @override
   void initState() {
     super.initState();
+
+    globalState = GlobalStateProvider.of(
+      context,
+    );
+
     _vm = RouteFormViewModel();
   }
 
   void _onSave() {
     if (_vm.formKey.currentState?.validate() ?? false) {
       _vm.formKey.currentState?.save();
-      _vm.save();
+      _vm.save(globalState.idToken!);
     }
   }
 

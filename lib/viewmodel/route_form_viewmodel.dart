@@ -2,10 +2,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:pe_na_pedra/controller/routes_controller.dart';
+import 'package:pe_na_pedra/model/trail_route.dart';
 import 'package:pe_na_pedra/model/route_point.dart';
 import 'package:pe_na_pedra/utils/enums.dart';
 
 class RouteFormViewModel extends ChangeNotifier {
+  final _controller = RoutesController();
+
   final name = ValueNotifier<String>('');
   final difficulty = ValueNotifier<Difficulty?>(null);
 
@@ -52,10 +56,9 @@ class RouteFormViewModel extends ChangeNotifier {
     elapsedTime.value = elapsed;
 
     canSave.value = name.value.isNotEmpty && points.value.isNotEmpty;
-    notifyListeners();
   }
 
-  Future<void> save() async {
+  Future<void> save(String idToken) async {
     if (!canSave.value) return;
 
     isSaving.value = true;
@@ -77,12 +80,9 @@ class RouteFormViewModel extends ChangeNotifier {
         'elapsedTimeSec': elapsedTime.value.inSeconds,
       };
 
-      // Simula salvar no Firebase
-      await Future.delayed(
-        const Duration(
-          seconds: 2,
-        ),
-      );
+      final route = TrailRoute.fromMap(data);
+
+      await _controller.createRoute(route, idToken: '');
 
       log(
         'Saving to Firebase: $data',
