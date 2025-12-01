@@ -22,9 +22,9 @@ class EditProfileViewModel extends ChangeNotifier with FormValidator {
     'confirmPassword': '',
   };
 
-  final ValueNotifier<bool> _isLoading = ValueNotifier(false);
-  final ValueNotifier<bool> _obscurePassword = ValueNotifier(true);
-  final ValueNotifier<bool> _obscureConfirmPassword = ValueNotifier(true);
+  final _isLoading = ValueNotifier(false);
+  final _obscurePassword = ValueNotifier(true);
+  final _obscureConfirmPassword = ValueNotifier(true);
 
   ValueNotifier<bool> get isLoading => _isLoading;
   ValueNotifier<bool> get obscurePassword => _obscurePassword;

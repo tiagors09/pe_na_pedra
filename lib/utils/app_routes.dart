@@ -7,4 +7,5 @@ abstract class AppRoutes {
   static const String calendar = '/calendar';
   static const String routes = '/routes';
   static const String routeForm = '/route-form';
+  static const String trackRoute = '/track-route';
 }

@@ -11,3 +11,13 @@ enum SwipeAction {
   removeAdmin,
   none,
 }
+
+enum Difficulty {
+  easy('FÁCIL'),
+  moderate('MODERADO'),
+  hard('DIFICIL');
+
+  final String label;
+
+  const Difficulty(this.label);
+}

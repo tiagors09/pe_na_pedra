@@ -49,5 +49,13 @@
 		<true/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Este app precisa acessar sua localização enquanto estiver em uso para gravar suas rotas.</string>
+
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>Este app precisa acessar sua localização em segundo plano para registrar suas trilhas.</string>
+
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Este app utiliza sua localização constantemente para registrar seu percurso com precisão.</string>
 	</dict>
 </plist>
