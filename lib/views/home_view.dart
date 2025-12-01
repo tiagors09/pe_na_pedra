@@ -12,60 +12,89 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  late HomeViewModel _viewModel;
+  late final HomeViewModel _vm;
 
   @override
   void initState() {
-    _viewModel = HomeViewModel();
     super.initState();
+    _vm = HomeViewModel();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final globalState = GlobalStateProvider.of(context);
 
-    final String role = globalState.profile?['role'] ?? UserRoles.hikker.name;
-    _viewModel.role = role;
+    final globalState = GlobalStateProvider.of(
+      context,
+    );
 
-    _viewModel.setCurrentIndex(_viewModel.currentIndex);
+    final String r = globalState.profile?['role'] ?? UserRoles.hikker.name;
+
+    _vm.role.value = r;
+
+    _vm.setCurrentIndex(_vm.currentIndex.value);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_viewModel.title),
-      ),
-      drawer: const Drawer(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.zero,
-        ),
-        child: ProfileView(),
-      ),
-      body: IndexedStack(
-        index: _viewModel.currentIndex,
-        children: _viewModel.baseViews,
-      ),
-      bottomNavigationBar: _viewModel.isAdmin
-          ? NavigationBar(
-              selectedIndex: _viewModel.currentIndex,
-              onDestinationSelected: _viewModel.setCurrentIndex,
-              destinations: _viewModel.destinations,
-            )
-          : const BottomAppBar(
-              color: Color(0xFFF5D204),
-              child: Icon(
-                Icons.map,
-                color: Color(0xFF745F04),
-              ),
+    return ValueListenableBuilder(
+      valueListenable: _vm.title,
+      builder: (_, title, __) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              title,
             ),
+          ),
+          drawer: const Drawer(
+            child: ProfileView(),
+          ),
+          body: ValueListenableBuilder(
+            valueListenable: _vm.currentIndex,
+            builder: (_, index, __) {
+              return IndexedStack(
+                index: index,
+                children: _vm.baseViews,
+              );
+            },
+          ),
+          bottomNavigationBar: ValueListenableBuilder(
+            valueListenable: _vm.role,
+            builder: (_, role, __) {
+              final isAdmin = role == UserRoles.adm.name;
+
+              return isAdmin
+                  ? ValueListenableBuilder(
+                      valueListenable: _vm.currentIndex,
+                      builder: (_, index, __) {
+                        return NavigationBar(
+                          selectedIndex: index,
+                          onDestinationSelected: _vm.setCurrentIndex,
+                          destinations: _vm.destinations,
+                        );
+                      },
+                    )
+                  : const BottomAppBar(
+                      color: Color(
+                        0xFFF5D204,
+                      ),
+                      child: Icon(
+                        Icons.map,
+                        color: Color(
+                          0xFF745F04,
+                        ),
+                      ),
+                    );
+            },
+          ),
+        );
+      },
     );
   }
 
   @override
   void dispose() {
-    _viewModel.dispose();
+    _vm.dispose();
     super.dispose();
   }
 }

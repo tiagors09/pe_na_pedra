@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pe_na_pedra/model/trail.dart';
-import 'package:pe_na_pedra/widegt/difficulty_chip.dart';
+import 'package:pe_na_pedra/widget/difficulty_chip.dart';
 
 class TrailCard extends StatelessWidget {
   final Trail trail;

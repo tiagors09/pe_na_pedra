@@ -3,21 +3,17 @@ import 'package:pe_na_pedra/utils/enums.dart';
 import 'package:pe_na_pedra/views/adm_view.dart';
 import 'package:pe_na_pedra/views/trails_view.dart';
 
-class HomeViewModel extends ChangeNotifier {
-  final labels = ['Trilhas', 'Painel Administrativo'];
+class HomeViewModel {
+  // índice atual
+  final currentIndex = ValueNotifier<int>(0);
 
-  String title = 'Trilhas';
+  // título atual
+  final title = ValueNotifier<String>('Trilhas');
 
-  String role = UserRoles.hikker.name;
+  // role do usuário
+  final role = ValueNotifier<String>(UserRoles.hikker.name);
 
-  int currentIndex = 0;
-
-  bool get isAdmin => role == UserRoles.adm.name;
-
-  void changeTitle(String label) {
-    title = label;
-    notifyListeners();
-  }
+  bool get isAdmin => role.value == UserRoles.adm.name;
 
   List<Widget> get baseViews {
     final list = <Widget>[
@@ -39,7 +35,7 @@ class HomeViewModel extends ChangeNotifier {
         NavigationDestination(
           icon: Icon(Icons.admin_panel_settings),
           label: 'Admin',
-        )
+        ),
       ];
     }
 
@@ -52,8 +48,14 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   void setCurrentIndex(int index) {
-    currentIndex = index.clamp(0, baseViews.length - 1);
-    title = labels[currentIndex];
-    notifyListeners();
+    final safeIndex = index.clamp(0, baseViews.length - 1);
+    currentIndex.value = safeIndex;
+    title.value = safeIndex == 0 ? 'Trilhas' : 'Painel Administrativo';
+  }
+
+  void dispose() {
+    currentIndex.dispose();
+    title.dispose();
+    role.dispose();
   }
 }

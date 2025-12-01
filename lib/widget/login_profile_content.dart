@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pe_na_pedra/widegt/login_profile_content_item.dart';
+import 'package:pe_na_pedra/widget/login_profile_content_item.dart';
 
 class LoginProfileContent extends StatelessWidget {
   final String fullName;

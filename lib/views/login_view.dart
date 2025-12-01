@@ -26,118 +26,150 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    final globalState = GlobalStateProvider.of(context);
+    final global = GlobalStateProvider.of(
+      context,
+    );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5D204),
+      backgroundColor: const Color(
+        0xFFF5D204,
+      ),
       body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width * 0.75,
           ),
           child: Card(
-            color: Colors.white,
-            elevation: 0,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(
+                16,
+              ),
             ),
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Form(
                 key: _vm.form,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: _vm.isLoading
-                      ? [
-                          const CircularProgressIndicator(),
-                          const SizedBox(height: 12),
-                          const Text('Aguarde...'),
-                        ]
-                      : [
-                          if (_vm.errorMessage.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              child: Text(
-                                _vm.errorMessage,
-                                style: const TextStyle(color: Colors.red),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          TextFormField(
-                            decoration:
-                                const InputDecoration(labelText: 'E-mail'),
-                            validator: _vm.validateEmailField,
-                            onSaved: _vm.onEmailSaved,
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: _vm.isLoading,
+                  builder: (_, loading, __) {
+                    if (loading) {
+                      return const Column(
+                        spacing: 12,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircularProgressIndicator(),
+                          Text(
+                            "Aguarde...",
                           ),
-                          const SizedBox(height: 16),
-                          TextFormField(
+                        ],
+                      );
+                    }
+
+                    return Column(
+                      spacing: 16,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ValueListenableBuilder<String>(
+                          valueListenable: _vm.errorMessage,
+                          builder: (_, msg, __) => msg.isEmpty
+                              ? const SizedBox()
+                              : Text(
+                                  msg,
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                        ),
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'E-mail',
+                          ),
+                          validator: _vm.validateEmailField,
+                          onSaved: _vm.onEmailSaved,
+                        ),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: _vm.obscurePassword,
+                          builder: (_, obscure, __) => TextFormField(
                             controller: _vm.passwordController,
                             decoration: InputDecoration(
                               labelText: 'Senha',
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _vm.obscurePassword
+                                  obscure
                                       ? Icons.visibility_off
                                       : Icons.visibility,
                                 ),
                                 onPressed: _vm.toggleObscurePassword,
                               ),
                             ),
-                            obscureText: _vm.obscurePassword,
+                            obscureText: obscure,
                             validator: _vm.validatePasswordField,
                             onSaved: _vm.onPasswordSaved,
                           ),
-                          if (_vm.showRegister) ...[
-                            const SizedBox(height: 16),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: 'Confirmar Senha',
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _vm.obscureConfirmPassword
-                                        ? Icons.visibility_off
-                                        : Icons.visibility,
+                        ),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: _vm.showRegister,
+                          builder: (_, register, __) {
+                            if (!register) return const SizedBox();
+
+                            return Column(
+                              spacing: 16,
+                              children: [
+                                ValueListenableBuilder<bool>(
+                                  valueListenable: _vm.obscureConfirmPassword,
+                                  builder: (_, obscure, __) => TextFormField(
+                                    decoration: InputDecoration(
+                                      labelText: 'Confirmar Senha',
+                                      suffixIcon: IconButton(
+                                        icon: Icon(
+                                          obscure
+                                              ? Icons.visibility_off
+                                              : Icons.visibility,
+                                        ),
+                                        onPressed:
+                                            _vm.toggleObscureConfirmPassword,
+                                      ),
+                                    ),
+                                    obscureText: obscure,
+                                    validator: _vm.validateConfirmPassword,
+                                    onSaved: _vm.onConfirmPasswordSaved,
                                   ),
-                                  onPressed: _vm.toggleObscureConfirmPassword,
                                 ),
-                              ),
-                              obscureText: _vm.obscureConfirmPassword,
-                              validator: _vm.checkConfirmPassword,
-                              onSaved: _vm.onConfirmPasswordSaved,
-                            ),
-                          ],
-                          const SizedBox(height: 24),
-                          SizedBox(
+                              ],
+                            );
+                          },
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(
+                            top: 24,
+                          ),
+                          child: SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () => _vm.submit(context, globalState),
-                              style: ElevatedButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 14),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: Text(
-                                _vm.showRegister ? 'Registrar' : 'Entrar',
-                                style: const TextStyle(fontSize: 16),
+                              onPressed: () => _vm.submit(context, global),
+                              child: ValueListenableBuilder<bool>(
+                                valueListenable: _vm.showRegister,
+                                builder: (_, register, __) =>
+                                    Text(register ? "Registrar" : "Entrar"),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 12),
-                          SizedBox(
-                            width: double.infinity,
-                            child: TextButton(
-                              onPressed: _vm.toggleRegister,
-                              child: Text(
-                                _vm.showRegister
-                                    ? 'Já possui conta? Entrar'
-                                    : 'Criar conta',
-                              ),
+                        ),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: _vm.showRegister,
+                          builder: (_, register, __) => TextButton(
+                            onPressed: _vm.toggleRegister,
+                            child: Text(
+                              register
+                                  ? "Já possui conta? Entrar"
+                                  : "Criar conta",
                             ),
                           ),
-                        ],
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),

@@ -5,107 +5,85 @@ import 'package:pe_na_pedra/views/edit_profile_view.dart';
 import 'package:pe_na_pedra/provider/global_state.dart';
 import 'package:pe_na_pedra/controller/login_controller.dart';
 
-class LoginViewModel extends ChangeNotifier with FormValidator {
+class LoginViewModel with FormValidator {
   final form = GlobalKey<FormState>();
   final _controller = LoginController();
+
   final passwordController = TextEditingController();
 
-  final formData = {'email': '', 'password': '', 'confirmPassword': ''};
+  final email = ValueNotifier<String>('');
+  final password = ValueNotifier<String>('');
+  final confirmPassword = ValueNotifier<String>('');
 
-  bool isLoading = false;
-  bool showRegister = false;
-  bool obscurePassword = true;
-  bool obscureConfirmPassword = true;
-  String errorMessage = '';
+  final isLoading = ValueNotifier<bool>(false);
+  final showRegister = ValueNotifier<bool>(false);
+  final obscurePassword = ValueNotifier<bool>(true);
+  final obscureConfirmPassword = ValueNotifier<bool>(true);
+  final errorMessage = ValueNotifier<String>('');
 
   void toggleRegister() {
-    showRegister = !showRegister;
+    showRegister.value = !showRegister.value;
     passwordController.clear();
-    notifyListeners();
   }
 
-  void toggleObscurePassword() {
-    obscurePassword = !obscurePassword;
-    notifyListeners();
-  }
+  void toggleObscurePassword() =>
+      obscurePassword.value = !obscurePassword.value;
 
-  void toggleObscureConfirmPassword() {
-    obscureConfirmPassword = !obscureConfirmPassword;
-    notifyListeners();
-  }
+  void toggleObscureConfirmPassword() =>
+      obscureConfirmPassword.value = !obscureConfirmPassword.value;
 
-  void onEmailSaved(String? v) => saveEmail(
-        formData,
-        v,
-      );
+  void onEmailSaved(String? v) => email.value = v ?? '';
+  void onPasswordSaved(String? v) => password.value = v ?? '';
+  void onConfirmPasswordSaved(String? v) => confirmPassword.value = v ?? '';
 
-  void onPasswordSaved(String? v) => savePassword(
-        formData,
-        v,
-      );
-
-  void onConfirmPasswordSaved(String? v) => saveConfirmPassword(
-        formData,
-        v,
-      );
-
-  String? checkConfirmPassword(String? value) {
-    if (!showRegister) return null;
-
-    if (value != passwordController.text) {
-      return "As senhas não coincidem";
-    }
-
+  String? validateConfirmPassword(String? value) {
+    if (!showRegister.value) return null;
+    if (value != passwordController.text) return "As senhas não coincidem";
     return validateConfirmPasswordField(value);
   }
 
-  Future<void> submit(BuildContext context, GlobalState globalState) async {
+  Future<void> submit(BuildContext context, GlobalState global) async {
     if (!(form.currentState?.validate() ?? false)) return;
 
     form.currentState!.save();
-    isLoading = true;
-    errorMessage = '';
-    notifyListeners();
+    isLoading.value = true;
+    errorMessage.value = '';
 
-    bool success;
+    bool ok;
 
-    if (showRegister) {
-      success = await _controller.createAccount(
-        email: formData['email']!,
-        password: formData['password']!,
-        globalState: globalState,
+    if (showRegister.value) {
+      ok = await _controller.createAccount(
+        email: email.value,
+        password: password.value,
+        globalState: global,
       );
     } else {
-      success = await _controller.login(
-        email: formData['email']!,
-        password: formData['password']!,
-        globalState: globalState,
+      ok = await _controller.login(
+        email: email.value,
+        password: password.value,
+        globalState: global,
       );
     }
 
-    isLoading = false;
-    notifyListeners();
+    isLoading.value = false;
 
-    if (success && context.mounted) {
+    if (ok && context.mounted) {
       Navigator.of(context).pushNamedAndRemoveUntil(
-        showRegister ? AppRoutes.editProfile : AppRoutes.home,
-        (route) => false,
-        arguments: showRegister
+        showRegister.value ? AppRoutes.editProfile : AppRoutes.home,
+        (_) => false,
+        arguments: showRegister.value
             ? EditProfileViewArguments(
-                userId: globalState.userId, // CORRIGIDO
+                userId: global.userId,
                 mode: EditProfileMode.completeProfile,
               )
             : null,
       );
     } else {
-      errorMessage = 'Falha na autenticação';
-      notifyListeners();
+      errorMessage.value = "Falha na autenticação";
     }
   }
 
-  @override
   void dispose() {
     passwordController.dispose();
-    super.dispose();
   }
 }

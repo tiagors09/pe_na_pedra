@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pe_na_pedra/utils/app_routes.dart';
+import 'package:pe_na_pedra/widget/adm_button.dart';
 
 class AdmView extends StatelessWidget {
   const AdmView({super.key});
@@ -7,7 +8,7 @@ class AdmView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final buttons = [
-      _AdmButton(
+      AdmButton(
         icon: Icons.terrain,
         label: 'Rotas',
         onTap: () {
@@ -16,7 +17,7 @@ class AdmView extends StatelessWidget {
           );
         },
       ),
-      _AdmButton(
+      AdmButton(
         icon: Icons.calendar_today,
         label: 'Calendário de trilhas',
         onTap: () {
@@ -25,7 +26,7 @@ class AdmView extends StatelessWidget {
           );
         },
       ),
-      _AdmButton(
+      AdmButton(
         icon: Icons.group,
         label: 'Trilheiros',
         onTap: () {
@@ -34,7 +35,7 @@ class AdmView extends StatelessWidget {
           );
         },
       ),
-      _AdmButton(
+      AdmButton(
         icon: Icons.settings,
         label: 'Configurações',
         onTap: () {
@@ -55,58 +56,6 @@ class AdmView extends StatelessWidget {
             childAspectRatio: 1, // evita overflow vertical
           ),
           itemBuilder: (context, i) => buttons[i],
-        ),
-      ),
-    );
-  }
-}
-
-class _AdmButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _AdmButton({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.transparent, // remove background
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Colors.black, width: 1), // outline preta
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min, // evita estourar o espaço
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  icon,
-                  size: 40,
-                  color: Colors.black,
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  label,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis, // segurança
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );
