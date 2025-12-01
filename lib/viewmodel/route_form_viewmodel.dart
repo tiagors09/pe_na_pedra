@@ -46,11 +46,13 @@ class RouteFormViewModel extends ChangeNotifier {
           ),
         )
         .toList();
+
     distanceKm.value = dist;
     speedKmh.value = spd;
     elapsedTime.value = elapsed;
 
     canSave.value = name.value.isNotEmpty && points.value.isNotEmpty;
+    notifyListeners();
   }
 
   Future<void> save() async {

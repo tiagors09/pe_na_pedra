@@ -34,12 +34,16 @@ class _RouteFormViewState extends State<RouteFormView> with FormValidator {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cadastrar Trilha'),
+        title: const Text(
+          'Cadastrar Trilha',
+        ),
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
           height: MediaQuery.of(context).size.height * 0.055,
-          margin: const EdgeInsets.all(16),
+          margin: const EdgeInsets.all(
+            16,
+          ),
           width: double.infinity,
           child: ValueListenableBuilder<bool>(
             valueListenable: _vm.isSaving,
@@ -50,9 +54,13 @@ class _RouteFormViewState extends State<RouteFormView> with FormValidator {
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
                       )
-                    : const Text('Salvar'),
+                    : const Text(
+                        'Salvar',
+                      ),
               );
             },
           ),
@@ -97,8 +105,9 @@ class _RouteFormViewState extends State<RouteFormView> with FormValidator {
                 FormField<List<RoutePoint>>(
                   initialValue: _vm.points.value,
                   validator: (_) {
-                    if (_vm.points.value.isEmpty)
+                    if (_vm.points.value.isEmpty) {
                       return 'Você deve gravar a rota';
+                    }
                     return null;
                   },
                   builder: (state) {
@@ -106,8 +115,7 @@ class _RouteFormViewState extends State<RouteFormView> with FormValidator {
                       decoration: InputDecoration(
                         labelText: 'Rota',
                         border: const OutlineInputBorder(),
-                        errorText: state
-                            .errorText, // aqui o texto de erro aparece igual ao TextFormField
+                        errorText: state.errorText,
                         contentPadding: const EdgeInsets.symmetric(
                           vertical: 12,
                           horizontal: 16,
@@ -117,21 +125,56 @@ class _RouteFormViewState extends State<RouteFormView> with FormValidator {
                         valueListenable: _vm.points,
                         builder: (_, pts, __) {
                           if (pts.isEmpty) {
-                            return OutlinedButton.icon(
-                              onPressed: () async {
+                            final color = state.hasError
+                                ? Theme.of(context).colorScheme.error
+                                : Colors.black87;
+
+                            return InkWell(
+                              onTap: () async {
                                 if (_vm.canTrackRoute()) {
-                                  final result = await Navigator.of(context)
-                                      .pushNamed(AppRoutes.trackRoute);
+                                  final result = await Navigator.of(
+                                    context,
+                                  ).pushNamed(
+                                    AppRoutes.trackRoute,
+                                  );
 
                                   _vm.setRecordedRoute(
-                                      result as Map<String, dynamic>?);
+                                    result as Map<String, dynamic>?,
+                                  );
+
                                   state.validate();
                                 }
                               },
-                              icon: const Icon(Icons.map),
-                              label: const Text('Gravar rota'),
+                              borderRadius: BorderRadius.circular(
+                                4,
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                height: 48,
+                                alignment: Alignment.centerLeft,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 0,
+                                  vertical: 0,
+                                ),
+                                child: Row(
+                                  spacing: 8,
+                                  children: [
+                                    Icon(
+                                      Icons.map,
+                                      color: color,
+                                    ),
+                                    Text(
+                                      'Gravar rota',
+                                      style: TextStyle(
+                                        color: color,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             );
                           }
+
                           return SizedBox(
                             height: 300,
                             width: double.infinity,
@@ -146,7 +189,7 @@ class _RouteFormViewState extends State<RouteFormView> with FormValidator {
                       ),
                     );
                   },
-                ),
+                )
               ],
             ),
           ),

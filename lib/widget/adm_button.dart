@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class AdmButton extends StatelessWidget {
   final IconData icon;
   final String label;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const AdmButton({
     super.key,
     required this.icon,
     required this.label,
-    required this.onTap,
+    this.onTap,
   });
 
   @override

@@ -35,12 +35,10 @@ class AdmView extends StatelessWidget {
           );
         },
       ),
-      AdmButton(
+      const AdmButton(
         icon: Icons.settings,
         label: 'Configurações',
-        onTap: () {
-          // TODO: configurações
-        },
+        onTap: null,
       ),
     ];
 
