@@ -3,7 +3,7 @@ import 'package:pe_na_pedra/controller/hikkers_controllers.dart';
 import 'package:pe_na_pedra/model/hikker.dart';
 import 'package:pe_na_pedra/utils/enums.dart';
 
-class HikkersViewmodel with ChangeNotifier {
+class HikkersViewmodel {
   final _controller = HikkersControllers();
 
   String role = UserRoles.hikker.name;
@@ -11,18 +11,33 @@ class HikkersViewmodel with ChangeNotifier {
 
   final ValueNotifier<bool> loading = ValueNotifier(false);
 
-  // lista completa (não filtrada)
+  // estados
+  final ValueNotifier<bool> showingBanned = ValueNotifier(false);
+
+  // dados brutos
   List<Hikker> _allHikkers = [];
 
   // pesquisa
   final ValueNotifier<String> searchQuery = ValueNotifier("");
 
-  // lista filtrada + ordenada
+  // lista filtrada + ordenada da view
   final ValueNotifier<List<Hikker>> hikkers = ValueNotifier([]);
 
   bool _initialized = false;
   bool get initialized => _initialized;
 
+  String? _loggedUserId;
+
+  // ----------------------------------------------------------
+  // LOGGED USER
+  // ----------------------------------------------------------
+  void setLoggedUser(String uid) {
+    _loggedUserId = uid;
+  }
+
+  // ----------------------------------------------------------
+  // FETCH INICIAL
+  // ----------------------------------------------------------
   Future<void> fetchOnce(String idToken) async {
     if (_initialized) return;
 
@@ -32,67 +47,96 @@ class HikkersViewmodel with ChangeNotifier {
     _applyFiltersAndSort();
   }
 
-  // ======================================================
-  //   FILTRAR + ORDENAR
-  // ======================================================
-  void _applyFiltersAndSort({String? loggedUserId}) {
-    var list = [..._allHikkers];
-
-    // --- busca ---
-    final query = searchQuery.value.trim().toLowerCase();
-    if (query.isNotEmpty) {
-      list =
-          list.where((h) => h.fullName.toLowerCase().contains(query)).toList();
-    }
-
-    // --- ordenação (INDO PARA VM COMO PEDIDO) ---
-    if (loggedUserId != null) {
-      list.sort((a, b) {
-        if (a.id == loggedUserId) return -1;
-        if (b.id == loggedUserId) return 1;
-
-        if (a.role == UserRoles.adm && b.role != UserRoles.adm) return -1;
-        if (b.role == UserRoles.adm && a.role != UserRoles.adm) return 1;
-
-        return a.fullName.compareTo(b.fullName);
-      });
-    }
-
-    hikkers.value = list;
+  // ----------------------------------------------------------
+  // ALTERAR ENTRE TRILHEIROS / BANIDOS
+  // ----------------------------------------------------------
+  void toggleList() {
+    showingBanned.value = !showingBanned.value;
+    _applyFiltersAndSort();
   }
 
-  // ======================================================
-  // PESQUISA (CHAMADO PELA VIEW)
-  // ======================================================
-  void setSearchQuery(String value, String loggedUserId) {
+  // ----------------------------------------------------------
+  // PESQUISA
+  // ----------------------------------------------------------
+  void setSearchQuery(String value) {
     searchQuery.value = value;
-
-    _applyFiltersAndSort(
-      loggedUserId: loggedUserId,
-    );
+    _applyFiltersAndSort();
   }
 
-  // ======================================================
-  // SWIPE LOGIC (SEM MUDANÇAS)
-  // ======================================================
+  // ----------------------------------------------------------
+  // FILTRAR + ORDENAR
+  // ----------------------------------------------------------
+  void _applyFiltersAndSort() {
+    if (_loggedUserId == null) return;
+
+    final query = searchQuery.value.trim().toLowerCase();
+
+    List<Hikker> result;
+
+    // BANIDOS ------------------------------------------------
+    if (showingBanned.value) {
+      result = _allHikkers.where((h) => h.role == UserRoles.banned).toList();
+
+      if (query.isNotEmpty) {
+        result = result
+            .where((h) => h.fullName.toLowerCase().contains(query))
+            .toList();
+      }
+
+      result.sort((a, b) => a.fullName.compareTo(b.fullName));
+      hikkers.value = result;
+      return;
+    }
+
+    // TRILHEIROS ---------------------------------------------
+    result = _allHikkers.where((h) => h.role != UserRoles.banned).toList();
+
+    if (query.isNotEmpty) {
+      result = result
+          .where((h) => h.fullName.toLowerCase().contains(query))
+          .toList();
+    }
+
+    result.sort((a, b) {
+      // logged user ADM no topo
+      if (a.id == _loggedUserId) return -1;
+      if (b.id == _loggedUserId) return 1;
+
+      // ADMs depois
+      final aAdm = a.role == UserRoles.adm;
+      final bAdm = b.role == UserRoles.adm;
+
+      if (aAdm && !bAdm) return -1;
+      if (bAdm && !aAdm) return 1;
+
+      // Ordem alfabética
+      return a.fullName.compareTo(b.fullName);
+    });
+
+    hikkers.value = result;
+  }
+
+  // ----------------------------------------------------------
+  // SWIPE LOGIC
+  // ----------------------------------------------------------
   Future<SwipeAction> handleSwipe(DismissDirection direction, Hikker h) async {
-    final bool isAdmin = h.role == UserRoles.adm;
-    final bool isBanned = h.role == UserRoles.banned;
+    final isAdminUser = h.role == UserRoles.adm;
+    final isBanned = h.role == UserRoles.banned;
 
     if (direction == DismissDirection.startToEnd) {
       return isBanned ? SwipeAction.unban : SwipeAction.ban;
     }
 
     if (direction == DismissDirection.endToStart) {
-      return isAdmin ? SwipeAction.removeAdmin : SwipeAction.makeAdmin;
+      return isAdminUser ? SwipeAction.removeAdmin : SwipeAction.makeAdmin;
     }
 
     return SwipeAction.none;
   }
 
-  // ======================================================
-  // EXECUTAR AÇÃO E ATUALIZAR LISTA LOCAL
-  // ======================================================
+  // ----------------------------------------------------------
+  // EXECUTAR AÇÃO
+  // ----------------------------------------------------------
   Future<void> executeAction(SwipeAction action, Hikker h) async {
     loading.value = true;
 
@@ -115,7 +159,6 @@ class HikkersViewmodel with ChangeNotifier {
 
     loading.value = false;
 
-    // UPDATE LOCAL
     final index = _allHikkers.indexWhere((x) => x.id == h.id);
     if (index != -1) {
       _allHikkers[index] = _allHikkers[index].copyWith(
@@ -141,27 +184,20 @@ class HikkersViewmodel with ChangeNotifier {
     }
   }
 
-  // CONTROLLERS (sem mudanças)
-  Future<void> promoteToAdmin(String uid) async => await _controller.updateRole(
-        uid: uid,
-        newRole: UserRoles.adm.name,
-      );
+  // CONTROLLERS
+  Future<void> promoteToAdmin(String uid) async =>
+      await _controller.updateRole(uid: uid, newRole: UserRoles.adm.name);
 
-  Future<void> demoteAdmin(String uid) async => await _controller.updateRole(
-        uid: uid,
-        newRole: UserRoles.hikker.name,
-      );
+  Future<void> demoteAdmin(String uid) async =>
+      await _controller.updateRole(uid: uid, newRole: UserRoles.hikker.name);
 
-  Future<void> banUser(String uid) async => await _controller.updateRole(
-        uid: uid,
-        newRole: UserRoles.banned.name,
-      );
+  Future<void> banUser(String uid) async =>
+      await _controller.updateRole(uid: uid, newRole: UserRoles.banned.name);
 
-  Future<void> unbanUser(String uid) async => await _controller.updateRole(
-        uid: uid,
-        newRole: UserRoles.hikker.name,
-      );
+  Future<void> unbanUser(String uid) async =>
+      await _controller.updateRole(uid: uid, newRole: UserRoles.hikker.name);
 
+  // TEXTOS
   String titleFor(SwipeAction a, Hikker h) {
     switch (a) {
       case SwipeAction.ban:

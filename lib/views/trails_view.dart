@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pe_na_pedra/model/trail.dart';
 import 'package:pe_na_pedra/provider/global_state_provider.dart';
 import 'package:pe_na_pedra/viewmodel/trails_viewmodel.dart';
-import 'package:pe_na_pedra/widegt/trail_card.dart';
+import 'package:pe_na_pedra/widget/trail_card.dart';
 
 class TrailsView extends StatefulWidget {
   const TrailsView({super.key});

@@ -15,82 +15,101 @@ class HikkersView extends StatefulWidget {
 }
 
 class _HikkersViewState extends State<HikkersView> {
-  late HikkersViewmodel _viewModel;
-  late GlobalState globalState;
+  late HikkersViewmodel _vm;
+  late GlobalState global;
 
   @override
   void initState() {
-    _viewModel = HikkersViewmodel();
     super.initState();
+    _vm = HikkersViewmodel();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    globalState = GlobalStateProvider.of(context);
+    global = GlobalStateProvider.of(context);
 
-    _viewModel.role = globalState.profile?['role'] ?? UserRoles.hikker.name;
-
-    _viewModel.fetchOnce(globalState.idToken!);
+    _vm.role = global.profile?['role'] ?? UserRoles.hikker.name;
+    _vm.setLoggedUser(global.userId!);
+    _vm.fetchOnce(global.idToken!);
   }
 
   @override
   Widget build(BuildContext context) {
-    final loggedUserId = globalState.userId;
+    final loggedUserId = global.userId!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Trilheiros'),
+        title: ValueListenableBuilder<bool>(
+          valueListenable: _vm.showingBanned,
+          builder: (_, banned, __) => Text(
+            banned ? 'Banidos' : 'Trilheiros',
+          ),
+        ),
+        actions: [
+          ValueListenableBuilder<bool>(
+            valueListenable: _vm.showingBanned,
+            builder: (_, banned, __) {
+              return IconButton(
+                icon: Icon(banned ? Icons.group : Icons.block),
+                tooltip: banned ? 'Ver trilheiros' : 'Ver banidos',
+                onPressed: _vm.toggleList,
+              );
+            },
+          ),
+        ],
       ),
       body: ValueListenableBuilder<List<Hikker>>(
-        valueListenable: _viewModel.hikkers,
-        builder: (context, hikkers, _) {
-          if (!_viewModel.initialized) {
+        valueListenable: _vm.hikkers,
+        builder: (_, list, __) {
+          if (!_vm.initialized) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final adms = hikkers.where((h) => h.role == UserRoles.adm).toList();
-          final users = hikkers.where((h) => h.role != UserRoles.adm).toList();
+          // Separação das listas
+          final banned = list.where((h) => h.role == UserRoles.banned).toList();
+          final adms = list.where((h) => h.role == UserRoles.adm).toList();
+          final users = list.where((h) => h.role == UserRoles.hikker).toList();
+
+          final showingBanned = _vm.showingBanned.value;
 
           return Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: "Buscar trilheiro...",
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+              // Campo de busca somente quando NÃO mostrando banidos
+              if (!showingBanned)
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Buscar trilheiro...",
+                      prefixIcon: const Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                  ),
-                  onChanged: (value) => _viewModel.setSearchQuery(
-                    value,
-                    loggedUserId!,
+                    onChanged: _vm.setSearchQuery,
                   ),
                 ),
-              ),
+
               Expanded(
                 child: HikkerList(
-                  adms: adms,
-                  users: users,
+                  adms: showingBanned ? const [] : adms,
+                  users: showingBanned ? banned : users,
                   loggedUserId: loggedUserId,
-                  onSwipe: (hikker, direction) async {
-                    final action =
-                        await _viewModel.handleSwipe(direction, hikker);
-
+                  onSwipe: (h, dir) async {
+                    final action = await _vm.handleSwipe(dir, h);
                     if (action == SwipeAction.none) return false;
 
                     final confirm = await DialogLauncher.showConfirmDialog(
                       context,
-                      title: _viewModel.titleFor(action, hikker),
-                      message: _viewModel.messageFor(action, hikker),
-                      confirmText: _viewModel.btnFor(action),
+                      title: _vm.titleFor(action, h),
+                      message: _vm.messageFor(action, h),
+                      confirmText: _vm.btnFor(action),
                     );
 
                     if (!confirm) return false;
 
-                    await _viewModel.executeAction(action, hikker);
+                    await _vm.executeAction(action, h);
                     return true;
                   },
                 ),

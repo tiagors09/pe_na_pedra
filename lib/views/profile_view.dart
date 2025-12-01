@@ -3,8 +3,8 @@ import 'package:pe_na_pedra/viewmodel/profile_viewmodel.dart';
 import 'package:pe_na_pedra/provider/global_state_provider.dart';
 import 'package:pe_na_pedra/utils/app_routes.dart';
 import 'package:pe_na_pedra/views/edit_profile_view.dart';
-import 'package:pe_na_pedra/widegt/login_profile_content.dart';
-import 'package:pe_na_pedra/widegt/login_prompt.dart';
+import 'package:pe_na_pedra/widget/login_profile_content.dart';
+import 'package:pe_na_pedra/widget/login_prompt.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
