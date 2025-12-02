@@ -90,7 +90,7 @@ class TrailCard extends StatelessWidget {
                 trail.meetingAddress!.isNotEmpty)
               Row(
                 spacing: 8,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Icon(
                     Icons.place,
