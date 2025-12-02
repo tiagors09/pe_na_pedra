@@ -21,3 +21,8 @@ enum Difficulty {
 
   const Difficulty(this.label);
 }
+
+enum EditProfileMode {
+  completeProfile,
+  editProfile,
+}

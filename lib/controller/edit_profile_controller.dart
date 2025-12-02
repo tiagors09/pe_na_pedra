@@ -5,7 +5,6 @@ import 'package:pe_na_pedra/provider/global_state.dart';
 import 'package:pe_na_pedra/utils/app_routes.dart';
 import 'package:pe_na_pedra/utils/enums.dart';
 import 'package:pe_na_pedra/viewmodel/edit_profile_viewmodel.dart';
-import 'package:pe_na_pedra/views/edit_profile_view.dart';
 
 class EditProfileController {
   Future<void> submit(

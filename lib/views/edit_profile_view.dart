@@ -1,21 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pe_na_pedra/provider/global_state_provider.dart';
+import 'package:pe_na_pedra/utils/edit_profile_view_arguments.dart';
+import 'package:pe_na_pedra/utils/enums.dart';
 import 'package:pe_na_pedra/viewmodel/edit_profile_viewmodel.dart';
-
-enum EditProfileMode {
-  completeProfile,
-  editProfile,
-}
-
-class EditProfileViewArguments {
-  final String? userId;
-  final EditProfileMode mode;
-
-  EditProfileViewArguments({
-    this.userId,
-    required this.mode,
-  });
-}
 
 class EditProfileView extends StatefulWidget {
   const EditProfileView({super.key});
@@ -162,79 +149,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                 onSaved: _viewModel.onAddressSaved,
               ),
             ),
-
-            // ====================================================
-            // CAMPOS DE LOGIN — APENAS PARA EDITAR PERFIL
-            // ====================================================
-            if (!isCompletingProfile) ...[
-              Container(
-                margin: const EdgeInsets.only(top: 16),
-                child: TextFormField(
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  keyboardType: TextInputType.emailAddress,
-                  initialValue: _viewModel.formData['email'],
-                  onSaved: _viewModel.onEmailSaved,
-                  validator: _viewModel.validateEmailField,
-                ),
-              ),
-
-              // senha
-              Container(
-                margin: const EdgeInsets.only(top: 16),
-                child: ValueListenableBuilder(
-                  valueListenable: _viewModel.obscurePassword,
-                  builder: (context, obscurePassword, child) {
-                    return TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Senha',
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            obscurePassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
-                          onPressed: _viewModel.toggleObscurePassword,
-                        ),
-                      ),
-                      obscureText: obscurePassword,
-                      onSaved: _viewModel.onPasswordSaved,
-                      validator: (value) => value!.isNotEmpty
-                          ? _viewModel.validatePasswordField(value)
-                          : null,
-                    );
-                  },
-                ),
-              ),
-
-              // confirmar senha
-              Container(
-                margin: const EdgeInsets.only(top: 16, bottom: 24),
-                child: ValueListenableBuilder(
-                  valueListenable: _viewModel.obscureConfirmPassword,
-                  builder: (context, obscureConfirmPassword, child) {
-                    return TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Confirmar Senha',
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            obscureConfirmPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
-                          onPressed: _viewModel.toggleObscureConfirmPassword,
-                        ),
-                      ),
-                      obscureText: obscureConfirmPassword,
-                      onSaved: _viewModel.onConfirmPasswordSaved,
-                      validator: (value) =>
-                          _viewModel.formData['password']?.isNotEmpty == true
-                              ? _viewModel.validateConfirmPasswordField(value)
-                              : null,
-                    );
-                  },
-                ),
-              ),
-            ],
           ],
         ),
       ),

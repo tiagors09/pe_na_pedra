@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pe_na_pedra/controller/edit_profile_controller.dart';
 import 'package:pe_na_pedra/provider/global_state.dart';
+import 'package:pe_na_pedra/utils/enums.dart';
 import 'package:pe_na_pedra/utils/form_validator.dart';
-import 'package:pe_na_pedra/views/edit_profile_view.dart';
 
 class EditProfileViewModel extends ChangeNotifier with FormValidator {
   final _controller = EditProfileController();
