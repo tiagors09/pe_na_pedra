@@ -1,41 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pe_na_pedra/controller/profile_controller.dart';
+import 'package:pe_na_pedra/provider/global_state_provider.dart';
 
 class ProfileViewModel {
   final _controller = ProfileController();
 
-  // Notifiers
   final profileData = ValueNotifier<Map<String, dynamic>>({});
   final isLoading = ValueNotifier<bool>(false);
   final errorMessage = ValueNotifier<String?>(null);
 
   bool _initialized = false;
 
-  Future<void> loadProfile(String userId, String idToken) async {
+  /// Carrega primeiro do cache → depois do servidor (refresh)
+  Future<void> loadProfile(BuildContext context) async {
     if (_initialized) return;
 
-    isLoading.value = true;
-    errorMessage.value = null;
+    final global = GlobalStateProvider.of(context);
 
+    // 1) Carrega instantaneamente do cache
+    if (global.profile != null) {
+      profileData.value = {...global.profile!};
+      _initialized = true; // evita reler no mesmo ciclo
+    }
+
+    // 2) Busca dados mais recentes do servidor
     try {
-      final data = await _controller.fetchProfile(userId, idToken);
+      isLoading.value = true;
 
-      profileData.value = {
-        'id': userId,
-        ...(data ?? {}),
-      };
+      final data = await _controller.fetchProfile(
+        global.userId!,
+        global.idToken!,
+      );
 
-      _initialized = true;
+      if (data != null) {
+        final formatted = {
+          'id': global.userId!,
+          ...data,
+        };
+
+        // salva no provider
+        global.setProfile(formatted);
+
+        // salva no VM
+        profileData.value = formatted;
+      }
     } catch (e) {
       errorMessage.value = e.toString().replaceFirst('Exception: ', '');
     } finally {
       isLoading.value = false;
+      _initialized = true;
     }
   }
 
-  void invalidateCache() {
+  /// usado quando o usuário edita o perfil
+  void refreshAfterEdit(BuildContext context) {
     _initialized = false;
+    loadProfile(context);
   }
 
   String formatBirthDate(String? raw) {

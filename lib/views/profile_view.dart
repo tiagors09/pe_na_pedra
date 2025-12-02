@@ -26,16 +26,12 @@ class _ProfileViewState extends State<ProfileView>
     super.initState();
     _vm = ProfileViewModel();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final global = GlobalStateProvider.of(
-        context,
-      );
+    // carregar depois que o contexto existe
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final global = GlobalStateProvider.of(context);
 
       if (global.isLoggedIn) {
-        await _vm.loadProfile(
-          global.userId!,
-          global.idToken!,
-        );
+        _vm.loadProfile(context);
       }
     });
   }
@@ -48,19 +44,13 @@ class _ProfileViewState extends State<ProfileView>
 
     if (!global.isLoggedIn) {
       return LoginPrompt(
-        onLogin: () => Navigator.of(context).pushNamed(
-          AppRoutes.login,
-        ),
+        onLogin: () => Navigator.of(context).pushNamed(AppRoutes.login),
       );
     }
 
     return ValueListenableBuilder<bool>(
       valueListenable: _vm.isLoading,
       builder: (_, loading, __) {
-        if (loading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
         return ValueListenableBuilder<String?>(
           valueListenable: _vm.errorMessage,
           builder: (_, error, __) {
@@ -73,10 +63,7 @@ class _ProfileViewState extends State<ProfileView>
                     Text(error, textAlign: TextAlign.center),
                     const SizedBox(height: 12),
                     ElevatedButton(
-                      onPressed: () => _vm.loadProfile(
-                        global.userId!,
-                        global.idToken!,
-                      ),
+                      onPressed: () => _vm.loadProfile(context),
                       child: const Text('Tentar novamente'),
                     ),
                   ],
@@ -87,6 +74,10 @@ class _ProfileViewState extends State<ProfileView>
             return ValueListenableBuilder<Map<String, dynamic>>(
               valueListenable: _vm.profileData,
               builder: (_, data, __) {
+                if (data.isEmpty && loading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
                 return LoginProfileContent(
                   fullName: data['fullName'] ?? '',
                   phone: data['phone'] ?? '',
@@ -100,8 +91,7 @@ class _ProfileViewState extends State<ProfileView>
                       ),
                     );
 
-                    _vm.invalidateCache();
-                    _vm.loadProfile(global.userId!, global.idToken!);
+                    _vm.refreshAfterEdit(context);
                   },
                   onLogout: global.logout,
                 );
