@@ -62,6 +62,7 @@ class TrailCard extends StatelessWidget {
               ],
             ),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 8,
               children: [
                 const Icon(
@@ -103,6 +104,7 @@ class TrailCard extends StatelessWidget {
                 ],
               ),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 8,
               children: [
                 const Icon(
