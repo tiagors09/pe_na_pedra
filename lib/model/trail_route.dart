@@ -39,7 +39,9 @@ class TrailRoute {
 
   // Criar TrailRoute a partir de Map
   factory TrailRoute.fromMap(Map<String, dynamic> map, {String? id}) {
-    final pts = (map['points'] as List).map((p) => RoutePoint(p['lat'], p['lng'])).toList();
+    final pts = (map['points'] as List)
+        .map((p) => RoutePoint(p['lat'], p['lng']))
+        .toList();
 
     return TrailRoute(
       id: id,

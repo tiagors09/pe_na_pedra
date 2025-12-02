@@ -39,7 +39,8 @@ class Trail {
     }
 
     final Map<String, dynamic> mp = map['meetingPoint'] as Map<String, dynamic>;
-    final Map<String, dynamic> tl = map['trailLocation'] as Map<String, dynamic>;
+    final Map<String, dynamic> tl =
+        map['trailLocation'] as Map<String, dynamic>;
 
     return Trail(
       id: id,
@@ -54,7 +55,8 @@ class Trail {
         (tl['lng'] as num).toDouble(),
       ),
       trailAddress: map['trailAddress'],
-      meetingDate: DateTime.tryParse(map['meetingDate'] ?? '') ?? DateTime.now(),
+      meetingDate:
+          DateTime.tryParse(map['meetingDate'] ?? '') ?? DateTime.now(),
       meetingTime: map['meetingTime'] ?? '00:00',
       spots: (map['spots'] as num?)?.toInt() ?? 0,
       difficulty: map['difficulty'] ?? 'easy',

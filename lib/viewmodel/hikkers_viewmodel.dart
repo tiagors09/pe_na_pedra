@@ -78,7 +78,9 @@ class HikkersViewmodel {
       result = _allHikkers.where((h) => h.role == UserRoles.banned).toList();
 
       if (query.isNotEmpty) {
-        result = result.where((h) => h.fullName.toLowerCase().contains(query)).toList();
+        result = result
+            .where((h) => h.fullName.toLowerCase().contains(query))
+            .toList();
       }
 
       result.sort((a, b) => a.fullName.compareTo(b.fullName));
@@ -90,7 +92,9 @@ class HikkersViewmodel {
     result = _allHikkers.where((h) => h.role != UserRoles.banned).toList();
 
     if (query.isNotEmpty) {
-      result = result.where((h) => h.fullName.toLowerCase().contains(query)).toList();
+      result = result
+          .where((h) => h.fullName.toLowerCase().contains(query))
+          .toList();
     }
 
     result.sort((a, b) {

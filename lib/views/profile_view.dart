@@ -13,7 +13,8 @@ class ProfileView extends StatefulWidget {
   State<ProfileView> createState() => _ProfileViewState();
 }
 
-class _ProfileViewState extends State<ProfileView> with AutomaticKeepAliveClientMixin {
+class _ProfileViewState extends State<ProfileView>
+    with AutomaticKeepAliveClientMixin {
   late ProfileViewModel _vm;
 
   @override

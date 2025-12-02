@@ -13,7 +13,8 @@ class TrailsController {
     return res['name'] as String;
   }
 
-  Future<void> updateTrail(String id, Trail trail, {required String? idToken}) async {
+  Future<void> updateTrail(String id, Trail trail,
+      {required String? idToken}) async {
     await _db.put('trails/$id', trail.toMap(), auth: idToken);
   }
 

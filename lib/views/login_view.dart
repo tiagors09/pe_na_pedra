@@ -96,7 +96,9 @@ class _LoginViewState extends State<LoginView> {
                               labelText: 'Senha',
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  obscure ? Icons.visibility_off : Icons.visibility,
+                                  obscure
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
                                 ),
                                 onPressed: _vm.toggleObscurePassword,
                               ),
@@ -121,9 +123,12 @@ class _LoginViewState extends State<LoginView> {
                                       labelText: 'Confirmar Senha',
                                       suffixIcon: IconButton(
                                         icon: Icon(
-                                          obscure ? Icons.visibility_off : Icons.visibility,
+                                          obscure
+                                              ? Icons.visibility_off
+                                              : Icons.visibility,
                                         ),
-                                        onPressed: _vm.toggleObscureConfirmPassword,
+                                        onPressed:
+                                            _vm.toggleObscureConfirmPassword,
                                       ),
                                     ),
                                     obscureText: obscure,
@@ -156,7 +161,9 @@ class _LoginViewState extends State<LoginView> {
                           builder: (_, register, __) => TextButton(
                             onPressed: _vm.toggleRegister,
                             child: Text(
-                              register ? "Já possui conta? Entrar" : "Criar conta",
+                              register
+                                  ? "Já possui conta? Entrar"
+                                  : "Criar conta",
                             ),
                           ),
                         ),

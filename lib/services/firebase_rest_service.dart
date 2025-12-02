@@ -13,7 +13,8 @@ class FirebaseRestService {
 
   final http.Client _client = http.Client();
 
-  Uri _pathUri(String path, {String? auth, Map<String, String>? queryParameters}) {
+  Uri _pathUri(String path,
+      {String? auth, Map<String, String>? queryParameters}) {
     final qp = <String, String>{};
     if (auth != null) qp['auth'] = auth;
     if (queryParameters != null) qp.addAll(queryParameters);
@@ -26,18 +27,24 @@ class FirebaseRestService {
     return jsonDecode(r.body);
   }
 
-  Future<dynamic> post(String path, Map<String, dynamic> body, {String? auth}) async {
-    final r = await _client.post(_pathUri(path, auth: auth), body: jsonEncode(body));
+  Future<dynamic> post(String path, Map<String, dynamic> body,
+      {String? auth}) async {
+    final r =
+        await _client.post(_pathUri(path, auth: auth), body: jsonEncode(body));
     return jsonDecode(r.body);
   }
 
-  Future<dynamic> put(String path, Map<String, dynamic> body, {String? auth}) async {
-    final r = await _client.put(_pathUri(path, auth: auth), body: jsonEncode(body));
+  Future<dynamic> put(String path, Map<String, dynamic> body,
+      {String? auth}) async {
+    final r =
+        await _client.put(_pathUri(path, auth: auth), body: jsonEncode(body));
     return jsonDecode(r.body);
   }
 
-  Future<dynamic> patch(String path, Map<String, dynamic> body, {String? auth}) async {
-    final r = await _client.patch(_pathUri(path, auth: auth), body: jsonEncode(body));
+  Future<dynamic> patch(String path, Map<String, dynamic> body,
+      {String? auth}) async {
+    final r =
+        await _client.patch(_pathUri(path, auth: auth), body: jsonEncode(body));
     return jsonDecode(r.body);
   }
 
@@ -53,8 +60,11 @@ class FirebaseRestService {
     final uri = _pathUri(path, auth: auth);
 
     // create HTTP request with Accept: text/event-stream
-    _client.send(http.Request('GET', uri)..headers['Accept'] = 'text/event-stream').then((req) {
-      req.stream.transform(utf8.decoder).transform(const LineSplitter()).listen((line) {
+    _client
+        .send(http.Request('GET', uri)..headers['Accept'] = 'text/event-stream')
+        .then((req) {
+      req.stream.transform(utf8.decoder).transform(const LineSplitter()).listen(
+          (line) {
         // Firebase SSE lines come like:
         // event: put
         // data: {"path":"/","data":{...}}

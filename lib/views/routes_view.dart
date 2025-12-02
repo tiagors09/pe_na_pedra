@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pe_na_pedra/model/trail_route.dart';
+import 'package:pe_na_pedra/provider/global_state_provider.dart';
 import 'package:pe_na_pedra/utils/app_routes.dart';
 import 'package:pe_na_pedra/utils/dialog_launcher.dart';
 import 'package:pe_na_pedra/viewmodel/routes_viewmodel.dart';
@@ -17,10 +18,20 @@ class _RoutesViewState extends State<RoutesView> {
   @override
   void initState() {
     super.initState();
-    _vm = RoutesViewModel(
-      idToken: 'YOUR_ID_TOKEN',
-    );
+
+    _vm = RoutesViewModel();
     _vm.loadRoutes();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final global = GlobalStateProvider.of(
+      context,
+    );
+
+    _vm.idToken = global.idToken!;
   }
 
   @override
@@ -40,18 +51,30 @@ class _RoutesViewState extends State<RoutesView> {
         body: ValueListenableBuilder<bool>(
           valueListenable: _vm.isLoading,
           builder: (_, bool loading, __) {
-            if (loading) return const Center(child: CircularProgressIndicator());
+            if (loading)
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
 
             return ValueListenableBuilder<String?>(
               valueListenable: _vm.error,
               builder: (_, String? error, __) {
-                if (error != null) return Center(child: Text(error));
+                if (error != null)
+                  return Center(
+                    child: Text(
+                      error,
+                    ),
+                  );
 
                 return ValueListenableBuilder<List<TrailRoute>>(
                   valueListenable: _vm.routes,
                   builder: (_, List<TrailRoute> routes, __) {
                     if (routes.isEmpty) {
-                      return const Center(child: Text('Nenhuma rota cadastrada'));
+                      return const Center(
+                        child: Text(
+                          'Nenhuma rota cadastrada',
+                        ),
+                      );
                     }
 
                     return ListView.builder(
@@ -65,13 +88,20 @@ class _RoutesViewState extends State<RoutesView> {
                           background: Container(
                             color: Colors.red,
                             alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.only(right: 20),
-                            child: const Icon(Icons.delete, color: Colors.white),
+                            padding: const EdgeInsets.only(
+                              right: 20,
+                            ),
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
                           ),
-                          confirmDismiss: (_) async => await DialogLauncher.showConfirmDialog(
+                          confirmDismiss: (_) async =>
+                              await DialogLauncher.showConfirmDialog(
                             context,
                             title: 'Excluir Rota',
-                            message: "Deseja realmente excluir '${route.name}'?",
+                            message:
+                                'Deseja realmente excluir "${route.name}"?',
                             confirmText: 'Excluir',
                           ),
                           onDismissed: (_) => _vm.deleteRoute(

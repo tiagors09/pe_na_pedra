@@ -46,7 +46,8 @@ class EditProfileViewModel extends ChangeNotifier with FormValidator {
     formData['email'] = profile['email'] ?? '';
 
     // exibe no campo de data
-    if (profile['birthDate'] != null && profile['birthDate'].toString().isNotEmpty) {
+    if (profile['birthDate'] != null &&
+        profile['birthDate'].toString().isNotEmpty) {
       try {
         final date = DateTime.parse(profile['birthDate']);
         birthDateController.text = DateFormat('dd/MM/yyyy').format(date);
@@ -72,11 +73,13 @@ class EditProfileViewModel extends ChangeNotifier with FormValidator {
   // ---------------------------------------------------------
   //  SALVAR CAMPOS
   // ---------------------------------------------------------
-  void onFullNameSaved(String? value) => formData['fullName'] = value?.trim() ?? '';
+  void onFullNameSaved(String? value) =>
+      formData['fullName'] = value?.trim() ?? '';
 
   void onPhoneSaved(String? value) => formData['phone'] = value?.trim() ?? '';
 
-  void onAddressSaved(String? value) => formData['address'] = value?.trim() ?? '';
+  void onAddressSaved(String? value) =>
+      formData['address'] = value?.trim() ?? '';
 
   void onEmailSaved(String? value) => saveEmail(
         formData,
@@ -138,7 +141,8 @@ class EditProfileViewModel extends ChangeNotifier with FormValidator {
       formData['birthDate'] = DateFormat('yyyy-MM-dd').format(picked);
       notifyListeners();
 
-      log('Data selecionada: ${formData['birthDate']}', name: 'EditProfileViewModel');
+      log('Data selecionada: ${formData['birthDate']}',
+          name: 'EditProfileViewModel');
     }
   }
 

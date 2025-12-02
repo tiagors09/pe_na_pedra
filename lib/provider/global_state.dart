@@ -31,7 +31,8 @@ class GlobalState extends ChangeNotifier {
   }
 
   Future<void> signIn(String email, String password) async {
-    final res = await FirebaseAuthService.instance.signIn(email: email, password: password);
+    final res = await FirebaseAuthService.instance
+        .signIn(email: email, password: password);
     if (res['idToken'] != null) {
       _handleAuthResponse(res);
       await loadProfile();
@@ -42,7 +43,8 @@ class GlobalState extends ChangeNotifier {
   }
 
   Future<void> signUp(String email, String password) async {
-    final res = await FirebaseAuthService.instance.signUp(email: email, password: password);
+    final res = await FirebaseAuthService.instance
+        .signUp(email: email, password: password);
     if (res['idToken'] != null) {
       _handleAuthResponse(res);
       // profile can be created later
@@ -104,7 +106,8 @@ class GlobalState extends ChangeNotifier {
           );
         }
         // schedule again using expires_in
-        final expiresIn = int.tryParse(res['expires_in']?.toString() ?? '') ?? 3600;
+        final expiresIn =
+            int.tryParse(res['expires_in']?.toString() ?? '') ?? 3600;
         _scheduleRefresh(Duration(seconds: expiresIn));
         notifyListeners();
       } else {

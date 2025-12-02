@@ -107,7 +107,8 @@ class _RouteFormViewState extends State<RouteFormView> with FormValidator {
                   initialValue: _vm.difficulty.value,
                   items: _vm.difficulties,
                   onChanged: _vm.onDifficultyChange,
-                  validator: (value) => value == null ? 'Selecione a dificuldade' : null,
+                  validator: (value) =>
+                      value == null ? 'Selecione a dificuldade' : null,
                   onSaved: (value) {
                     if (value != null) _vm.difficulty.value = value;
                   },

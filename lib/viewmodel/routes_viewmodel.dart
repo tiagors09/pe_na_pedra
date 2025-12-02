@@ -9,9 +9,7 @@ class RoutesViewModel {
   final ValueNotifier<bool> isLoading = ValueNotifier(false);
   final ValueNotifier<String?> error = ValueNotifier(null);
 
-  final String? idToken;
-
-  RoutesViewModel({this.idToken});
+  String? idToken;
 
   Future<void> loadRoutes() async {
     isLoading.value = true;

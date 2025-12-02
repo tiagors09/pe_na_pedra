@@ -26,7 +26,8 @@ class LoginViewModel with FormValidator {
     passwordController.clear();
   }
 
-  void toggleObscurePassword() => obscurePassword.value = !obscurePassword.value;
+  void toggleObscurePassword() =>
+      obscurePassword.value = !obscurePassword.value;
 
   void toggleObscureConfirmPassword() =>
       obscureConfirmPassword.value = !obscureConfirmPassword.value;

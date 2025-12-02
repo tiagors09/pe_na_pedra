@@ -42,6 +42,11 @@ class RouteFormViewModel extends ChangeNotifier {
     final spd = result['speedKmh'] as double;
     final elapsed = result['elapsedTime'] as Duration;
 
+    log(
+      'Points $pts, Distance $dist, Speed $spd, Elapsed Time $elapsed',
+      name: 'RouteFormViewModel',
+    );
+
     points.value = pts
         .map(
           (p) => RoutePoint(

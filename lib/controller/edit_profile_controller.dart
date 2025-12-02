@@ -46,7 +46,8 @@ class EditProfileController {
 
       log('Perfil atualizado com sucesso', name: 'EditProfileController');
     } catch (e, st) {
-      log('Erro ao salvar perfil: $e', stackTrace: st, name: 'EditProfileController');
+      log('Erro ao salvar perfil: $e',
+          stackTrace: st, name: 'EditProfileController');
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
