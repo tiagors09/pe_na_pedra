@@ -41,8 +41,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     if (_initialized) return;
     _initialized = true;
 
-    args =
-        ModalRoute.of(context)!.settings.arguments as EditProfileViewArguments;
+    args = ModalRoute.of(context)!.settings.arguments as EditProfileViewArguments;
 
     final globalState = GlobalStateProvider.of(context);
 
@@ -80,9 +79,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                           globalState,
                           args.mode,
                         ),
-                child: isLoading
-                    ? const CircularProgressIndicator()
-                    : const Text('Salvar'),
+                child: isLoading ? const CircularProgressIndicator() : const Text('Salvar'),
               );
             },
           ),
@@ -189,18 +186,15 @@ class _EditProfileViewState extends State<EditProfileView> {
                         labelText: 'Senha',
                         suffixIcon: IconButton(
                           icon: Icon(
-                            obscurePassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                            obscurePassword ? Icons.visibility_off : Icons.visibility,
                           ),
                           onPressed: _viewModel.toggleObscurePassword,
                         ),
                       ),
                       obscureText: obscurePassword,
                       onSaved: _viewModel.onPasswordSaved,
-                      validator: (value) => value!.isNotEmpty
-                          ? _viewModel.validatePasswordField(value)
-                          : null,
+                      validator: (value) =>
+                          value!.isNotEmpty ? _viewModel.validatePasswordField(value) : null,
                     );
                   },
                 ),
@@ -217,19 +211,16 @@ class _EditProfileViewState extends State<EditProfileView> {
                         labelText: 'Confirmar Senha',
                         suffixIcon: IconButton(
                           icon: Icon(
-                            obscureConfirmPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                            obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
                           ),
                           onPressed: _viewModel.toggleObscureConfirmPassword,
                         ),
                       ),
                       obscureText: obscureConfirmPassword,
                       onSaved: _viewModel.onConfirmPasswordSaved,
-                      validator: (value) =>
-                          _viewModel.formData['password']?.isNotEmpty == true
-                              ? _viewModel.validateConfirmPasswordField(value)
-                              : null,
+                      validator: (value) => _viewModel.formData['password']?.isNotEmpty == true
+                          ? _viewModel.validateConfirmPasswordField(value)
+                          : null,
                     );
                   },
                 ),

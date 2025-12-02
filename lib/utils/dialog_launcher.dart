@@ -16,16 +16,14 @@ class DialogLauncher {
               ),
               title: Text(title),
               content: Text(message),
-              actionsPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               actions: [
                 Row(
                   children: [
                     Expanded(
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
-                          side:
-                              const BorderSide(color: Colors.black, width: 1.5),
+                          side: const BorderSide(color: Colors.black, width: 1.5),
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(8)),
                           ),

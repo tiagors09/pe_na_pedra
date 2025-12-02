@@ -49,8 +49,7 @@ class _TrackRouteViewState extends State<TrackRouteView> {
                 ),
                 children: [
                   TileLayer(
-                    urlTemplate:
-                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     userAgentPackageName: 'br.com.tiagors09.penapedra',
                   ),
                   ValueListenableBuilder<List<LatLng>>(
@@ -86,15 +85,13 @@ class _TrackRouteViewState extends State<TrackRouteView> {
                             point: points.first,
                             width: 40,
                             height: 40,
-                            child: const Icon(Icons.flag,
-                                color: Colors.green, size: 32),
+                            child: const Icon(Icons.flag, color: Colors.green, size: 32),
                           ),
                           Marker(
                             point: points.last,
                             width: 40,
                             height: 40,
-                            child: const Icon(Icons.my_location,
-                                color: Colors.red, size: 34),
+                            child: const Icon(Icons.my_location, color: Colors.red, size: 34),
                           ),
                         ],
                       );

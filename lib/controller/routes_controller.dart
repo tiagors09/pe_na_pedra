@@ -12,8 +12,7 @@ class RoutesController {
   }
 
   /// Atualiza uma rota existente pelo ID
-  Future<void> updateRoute(String id, TrailRoute route,
-      {required String? idToken}) async {
+  Future<void> updateRoute(String id, TrailRoute route, {required String? idToken}) async {
     await _db.put('routes/$id', route.toMap(), auth: idToken);
   }
 

@@ -1,48 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:pe_na_pedra/model/route_item.dart';
-import 'package:pe_na_pedra/model/route_point.dart';
+import 'package:pe_na_pedra/controller/routes_controller.dart';
+import 'package:pe_na_pedra/model/trail_route.dart';
 
-class RoutesViewModel with ChangeNotifier {
-  final List<RouteItem> _routes = [
-    RouteItem(
-      id: '1',
-      name: "Trilha da Cachoeira Azul",
-      description: "Trilha leve com queda d'água.",
-      points: [
-        RoutePoint(-22.9068, -43.1729), // início
-        RoutePoint(-22.9055, -43.1702),
-        RoutePoint(-22.9039, -43.1687),
-        RoutePoint(-22.9025, -43.1670), // cachoeira
-      ],
-    ),
-    RouteItem(
-      id: '2',
-      name: "Pico da Serra Alta",
-      description: "Subida forte, visual incrível.",
-      points: [
-        RoutePoint(-25.4284, -49.2733),
-        RoutePoint(-25.4299, -49.2701),
-        RoutePoint(-25.4310, -49.2678),
-        RoutePoint(-25.4327, -49.2654), // pico
-      ],
-    ),
-    RouteItem(
-      id: '3',
-      name: "Vale Encantado",
-      description: "Trilha média, floresta fechada.",
-      points: [
-        RoutePoint(-21.1700, -47.8100),
-        RoutePoint(-21.1690, -47.8082),
-        RoutePoint(-21.1680, -47.8067),
-        RoutePoint(-21.1670, -47.8049),
-      ],
-    ),
-  ];
+class RoutesViewModel {
+  final RoutesController _controller = RoutesController();
 
-  List<RouteItem> get routes => List.unmodifiable(_routes);
+  final ValueNotifier<List<TrailRoute>> routes = ValueNotifier([]);
+  final ValueNotifier<bool> isLoading = ValueNotifier(false);
+  final ValueNotifier<String?> error = ValueNotifier(null);
 
-  void deleteRoute(String id) {
-    _routes.removeWhere((r) => r.id == id);
-    notifyListeners();
+  final String? idToken;
+
+  RoutesViewModel({this.idToken});
+
+  Future<void> loadRoutes() async {
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      final fetched = await _controller.fetchRoutes(idToken: idToken);
+      routes.value = fetched;
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> deleteRoute(String id) async {
+    try {
+      await _controller.deleteRoute(id, idToken: idToken);
+      routes.value = routes.value.where((r) => r.id != id).toList();
+    } catch (e) {
+      error.value = e.toString();
+    }
+  }
+
+  Future<void> saveRoute(TrailRoute route, {String? id}) async {
+    if (id == null) {
+      // Criar nova rota
+      await _controller.createRoute(route, idToken: idToken);
+    } else {
+      // Atualizar rota existente
+      await _controller.updateRoute(id, route, idToken: idToken);
+    }
+    await loadRoutes();
   }
 }

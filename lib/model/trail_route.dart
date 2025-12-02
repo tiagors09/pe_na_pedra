@@ -2,6 +2,7 @@ import 'package:pe_na_pedra/model/route_point.dart';
 import 'package:pe_na_pedra/utils/enums.dart';
 
 class TrailRoute {
+  final String? id; // id opcional
   final String name;
   final Difficulty difficulty;
   final List<RoutePoint> points;
@@ -10,6 +11,7 @@ class TrailRoute {
   final Duration elapsedTime;
 
   TrailRoute({
+    this.id,
     required this.name,
     required this.difficulty,
     required this.points,
@@ -36,12 +38,11 @@ class TrailRoute {
   }
 
   // Criar TrailRoute a partir de Map
-  factory TrailRoute.fromMap(Map<String, dynamic> map) {
-    final pts = (map['points'] as List)
-        .map((p) => RoutePoint(p['lat'], p['lng']))
-        .toList();
+  factory TrailRoute.fromMap(Map<String, dynamic> map, {String? id}) {
+    final pts = (map['points'] as List).map((p) => RoutePoint(p['lat'], p['lng'])).toList();
 
     return TrailRoute(
+      id: id,
       name: map['name'] ?? '',
       difficulty: Difficulty.values.firstWhere(
         (d) => d.name == map['difficulty'],

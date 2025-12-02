@@ -68,8 +68,7 @@ class HikkerListItem extends StatelessWidget {
         ),
         child: ListTile(
           leading: const CircleAvatar(
-            backgroundImage:
-                AssetImage('assets/images/avatar_placeholder_large.png'),
+            backgroundImage: AssetImage('assets/images/avatar_placeholder_large.png'),
             radius: 24,
           ),
           title: Text(

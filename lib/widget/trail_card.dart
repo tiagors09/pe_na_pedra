@@ -85,8 +85,7 @@ class TrailCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (trail.meetingAddress != null &&
-                trail.meetingAddress!.isNotEmpty)
+            if (trail.meetingAddress != null && trail.meetingAddress!.isNotEmpty)
               Row(
                 spacing: 8,
                 crossAxisAlignment: CrossAxisAlignment.start,

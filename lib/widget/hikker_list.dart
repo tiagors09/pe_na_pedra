@@ -5,8 +5,7 @@ class HikkerList extends StatelessWidget {
   final List adms;
   final List users;
   final String? loggedUserId;
-  final Future<bool> Function(dynamic hikker, DismissDirection direction)
-      onSwipe;
+  final Future<bool> Function(dynamic hikker, DismissDirection direction) onSwipe;
 
   const HikkerList({
     super.key,

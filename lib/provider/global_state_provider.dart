@@ -9,8 +9,7 @@ class GlobalStateProvider extends InheritedNotifier<GlobalState> {
   }) : super(notifier: notifier);
 
   static GlobalState of(BuildContext context) {
-    final provider =
-        context.dependOnInheritedWidgetOfExactType<GlobalStateProvider>();
+    final provider = context.dependOnInheritedWidgetOfExactType<GlobalStateProvider>();
 
     assert(
       provider != null,

@@ -24,8 +24,12 @@ class _RouteFormViewState extends State<RouteFormView> with FormValidator {
   void initState() {
     super.initState();
 
-    globalState = GlobalStateProvider.of(
-      context,
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) async {
+        globalState = GlobalStateProvider.of(
+          context,
+        );
+      },
     );
 
     _vm = RouteFormViewModel();
@@ -103,8 +107,7 @@ class _RouteFormViewState extends State<RouteFormView> with FormValidator {
                   initialValue: _vm.difficulty.value,
                   items: _vm.difficulties,
                   onChanged: _vm.onDifficultyChange,
-                  validator: (value) =>
-                      value == null ? 'Selecione a dificuldade' : null,
+                  validator: (value) => value == null ? 'Selecione a dificuldade' : null,
                   onSaved: (value) {
                     if (value != null) _vm.difficulty.value = value;
                   },

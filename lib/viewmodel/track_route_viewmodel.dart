@@ -29,8 +29,7 @@ class TrackRouteViewModel {
 
   final Distance _distance = const Distance();
 
-  final ValueNotifier<Map<String, dynamic>> data =
-      ValueNotifier<Map<String, dynamic>>({});
+  final ValueNotifier<Map<String, dynamic>> data = ValueNotifier<Map<String, dynamic>>({});
 
   void setData(Map<String, dynamic> value) {
     data.value = value;
@@ -41,8 +40,7 @@ class TrackRouteViewModel {
   Future<void> initLocation() async {
     final perm = await Geolocator.requestPermission();
 
-    if (perm == LocationPermission.denied ||
-        perm == LocationPermission.deniedForever) {
+    if (perm == LocationPermission.denied || perm == LocationPermission.deniedForever) {
       return;
     }
 

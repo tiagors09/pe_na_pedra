@@ -7,15 +7,12 @@ class FirebaseAuthService {
   FirebaseAuthService._();
   static final instance = FirebaseAuthService._();
 
-  static const String _authBase =
-      'https://identitytoolkit.googleapis.com/v1/accounts';
-  static const String _tokenBase =
-      'https://securetoken.googleapis.com/v1/token';
+  static const String _authBase = 'https://identitytoolkit.googleapis.com/v1/accounts';
+  static const String _tokenBase = 'https://securetoken.googleapis.com/v1/token';
 
   String get _apiKey => FirebaseRestService.apiKey;
 
-  Future<Map<String, dynamic>> signUp(
-      {required String email, required String password}) async {
+  Future<Map<String, dynamic>> signUp({required String email, required String password}) async {
     final url = Uri.parse(
       '$_authBase:signUp?key=$_apiKey',
     );
@@ -37,8 +34,7 @@ class FirebaseAuthService {
     );
   }
 
-  Future<Map<String, dynamic>> signIn(
-      {required String email, required String password}) async {
+  Future<Map<String, dynamic>> signIn({required String email, required String password}) async {
     final url = Uri.parse(
       '$_authBase:signInWithPassword?key=$_apiKey',
     );
