@@ -63,8 +63,8 @@ class RouteFormViewModel extends ChangeNotifier {
     canSave.value = name.value.isNotEmpty && points.value.isNotEmpty;
   }
 
-  Future<void> save(String idToken) async {
-    if (!canSave.value) return;
+  Future<bool> save(String idToken) async {
+    if (!canSave.value) return false;
 
     isSaving.value = true;
 
@@ -87,12 +87,11 @@ class RouteFormViewModel extends ChangeNotifier {
 
       final route = TrailRoute.fromMap(data);
 
-      await _controller.createRoute(route, idToken: '');
+      await _controller.createRoute(route, idToken: idToken);
 
-      log(
-        'Saving to Firebase: $data',
-        name: 'RouteFormViewModel',
-      );
+      return true; //  <<<< SUCESSO
+    } catch (e) {
+      return false; //  <<<< FALHA
     } finally {
       isSaving.value = false;
     }

@@ -35,10 +35,24 @@ class _RouteFormViewState extends State<RouteFormView> with FormValidator {
     _vm = RouteFormViewModel();
   }
 
-  void _onSave() {
+  void _onSave() async {
     if (_vm.formKey.currentState?.validate() ?? false) {
       _vm.formKey.currentState?.save();
-      _vm.save(globalState.idToken!);
+
+      final ok = await _vm.save(globalState.idToken!);
+
+      if (!mounted) return;
+
+      if (ok) {
+        Navigator.pop(context);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Trilha salva com sucesso!'),
+            showCloseIcon: true,
+          ),
+        );
+      }
     }
   }
 
