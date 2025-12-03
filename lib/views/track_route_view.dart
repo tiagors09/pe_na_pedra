@@ -201,6 +201,8 @@ class _TrackRouteViewState extends State<TrackRouteView> {
                         final data = vm.stopRecording();
 
                         if (data != null && data.isNotEmpty) {
+                          vm.setData(data);
+
                           ScaffoldMessenger.of(
                             context,
                           ).showSnackBar(

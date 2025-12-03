@@ -83,126 +83,128 @@ class _RouteFormViewState extends State<RouteFormView> with FormValidator {
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _vm.formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextFormField(
-                  initialValue: _vm.name.value,
-                  decoration: const InputDecoration(
-                    labelText: 'Nome da trilha',
-                    border: OutlineInputBorder(),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    initialValue: _vm.name.value,
+                    decoration: const InputDecoration(
+                      labelText: 'Nome da trilha',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: _vm.setName,
+                    validator: validateNameField,
+                    onSaved: (value) {
+                      _vm.name.value = value ?? '';
+                    },
                   ),
-                  onChanged: _vm.setName,
-                  validator: validateNameField,
-                  onSaved: (value) {
-                    _vm.name.value = value ?? '';
-                  },
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<Difficulty>(
-                  decoration: const InputDecoration(
-                    labelText: 'Dificuldade',
-                    border: OutlineInputBorder(),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<Difficulty>(
+                    decoration: const InputDecoration(
+                      labelText: 'Dificuldade',
+                      border: OutlineInputBorder(),
+                    ),
+                    initialValue: _vm.difficulty.value,
+                    items: _vm.difficulties,
+                    onChanged: _vm.onDifficultyChange,
+                    validator: (value) =>
+                        value == null ? 'Selecione a dificuldade' : null,
+                    onSaved: (value) {
+                      if (value != null) _vm.difficulty.value = value;
+                    },
                   ),
-                  initialValue: _vm.difficulty.value,
-                  items: _vm.difficulties,
-                  onChanged: _vm.onDifficultyChange,
-                  validator: (value) =>
-                      value == null ? 'Selecione a dificuldade' : null,
-                  onSaved: (value) {
-                    if (value != null) _vm.difficulty.value = value;
-                  },
-                ),
-                const SizedBox(height: 16),
-                FormField<List<RoutePoint>>(
-                  initialValue: _vm.points.value,
-                  validator: (_) {
-                    if (_vm.points.value.isEmpty) {
-                      return 'Você deve gravar a rota';
-                    }
-                    return null;
-                  },
-                  builder: (state) {
-                    return InputDecorator(
-                      decoration: InputDecoration(
-                        labelText: 'Rota',
-                        border: const OutlineInputBorder(),
-                        errorText: state.errorText,
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 16,
+                  const SizedBox(height: 16),
+                  FormField<List<RoutePoint>>(
+                    initialValue: _vm.points.value,
+                    validator: (_) {
+                      if (_vm.points.value.isEmpty) {
+                        return 'Você deve gravar a rota';
+                      }
+                      return null;
+                    },
+                    builder: (state) {
+                      return InputDecorator(
+                        decoration: InputDecoration(
+                          labelText: 'Rota',
+                          border: const OutlineInputBorder(),
+                          errorText: state.errorText,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 16,
+                          ),
                         ),
-                      ),
-                      child: ValueListenableBuilder<List<RoutePoint>>(
-                        valueListenable: _vm.points,
-                        builder: (_, pts, __) {
-                          if (pts.isEmpty) {
-                            final color = state.hasError
-                                ? Theme.of(context).colorScheme.error
-                                : Colors.black87;
+                        child: ValueListenableBuilder<List<RoutePoint>>(
+                          valueListenable: _vm.points,
+                          builder: (_, pts, __) {
+                            if (pts.isEmpty) {
+                              final color = state.hasError
+                                  ? Theme.of(context).colorScheme.error
+                                  : Colors.black87;
 
-                            return InkWell(
-                              onTap: () async {
-                                if (_vm.canTrackRoute()) {
-                                  final result = await Navigator.of(
-                                    context,
-                                  ).pushNamed(
-                                    AppRoutes.trackRoute,
-                                  );
+                              return InkWell(
+                                onTap: () async {
+                                  if (_vm.canTrackRoute()) {
+                                    final result = await Navigator.of(
+                                      context,
+                                    ).pushNamed(
+                                      AppRoutes.trackRoute,
+                                    );
 
-                                  _vm.setRecordedRoute(
-                                    result as Map<String, dynamic>?,
-                                  );
+                                    _vm.setRecordedRoute(
+                                      result as Map<String, dynamic>?,
+                                    );
 
-                                  state.validate();
-                                }
-                              },
-                              borderRadius: BorderRadius.circular(
-                                4,
-                              ),
-                              child: Container(
-                                width: double.infinity,
-                                height: 48,
-                                alignment: Alignment.centerLeft,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 0,
-                                  vertical: 0,
+                                    state.validate();
+                                  }
+                                },
+                                borderRadius: BorderRadius.circular(
+                                  4,
                                 ),
-                                child: Row(
-                                  spacing: 8,
-                                  children: [
-                                    Icon(
-                                      Icons.map,
-                                      color: color,
-                                    ),
-                                    Text(
-                                      'Gravar rota',
-                                      style: TextStyle(
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 48,
+                                  alignment: Alignment.centerLeft,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 0,
+                                    vertical: 0,
+                                  ),
+                                  child: Row(
+                                    spacing: 8,
+                                    children: [
+                                      Icon(
+                                        Icons.map,
                                         color: color,
                                       ),
-                                    ),
-                                  ],
+                                      Text(
+                                        'Gravar rota',
+                                        style: TextStyle(
+                                          color: color,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+
+                            return SizedBox(
+                              height: 300,
+                              width: double.infinity,
+                              child: RouteInfo(
+                                points: pts,
+                                interactionOptions: const InteractionOptions(
+                                  flags: InteractiveFlag.none,
                                 ),
                               ),
                             );
-                          }
-
-                          return SizedBox(
-                            height: 300,
-                            width: double.infinity,
-                            child: RouteInfo(
-                              points: pts,
-                              interactionOptions: const InteractionOptions(
-                                flags: InteractiveFlag.none,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                )
-              ],
+                          },
+                        ),
+                      );
+                    },
+                  )
+                ],
+              ),
             ),
           ),
         ),
