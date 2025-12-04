@@ -27,22 +27,28 @@ class RoutesController {
     final data = await _db.get('routes', auth: idToken);
     if (data == null) return [];
 
-    // 🔥 Caso venha LISTA
+    // Caso venha MAP (padrão do Firebase)
+    if (data is Map) {
+      final map = Map<String, dynamic>.from(data);
+      return map.entries
+          .where((e) => e.value != null)
+          .map((e) => TrailRoute.fromMap(
+                Map<String, dynamic>.from(e.value),
+                id: e.key, // <-- ID AQUI!
+              ))
+          .toList();
+    }
+
+    // Caso venha LISTA (não é o ideal, mas tratamos)
     if (data is List) {
       return data
           .asMap()
           .entries
           .where((e) => e.value != null)
-          .map((e) => TrailRoute.fromMap(Map<String, dynamic>.from(e.value)))
-          .toList();
-    }
-
-    // 🔥 Caso venha MAP (formato ideal do Firebase)
-    if (data is Map) {
-      final map = Map<String, dynamic>.from(data);
-      return map.entries
-          .where((e) => e.value != null)
-          .map((e) => TrailRoute.fromMap(Map<String, dynamic>.from(e.value)))
+          .map((e) => TrailRoute.fromMap(
+                Map<String, dynamic>.from(e.value),
+                id: e.key.toString(), // <-- cria ID para listas
+              ))
           .toList();
     }
 

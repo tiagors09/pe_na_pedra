@@ -118,7 +118,7 @@ class _RoutesViewState extends State<RoutesView> {
                             onTap: () async {
                               // Editar usando o mesmo form
                               await Navigator.of(context).pushNamed(
-                                AppRoutes.routeForm,
+                                AppRoutes.routeDetails,
                                 arguments: route,
                               );
                               _vm.loadRoutes();

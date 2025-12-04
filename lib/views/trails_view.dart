@@ -40,9 +40,28 @@ class _TrailsViewState extends State<TrailsView> {
 
         if (snapshot.hasError) {
           return Center(
-            child: Text(
-              "Erro ao carregar trilhas:\n${snapshot.error}",
-              textAlign: TextAlign.center,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Erro ao carregar trilhas",
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(
+                      () {
+                        final global = GlobalStateProvider.of(context);
+                        _future = _vm.fetchOnce(global); // Recarrega o Future
+                      },
+                    );
+                  },
+                  child: const Text(
+                    "Tentar novamente",
+                  ),
+                ),
+              ],
             ),
           );
         }

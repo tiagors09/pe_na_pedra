@@ -7,8 +7,10 @@ import 'package:pe_na_pedra/views/home_view.dart';
 import 'package:pe_na_pedra/views/login_view.dart';
 import 'package:pe_na_pedra/views/hikkers_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:pe_na_pedra/views/route_detail_view.dart';
 import 'package:pe_na_pedra/views/route_form_view.dart';
 import 'package:pe_na_pedra/views/routes_view.dart';
+import 'package:pe_na_pedra/views/scheduled_trail_form_view.dart';
 import 'package:pe_na_pedra/views/track_route_view.dart';
 
 class App extends StatelessWidget {
@@ -29,6 +31,9 @@ class App extends StatelessWidget {
         AppRoutes.routes: (context) => const RoutesView(),
         AppRoutes.routeForm: (context) => const RouteFormView(),
         AppRoutes.trackRoute: (context) => const TrackRouteView(),
+        AppRoutes.scheduledTrailForm: (context) =>
+            const ScheduledTrailFormView(),
+        AppRoutes.routeDetails: (context) => const RouteDetailsView(),
       },
       locale: const Locale('pt', 'BR'),
       supportedLocales: const [
