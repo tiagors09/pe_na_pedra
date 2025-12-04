@@ -35,11 +35,13 @@ class AdmView extends StatelessWidget {
           );
         },
       ),
+      /*
       const AdmButton(
         icon: Icons.settings,
         label: 'Configurações',
         onTap: null,
       ),
+      */
     ];
 
     return SafeArea(

@@ -93,6 +93,13 @@ class ScheduledTrailFormViewModel {
     }
   }
 
+  void delete(String id) async {
+    await _scheduledController.deleteScheduledTrail(
+      id,
+      idToken: idToken,
+    );
+  }
+
   void dispose() {
     meetingPoint.dispose();
     meetingTime.dispose();

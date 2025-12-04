@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pe_na_pedra/provider/global_state_provider.dart';
 import 'package:pe_na_pedra/utils/app_routes.dart';
+import 'package:pe_na_pedra/utils/dialog_launcher.dart';
 import 'package:pe_na_pedra/viewmodel/calendar_viewmodel.dart';
 
 class CalendarView extends StatefulWidget {
@@ -85,24 +86,11 @@ class _CalendarViewState extends State<CalendarView> {
                       child: const Icon(Icons.delete, color: Colors.white),
                     ),
                     confirmDismiss: (direction) async {
-                      return await showDialog(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                          title: const Text("Excluir trilha?"),
-                          content: Text(
-                            "Deseja excluir a trilha '$routeName'?",
-                          ),
-                          actions: [
-                            TextButton(
-                              child: const Text("Cancelar"),
-                              onPressed: () => Navigator.of(context).pop(false),
-                            ),
-                            TextButton(
-                              child: const Text("Excluir"),
-                              onPressed: () => Navigator.of(context).pop(true),
-                            ),
-                          ],
-                        ),
+                      return await DialogLauncher.showConfirmDialog(
+                        context,
+                        title: "Excluir trilha?",
+                        message: "Deseja excluir a trilha '$routeName'?",
+                        confirmText: "Excluir",
                       );
                     },
                     onDismissed: (_) {

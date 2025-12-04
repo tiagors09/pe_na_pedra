@@ -102,15 +102,3 @@ class ScheduledTrailsController {
     }
   }
 }
-
-extension _CopyWithId on ScheduledTrail {
-  ScheduledTrail copyWithId(String newId) {
-    return ScheduledTrail(
-      id: newId,
-      routeId: routeId,
-      meetingPoint: meetingPoint,
-      meetingTime: meetingTime,
-      meetingDate: meetingDate,
-    );
-  }
-}

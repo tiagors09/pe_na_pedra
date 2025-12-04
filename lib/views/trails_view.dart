@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pe_na_pedra/model/trail.dart';
+import 'package:pe_na_pedra/model/scheduled_trail.dart';
 import 'package:pe_na_pedra/provider/global_state_provider.dart';
 import 'package:pe_na_pedra/viewmodel/trails_viewmodel.dart';
 import 'package:pe_na_pedra/widget/trail_card.dart';
@@ -12,14 +12,9 @@ class TrailsView extends StatefulWidget {
 }
 
 class _TrailsViewState extends State<TrailsView> {
-  late Future<List<Trail>> _future;
+  late Future<List<ScheduledTrail>> _future;
 
   final TrailsViewModel _vm = TrailsViewModel();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void didChangeDependencies() {
@@ -31,7 +26,7 @@ class _TrailsViewState extends State<TrailsView> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Trail>>(
+    return FutureBuilder<List<ScheduledTrail>>(
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -43,23 +38,19 @@ class _TrailsViewState extends State<TrailsView> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                const Text(
                   "Erro ao carregar trilhas",
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    setState(
-                      () {
-                        final global = GlobalStateProvider.of(context);
-                        _future = _vm.fetchOnce(global); // Recarrega o Future
-                      },
-                    );
+                    setState(() {
+                      final global = GlobalStateProvider.of(context);
+                      _future = _vm.fetchOnce(global);
+                    });
                   },
-                  child: const Text(
-                    "Tentar novamente",
-                  ),
+                  child: const Text("Tentar novamente"),
                 ),
               ],
             ),
@@ -77,9 +68,7 @@ class _TrailsViewState extends State<TrailsView> {
         return ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: trails.length,
-          itemBuilder: (_, i) => TrailCard(
-            trail: trails[i],
-          ),
+          itemBuilder: (_, i) => TrailCard(trail: trails[i]),
         );
       },
     );

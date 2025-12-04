@@ -1,56 +1,29 @@
-// lib/controllers/trails_controller.dart
-import 'dart:async';
-import 'package:pe_na_pedra/model/trail.dart';
-import 'package:pe_na_pedra/services/firebase_rest_service.dart';
+import 'package:pe_na_pedra/controller/routes_controller.dart';
+import 'package:pe_na_pedra/controller/scheduled_trails_controller.dart';
+import 'package:pe_na_pedra/model/scheduled_trail.dart';
 
 class TrailsController {
-  final FirebaseRestService _db = FirebaseRestService.instance;
+  final ScheduledTrailsController _scheduled = ScheduledTrailsController();
+  final RoutesController _routes = RoutesController();
 
-  /// Create trail (push auto-id)
-  Future<String> createTrail(Trail trail, {required String? idToken}) async {
-    final res = await _db.post('trails', trail.toMap(), auth: idToken);
-    // Firebase returns { "name": "-MQxxx" }
-    return res['name'] as String;
-  }
+  Future<List<ScheduledTrail>> fetchTrails({
+    required String? idToken,
+  }) async {
+    // 1) Busca os agendamentos
+    final scheduled = await _scheduled.fetchScheduledTrails(idToken: idToken);
 
-  Future<void> updateTrail(String id, Trail trail,
-      {required String? idToken}) async {
-    await _db.put('trails/$id', trail.toMap(), auth: idToken);
-  }
+    // 2) Busca TODAS as rotas
+    final routes = await _routes.fetchRoutes(idToken: idToken);
+    final routeById = {for (var r in routes) r.id!: r};
 
-  Future<void> deleteTrail(String id, {required String? idToken}) async {
-    await _db.delete('trails/$id', auth: idToken);
-  }
-
-  Future<List<Trail>> fetchTrails({required String? idToken}) async {
-    final data = await _db.get('trails', auth: idToken);
-    if (data == null) return [];
-
-    // 🔥 Caso venha LISTA
-    if (data is List) {
-      return data
-          .asMap()
-          .entries
-          .where((e) => e.value != null)
-          .map((e) => Trail.fromMap(
-                e.key.toString(), // usa índice como ID
-                Map<String, dynamic>.from(e.value),
-              ))
-          .toList();
+    // 3) associa rota ao scheduledTrail
+    for (final sched in scheduled) {
+      final route = routeById[sched.routeId];
+      if (route != null) {
+        sched.route = route;
+      }
     }
 
-    // 🔥 Caso venha MAP (formato ideal do Firebase)
-    if (data is Map) {
-      final map = Map<String, dynamic>.from(data);
-      return map.entries
-          .where((e) => e.value != null)
-          .map((e) => Trail.fromMap(
-                e.key,
-                Map<String, dynamic>.from(e.value),
-              ))
-          .toList();
-    }
-
-    throw Exception("Formato inesperado em /trails: ${data.runtimeType}");
+    return scheduled;
   }
 }
