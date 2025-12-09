@@ -8,6 +8,9 @@ class ScheduledTrail {
   final String meetingTime;
   final DateTime meetingDate;
 
+  /// Lista de inscritos
+  List<String> subscribers;
+
   ScheduledTrail({
     required this.routeId,
     required this.meetingPoint,
@@ -15,7 +18,8 @@ class ScheduledTrail {
     required this.meetingDate,
     this.route,
     this.id,
-  });
+    List<String>? subscribers,
+  }) : subscribers = subscribers ?? [];
 
   factory ScheduledTrail.fromMap(
     Map<String, dynamic> map, {
@@ -27,6 +31,10 @@ class ScheduledTrail {
       meetingPoint: map['meetingPoint'] ?? '',
       meetingTime: map['meetingTime'] ?? '',
       meetingDate: DateTime.parse(map['meetingDate']),
+      subscribers: (map['subscribers'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
     );
   }
 
@@ -36,6 +44,7 @@ class ScheduledTrail {
       'meetingPoint': meetingPoint,
       'meetingTime': meetingTime,
       'meetingDate': meetingDate.toIso8601String(),
+      'subscribers': subscribers,
     };
   }
 }

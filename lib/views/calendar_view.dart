@@ -97,6 +97,10 @@ class _CalendarViewState extends State<CalendarView> {
                       vm.delete(trail.id!);
                     },
                     child: ListTile(
+                      onTap: () => Navigator.of(context).pushNamed(
+                        AppRoutes.subs,
+                        arguments: trail,
+                      ),
                       title: Text(routeName),
                       subtitle:
                           Text("${trail.meetingPoint} - ${trail.meetingTime}"),

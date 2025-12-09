@@ -11,4 +11,29 @@ class TrailsViewModel extends ChangeNotifier {
   Future<List<ScheduledTrail>> fetchOnce(GlobalState globalState) {
     return _controller.fetchTrails(idToken: globalState.idToken);
   }
+
+  Future<void> subscribe(GlobalState global, ScheduledTrail trail) async {
+    await _controller.subscribeToTrail(
+      idToken: global.idToken,
+      userId: global.userId!,
+      trailId: trail.id!,
+    );
+
+    // reflete no model local também
+    trail.subscribers.add(global.userId!);
+
+    notifyListeners();
+  }
+
+  Future<void> unsubscribe(GlobalState global, ScheduledTrail trail) async {
+    await _controller.unsubscribeFromTrail(
+      idToken: global.idToken,
+      userId: global.userId!,
+      trailId: trail.id!,
+    );
+
+    trail.subscribers.remove(global.userId!);
+
+    notifyListeners();
+  }
 }

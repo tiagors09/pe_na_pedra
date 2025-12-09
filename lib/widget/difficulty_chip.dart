@@ -18,7 +18,7 @@ class DifficultyChip extends StatelessWidget {
         color = Colors.green;
         label = "Fácil";
         break;
-      case 'medium':
+      case 'moderate':
         color = Colors.orange;
         label = "Média";
         break;

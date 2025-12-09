@@ -11,4 +11,5 @@ abstract class AppRoutes {
   static const String banned = '/banned';
   static const String scheduledTrailForm = '/scheduled-trail-form';
   static const String routeDetails = '/route-details';
+  static const String subs = '/subs';
 }

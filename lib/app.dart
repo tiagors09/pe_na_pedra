@@ -12,6 +12,7 @@ import 'package:pe_na_pedra/views/route_form_view.dart';
 import 'package:pe_na_pedra/views/routes_view.dart';
 import 'package:pe_na_pedra/views/scheduled_trail_form_view.dart';
 import 'package:pe_na_pedra/views/track_route_view.dart';
+import 'package:pe_na_pedra/views/trail_subscribers_view.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -34,6 +35,7 @@ class App extends StatelessWidget {
         AppRoutes.scheduledTrailForm: (context) =>
             const ScheduledTrailFormView(),
         AppRoutes.routeDetails: (context) => const RouteDetailsView(),
+        AppRoutes.subs: (context) => const TrailSubscribersView(),
       },
       locale: const Locale('pt', 'BR'),
       supportedLocales: const [

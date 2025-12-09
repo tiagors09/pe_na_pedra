@@ -26,4 +26,34 @@ class TrailsController {
 
     return scheduled;
   }
+
+  //
+  // SUBSCRIBE
+  //
+  Future<void> subscribeToTrail({
+    required String? idToken,
+    required String userId,
+    required String trailId,
+  }) async {
+    await _scheduled.subscribeToTrail(
+      idToken: idToken,
+      userId: userId,
+      trailId: trailId,
+    );
+  }
+
+  //
+  // UNSUBSCRIBE
+  //
+  Future<void> unsubscribeFromTrail({
+    required String? idToken,
+    required String userId,
+    required String trailId,
+  }) async {
+    await _scheduled.unsubscribeFromTrail(
+      idToken: idToken,
+      userId: userId,
+      trailId: trailId,
+    );
+  }
 }

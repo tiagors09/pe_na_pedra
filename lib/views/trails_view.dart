@@ -45,10 +45,12 @@ class _TrailsViewState extends State<TrailsView> {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    setState(() {
-                      final global = GlobalStateProvider.of(context);
-                      _future = _vm.fetchOnce(global);
-                    });
+                    setState(
+                      () {
+                        final global = GlobalStateProvider.of(context);
+                        _future = _vm.fetchOnce(global);
+                      },
+                    );
                   },
                   child: const Text("Tentar novamente"),
                 ),
@@ -68,7 +70,32 @@ class _TrailsViewState extends State<TrailsView> {
         return ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: trails.length,
-          itemBuilder: (_, i) => TrailCard(trail: trails[i]),
+          itemBuilder: (_, i) {
+            final trail = trails[i];
+            final global = GlobalStateProvider.of(context);
+
+            final String userId = global.isLoggedIn ? global.userId! : "";
+
+            return TrailCard(
+              trail: trail,
+              currentUserId: userId,
+
+              // Só ativa callbacks se o usuário estiver logado
+              onSubscribe: global.isLoggedIn
+                  ? (t) async {
+                      await _vm.subscribe(global, t);
+                      setState(() {});
+                    }
+                  : null,
+
+              onUnsubscribe: global.isLoggedIn
+                  ? (t) async {
+                      await _vm.unsubscribe(global, t);
+                      setState(() {});
+                    }
+                  : null,
+            );
+          },
         );
       },
     );

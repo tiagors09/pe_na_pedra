@@ -101,4 +101,62 @@ class ScheduledTrailsController {
       await deleteScheduledTrail(t.id!, idToken: idToken);
     }
   }
+
+  Future<void> unsubscribeFromTrail({
+    required String? idToken,
+    required String userId,
+    required String trailId,
+  }) async {
+    final path = "scheduled_trails/$trailId";
+
+    final existing = await _db.get(path, auth: idToken);
+
+    if (existing == null) return;
+
+    final List subs = (existing["subscribers"] ?? []).cast<String>();
+
+    subs.remove(userId);
+
+    await _db.patch(
+      path,
+      {
+        "subscribers": subs,
+      },
+      auth: idToken,
+    );
+  }
+
+  Future<void> subscribeToTrail({
+    required String? idToken,
+    required String userId,
+    required String trailId,
+  }) async {
+    final path = "scheduled_trails/$trailId";
+
+    final existing = await _db.get(path, auth: idToken);
+
+    if (existing == null) {
+      // criar registro do zero
+      await _db.post(
+          path,
+          {
+            "subscribers": [userId],
+          },
+          auth: idToken);
+      return;
+    }
+
+    final List subs = (existing["subscribers"] ?? []).cast<String>();
+
+    if (!subs.contains(userId)) {
+      subs.add(userId);
+    }
+
+    await _db.patch(
+        path,
+        {
+          "subscribers": subs,
+        },
+        auth: idToken);
+  }
 }
