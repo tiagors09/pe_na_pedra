@@ -1,0 +1,776 @@
+@startuml
+class SecureStorage {
+---
+instance: null
+-storage: FlutterSecureStorage
+write(): void
+read(): String?
+delete(): void
+}
+SecureStorage ..> FlutterSecureStorage
+class GlobalState {
+---
+-idToken: String?
+-refreshToken: String?
+-userId: String?
+-profile: Map<String, dynamic>?
+-refreshTimer: Timer?
+idToken(): String?
+refreshToken(): String?
+userId(): String?
+profile(): Map<String, dynamic?
+isLoggedIn(): bool
+restoreFromStorage(): void
+signIn(): void
+signUp(): void
+-_handleAuthResponse(): void
+-_scheduleRefresh(): void
+-_refreshAuth(): void
+loadProfile(): void
+logout(): void
+setProfile(): void
+}
+ChangeNotifier <|-- GlobalState
+GlobalState ..> Timer
+class GlobalStateProvider {
+---
+of(): GlobalState
+}
+InheritedNotifier <|-- GlobalStateProvider
+class App {
+---
+build(): Widget
+}
+StatelessWidget <|-- App
+class DifficultyChip {
+---
+diff: String
+build(): Widget
+}
+StatelessWidget <|-- DifficultyChip
+class LoginProfileContentItem {
+---
+icon: IconData
+label: String
+value: String
+build(): Widget
+}
+StatelessWidget <|-- LoginProfileContentItem
+LoginProfileContentItem ..> IconData
+class RouteInfo {
+---
+points: List<RoutePoint>
+interactionOptions: InteractionOptions
+build(): Widget
+}
+StatelessWidget <|-- RouteInfo
+RouteInfo ..> InteractionOptions
+class LoginPrompt {
+---
+onLogin: VoidCallback?
+build(): Widget
+}
+StatelessWidget <|-- LoginPrompt
+LoginPrompt ..> VoidCallback
+class TrailCard {
+---
+trail: ScheduledTrail
+onSubscribe: Future<void> Function(ScheduledTrail trail)?
+onUnsubscribe: Future<void> Function(ScheduledTrail trail)?
+currentUserId: String
+build(): Widget
+}
+StatelessWidget <|-- TrailCard
+TrailCard ..> ScheduledTrail
+class LoginProfileContent {
+---
+fullName: String
+phone: String
+birthDate: String
+address: String
+onEditProfile: Future<void> Function()
+onLogout: VoidCallback
+build(): Widget
+}
+StatelessWidget <|-- LoginProfileContent
+LoginProfileContent ..> VoidCallback
+class HikkerList {
+---
+adms: List
+users: List
+loggedUserId: String?
+onSwipe: Future<bool> Function(dynamic hikker, DismissDirection direction)
+build(): Widget
+}
+StatelessWidget <|-- HikkerList
+class AdmButton {
+---
+icon: IconData
+label: String
+onTap: VoidCallback?
+build(): Widget
+}
+StatelessWidget <|-- AdmButton
+AdmButton ..> IconData
+AdmButton ..> VoidCallback
+class HikkerListItem {
+---
+hikker: dynamic
+loggedUserId: String?
+onSwipe: Future<bool> Function(DismissDirection direction)
+build(): Widget
+}
+StatelessWidget <|-- HikkerListItem
+class DialogLauncher {
+---
+showConfirmDialog(): bool
+}
+class Env {
+---
+apiKey: null
+authDomain: null
+dbUrl: null
+projectId: null
+storageBucket: null
+messagingSenderId: null
+appId: null
+}
+class EditProfileViewArguments {
+---
+userId: String?
+mode: EditProfileMode
+}
+EditProfileViewArguments ..> EditProfileMode
+abstract class AppRoutes {
+---
+login: String
+home: String
+editProfile: String
+users: String
+config: String
+calendar: String
+routes: String
+routeForm: String
+trackRoute: String
+banned: String
+scheduledTrailForm: String
+routeDetails: String
+subs: String
+}
+class Trail {
+---
+id: String
+name: String
+meetingPoint: LatLng
+meetingAddress: String?
+trailLocation: LatLng
+trailAddress: String?
+meetingDate: DateTime
+meetingTime: String
+spots: int
+difficulty: String
+route: List<LatLng>
+toMap(): Map<String, dynamic
+}
+Trail ..> LatLng
+Trail ..> DateTime
+class TrailRoute {
+---
+id: String?
+name: String
+difficulty: Difficulty
+points: List<RoutePoint>
+distanceKm: double
+speedKmh: double
+elapsedTime: Duration
+toMap(): Map<String, dynamic
+}
+TrailRoute ..> Difficulty
+class ScheduledTrail {
+---
+id: String?
+routeId: String
+route: TrailRoute?
+meetingPoint: String
+meetingTime: String
+meetingDate: DateTime
+subscribers: List<String>
+toMap(): Map<String, dynamic
+}
+ScheduledTrail ..> TrailRoute
+ScheduledTrail ..> DateTime
+class Hikker {
+---
+id: String
+fullName: String
+address: String
+birthDate: String
+phone: String
+role: UserRoles
+toMap(): Map<String, dynamic
+copyWith(): Hikker
+}
+Hikker ..> UserRoles
+class RoutePoint {
+---
+lat: double
+lng: double
+}
+class RouteItem {
+---
+id: String
+name: String
+description: String
+points: List<RoutePoint>
+}
+class FirebaseRestService {
+---
+instance: null
+apiKey: String
+dbUrl: String
+-client: http.Client
+-_pathUri(): Uri
+get(): dynamic
+post(): dynamic
+put(): dynamic
+patch(): dynamic
+delete(): dynamic
+stream(): Stream<Map<String, dynamic
+}
+FirebaseRestService ..> http.Client
+class FirebaseAuthService {
+---
+instance: null
+-authBase: String
+-tokenBase: String
+-_apiKey(): String
+signUp(): Map<String, dynamic
+signIn(): Map<String, dynamic
+refresh(): Map<String, dynamic
+}
+class AuthCacheService {
+---
+-keyProfile: null
+saveProfile(): void
+loadProfile(): Map<String, dynamic?
+clearProfile(): void
+saveSession(): void
+loadSession(): Map<String, String?
+clear(): void
+}
+class TrailsView {
+---
+createState(): State<TrailsView
+}
+StatefulWidget <|-- TrailsView
+class _TrailsViewState {
+---
+-future: Future<List<ScheduledTrail>>
+-vm: TrailsViewModel
+didChangeDependencies(): void
+build(): Widget
+}
+State <|-- _TrailsViewState
+_TrailsViewState ..> Future
+_TrailsViewState ..> TrailsViewModel
+class HikkersView {
+---
+createState(): State<HikkersView
+}
+StatefulWidget <|-- HikkersView
+class _HikkersViewState {
+---
+-vm: HikkersViewmodel
+global: GlobalState
+initState(): void
+didChangeDependencies(): void
+build(): Widget
+}
+State <|-- _HikkersViewState
+_HikkersViewState ..> HikkersViewmodel
+_HikkersViewState ..> GlobalState
+class ScheduledTrailFormView {
+---
+createState(): State<ScheduledTrailFormView
+}
+StatefulWidget <|-- ScheduledTrailFormView
+class _ScheduledTrailFormViewState {
+---
+vm: ScheduledTrailFormViewModel
+loadedArgs: bool
+initState(): void
+didChangeDependencies(): void
+-_loadInitialData(): void
+dispose(): void
+build(): Widget
+}
+State <|-- _ScheduledTrailFormViewState
+_ScheduledTrailFormViewState ..> ScheduledTrailFormViewModel
+class TrackRouteView {
+---
+createState(): State<TrackRouteView
+}
+StatefulWidget <|-- TrackRouteView
+class _TrackRouteViewState {
+---
+vm: null
+-mapController: MapController
+initState(): void
+dispose(): void
+build(): Widget
+-_infoOverlay(): Widget
+-_infoTile(): Widget
+-_buttonsRow(): Widget
+}
+State <|-- _TrackRouteViewState
+class InitialRouteDeciderView {
+---
+createState(): State<InitialRouteDeciderView
+}
+StatefulWidget <|-- InitialRouteDeciderView
+class _InitialRouteDeciderViewState {
+---
+initState(): void
+build(): Widget
+}
+State <|-- _InitialRouteDeciderViewState
+class RouteFormView {
+---
+createState(): State<RouteFormView
+}
+StatefulWidget <|-- RouteFormView
+class _RouteFormViewState {
+---
+-vm: RouteFormViewModel
+globalState: GlobalState
+initState(): void
+-_onSave(): void
+build(): Widget
+}
+State <|-- _RouteFormViewState
+_RouteFormViewState ..> RouteFormViewModel
+_RouteFormViewState ..> GlobalState
+class HomeView {
+---
+createState(): State<HomeView
+}
+StatefulWidget <|-- HomeView
+class _HomeViewState {
+---
+-vm: HomeViewModel
+initState(): void
+didChangeDependencies(): void
+build(): Widget
+dispose(): void
+}
+State <|-- _HomeViewState
+_HomeViewState ..> HomeViewModel
+class CalendarView {
+---
+createState(): State<CalendarView
+}
+StatefulWidget <|-- CalendarView
+class _CalendarViewState {
+---
+vm: CalendarViewmodel
+-tokenSet: bool
+initState(): void
+didChangeDependencies(): void
+build(): Widget
+}
+State <|-- _CalendarViewState
+_CalendarViewState ..> CalendarViewmodel
+class ProfileView {
+---
+createState(): State<ProfileView
+}
+StatefulWidget <|-- ProfileView
+class _ProfileViewState {
+---
+-vm: ProfileViewModel
+wantKeepAlive(): bool
+initState(): void
+build(): Widget
+}
+State <|-- _ProfileViewState
+_ProfileViewState ..> ProfileViewModel
+class RouteDetailsView {
+---
+createState(): State<RouteDetailsView
+}
+StatefulWidget <|-- RouteDetailsView
+class _RouteDetailsViewState {
+---
+route: TrailRoute
+-loaded: bool
+didChangeDependencies(): void
+build(): Widget
+}
+State <|-- _RouteDetailsViewState
+_RouteDetailsViewState ..> TrailRoute
+class LoginView {
+---
+createState(): State<LoginView
+}
+StatefulWidget <|-- LoginView
+class _LoginViewState {
+---
+-vm: LoginViewModel
+initState(): void
+dispose(): void
+build(): Widget
+}
+State <|-- _LoginViewState
+_LoginViewState ..> LoginViewModel
+class EditProfileView {
+---
+createState(): State<EditProfileView
+}
+StatefulWidget <|-- EditProfileView
+class _EditProfileViewState {
+---
+-viewModel: EditProfileViewModel
+args: EditProfileViewArguments
+-initialized: bool
+initState(): void
+didChangeDependencies(): void
+dispose(): void
+build(): Widget
+}
+State <|-- _EditProfileViewState
+_EditProfileViewState ..> EditProfileViewModel
+_EditProfileViewState ..> EditProfileViewArguments
+class RoutesView {
+---
+createState(): State<RoutesView
+}
+StatefulWidget <|-- RoutesView
+class _RoutesViewState {
+---
+-vm: RoutesViewModel
+initState(): void
+didChangeDependencies(): void
+build(): Widget
+}
+State <|-- _RoutesViewState
+_RoutesViewState ..> RoutesViewModel
+class BannedView {
+---
+build(): Widget
+}
+StatelessWidget <|-- BannedView
+class AdmView {
+---
+build(): Widget
+}
+StatelessWidget <|-- AdmView
+class TrailSubscribersView {
+---
+createState(): State<TrailSubscribersView
+}
+StatefulWidget <|-- TrailSubscribersView
+class _TrailSubscribersViewState {
+---
+vm: TrailSubscribersViewmodel
+-loaded: bool
+initState(): void
+didChangeDependencies(): void
+build(): Widget
+}
+State <|-- _TrailSubscribersViewState
+_TrailSubscribersViewState ..> TrailSubscribersViewmodel
+class ScheduledTrailFormViewModel {
+---
+formKey: null
+-routesController: RoutesController
+-scheduledController: ScheduledTrailsController
+idToken: String
+editing: ScheduledTrail?
+meetingPoint: null
+meetingTime: null
+meetingDate: null
+selectedRoute: null
+isSaving: null
+routes: null
+isLoadingRoutes: null
+meetingPointController: null
+isUpdating: bool
+loadRoutes(): void
+submit(): ScheduledTrail?
+saveToFirebase(): bool
+delete(): void
+dispose(): void
+}
+ScheduledTrailFormViewModel ..> RoutesController
+ScheduledTrailFormViewModel ..> ScheduledTrailsController
+ScheduledTrailFormViewModel ..> ScheduledTrail
+class TrackRouteViewModel {
+---
+isRecording: ValueNotifier<bool>
+hasInitialLocation: ValueNotifier<bool>
+initialCenter: LatLng
+points: ValueNotifier<List<LatLng>>
+totalDistanceKm: ValueNotifier<double>
+speedKmh: ValueNotifier<double>
+elapsedTime: ValueNotifier<Duration>
+-stopwatch: Stopwatch
+-timer: Timer?
+-locationStream: StreamSubscription<Position>?
+-distance: Distance
+data: ValueNotifier<Map<String, dynamic>>
+setData(): void
+mapData(): Map<String, dynamic
+initLocation(): void
+startRecording(): void
+stopRecording(): Map<String, dynamic?
+reset(): void
+formattedTime(): String
+dispose(): void
+}
+TrackRouteViewModel ..> ValueNotifier
+TrackRouteViewModel ..> LatLng
+TrackRouteViewModel ..> Stopwatch
+TrackRouteViewModel ..> Timer
+TrackRouteViewModel ..> Distance
+class EditProfileViewModel {
+---
+-controller: null
+form: null
+formData: null
+-isLoading: null
+-obscurePassword: null
+-obscureConfirmPassword: null
+birthDateController: TextEditingController
+isLoading(): ValueNotifier<bool
+obscurePassword(): ValueNotifier<bool
+obscureConfirmPassword(): ValueNotifier<bool
+loadInitialData(): void
+toggleObscurePassword(): void
+toggleObscureConfirmPassword(): void
+onFullNameSaved(): void
+onPhoneSaved(): void
+onAddressSaved(): void
+onEmailSaved(): void
+onPasswordSaved(): void
+onConfirmPasswordSaved(): void
+validateName(): String?
+validatePhone(): String?
+validateConfirmPasswordField(): String?
+selectBirthDate(): void
+setLoading(): void
+submit(): void
+dispose(): void
+}
+ChangeNotifier <|-- EditProfileViewModel
+EditProfileViewModel ..> TextEditingController
+class HikkersViewmodel {
+---
+-controller: null
+role: String
+loading: ValueNotifier<bool>
+showingBanned: ValueNotifier<bool>
+-allHikkers: List<Hikker>
+searchQuery: ValueNotifier<String>
+hikkers: ValueNotifier<List<Hikker>>
+-initialized: bool
+-loggedUserId: String?
+isAdmin(): bool
+initialized(): bool
+setLoggedUser(): void
+fetchOnce(): void
+toggleList(): void
+setSearchQuery(): void
+-_applyFiltersAndSort(): void
+handleSwipe(): SwipeAction
+executeAction(): void
+-_roleForAction(): UserRoles
+promoteToAdmin(): void
+demoteAdmin(): void
+banUser(): void
+unbanUser(): void
+titleFor(): String
+messageFor(): String
+btnFor(): String
+}
+HikkersViewmodel ..> ValueNotifier
+class TrailsViewModel {
+---
+-controller: TrailsController
+fetchOnce(): ScheduledTrail[0..*]
+subscribe(): void
+unsubscribe(): void
+}
+ChangeNotifier <|-- TrailsViewModel
+TrailsViewModel ..> TrailsController
+class ProfileViewModel {
+---
+-controller: null
+profileData: null
+isLoading: null
+errorMessage: null
+-initialized: bool
+loadProfile(): void
+refreshAfterEdit(): void
+formatBirthDate(): String
+}
+class RoutesViewModel {
+---
+-controller: RoutesController
+routes: ValueNotifier<List<TrailRoute>>
+isLoading: ValueNotifier<bool>
+error: ValueNotifier<String?>
+idToken: String?
+loadRoutes(): void
+deleteRoute(): void
+saveRoute(): void
+}
+RoutesViewModel ..> RoutesController
+RoutesViewModel ..> ValueNotifier
+class LoginViewModel {
+---
+form: null
+-controller: null
+passwordController: null
+email: null
+password: null
+confirmPassword: null
+isLoading: null
+showRegister: null
+obscurePassword: null
+obscureConfirmPassword: null
+errorMessage: null
+toggleRegister(): void
+toggleObscurePassword(): void
+toggleObscureConfirmPassword(): void
+onEmailSaved(): void
+onPasswordSaved(): void
+onConfirmPasswordSaved(): void
+validateConfirmPassword(): String?
+submit(): void
+dispose(): void
+}
+class HomeViewModel {
+---
+currentIndex: null
+title: null
+role: null
+isAdmin(): bool
+baseViews(): Widget[0..*]
+destinations(): NavigationDestination[0..*]
+setCurrentIndex(): void
+dispose(): void
+}
+class TrailSubscribersViewmodel {
+---
+scheduledCtrl: ScheduledTrailsController
+hikkersCtrl: HikkersControllers
+idToken: String
+trail: ScheduledTrail
+isLoading: ValueNotifier<bool>
+admins: ValueNotifier<List<Hikker>>
+users: ValueNotifier<List<Hikker>>
+load(): void
+removeSubscriber(): void
+}
+TrailSubscribersViewmodel ..> ScheduledTrailsController
+TrailSubscribersViewmodel ..> HikkersControllers
+TrailSubscribersViewmodel ..> ScheduledTrail
+TrailSubscribersViewmodel ..> ValueNotifier
+class RouteFormViewModel {
+---
+-controller: null
+name: null
+difficulty: null
+points: null
+distanceKm: ValueNotifier<double>
+speedKmh: ValueNotifier<double>
+elapsedTime: ValueNotifier<Duration>
+isSaving: ValueNotifier<bool>
+formKey: null
+canSave(): ValueNotifier<bool
+setName(): void
+setDifficulty(): void
+setRecordedRoute(): void
+save(): bool
+difficulties(): DropdownMenuItemDifficulty[0..*]
+onDifficultyChange(): void
+canTrackRoute(): bool
+}
+ChangeNotifier <|-- RouteFormViewModel
+RouteFormViewModel ..> ValueNotifier
+class CalendarViewmodel {
+---
+-controller: ScheduledTrailsController
+-routesController: RoutesController
+idToken: String
+isLoading: null
+trailsByMonth: null
+routesById: null
+load(): void
+-_groupByMonth(): Map<String, ScheduledTrail[0..*]
+delete(): void
+}
+CalendarViewmodel ..> ScheduledTrailsController
+CalendarViewmodel ..> RoutesController
+class ScheduledTrailsController {
+---
+-db: FirebaseRestService
+createScheduledTrail(): void
+updateScheduledTrail(): void
+deleteScheduledTrail(): void
+fetchScheduledTrails(): ScheduledTrail[0..*]
+-_cleanExpired(): void
+unsubscribeFromTrail(): void
+subscribeToTrail(): void
+}
+ScheduledTrailsController ..> FirebaseRestService
+class ProfileController {
+---
+-db: FirebaseRestService
+fetchProfile(): Map<String, dynamic?
+upsertProfile(): void
+}
+ProfileController ..> FirebaseRestService
+class TrailsController {
+---
+-scheduled: ScheduledTrailsController
+-routes: RoutesController
+fetchTrails(): ScheduledTrail[0..*]
+subscribeToTrail(): void
+unsubscribeFromTrail(): void
+}
+TrailsController ..> ScheduledTrailsController
+TrailsController ..> RoutesController
+class LoginController {
+---
+login(): bool
+createAccount(): bool
+}
+class RoutesController {
+---
+-db: FirebaseRestService
+createRoute(): void
+updateRoute(): void
+deleteRoute(): void
+fetchRoutes(): TrailRoute[0..*]
+}
+RoutesController ..> FirebaseRestService
+class EditProfileController {
+---
+submit(): void
+}
+class HikkersControllers {
+---
+-db: FirebaseRestService
+fetchHikkers(): Hikker[0..*]
+updateRole(): void
+}
+HikkersControllers ..> FirebaseRestService
+class HomeController {
+---
+}
+class _PluginRegistrant {
+---
+register(): void
+}
+@enduml

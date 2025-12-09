@@ -21,7 +21,7 @@ class TrailSubscribersViewmodel {
   Future<void> load() async {
     isLoading.value = true;
 
-    final subsIds = trail.subscribers ?? [];
+    final subsIds = trail.subscribers;
 
     // pega todos hikkers do sistema
     final all = await hikkersCtrl.fetchHikkers(idToken: idToken);
