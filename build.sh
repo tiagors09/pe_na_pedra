@@ -1,9 +1,9 @@
 #!/bin/bash
 # Limpa builds anteriores
-flutter clean
+flutter/bin/flutter clean
 
 # Baixa dependências
-flutter pub get
+flutter/bin/flutter pub get
 
 # Build do web com variáveis de ambiente
 flutter/bin/flutter build web --release \
