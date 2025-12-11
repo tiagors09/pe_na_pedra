@@ -3,6 +3,7 @@ import 'package:pe_na_pedra/utils/app_routes.dart';
 import 'package:pe_na_pedra/utils/app_theme.dart';
 import 'package:pe_na_pedra/views/calendar_view.dart';
 import 'package:pe_na_pedra/views/edit_profile_view.dart';
+import 'package:pe_na_pedra/views/home_view.dart';
 import 'package:pe_na_pedra/views/initial_route_decider_view.dart';
 import 'package:pe_na_pedra/views/login_view.dart';
 import 'package:pe_na_pedra/views/hikkers_view.dart';
@@ -22,9 +23,10 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Pé na Pedra',
       theme: appTheme,
-      initialRoute: AppRoutes.home,
+      initialRoute: AppRoutes.decider,
       routes: {
-        AppRoutes.home: (context) => const InitialRouteDeciderView(),
+        AppRoutes.home: (context) => const HomeView(),
+        AppRoutes.decider: (context) => const InitialRouteDeciderView(),
         AppRoutes.login: (context) => const LoginView(),
         AppRoutes.editProfile: (context) => const EditProfileView(),
         AppRoutes.users: (context) => const HikkersView(),

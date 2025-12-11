@@ -19,21 +19,34 @@ class GlobalState extends ChangeNotifier {
   bool get isLoggedIn => _idToken != null && _userId != null;
 
   Future<void> restoreFromStorage() async {
-    // carrega tokens
-    final session = await AuthCacheService.loadSession();
+    // 1. tenta carregar do secure storage (fonte principal)
+    _idToken = await SecureStorage.instance.read('idToken');
+    _refreshToken = await SecureStorage.instance.read('refreshToken');
+    _userId = await SecureStorage.instance.read('userId');
 
-    _userId = session["userId"];
-    _idToken = session["idToken"];
-    _refreshToken = session["refreshToken"];
+    // 2. se não achar, tenta do SharedPreferences (fallback)
+    if (_idToken == null || _refreshToken == null || _userId == null) {
+      final session = await AuthCacheService.loadSession();
+      _idToken = session["idToken"];
+      _refreshToken = session["refreshToken"];
+      _userId = session["userId"];
 
-    // carrega perfil do cache
+      // se achou no SharedPreferences, sincroniza de volta para o secure
+      if (_idToken != null && _refreshToken != null && _userId != null) {
+        await SecureStorage.instance.write('idToken', _idToken!);
+        await SecureStorage.instance.write('refreshToken', _refreshToken!);
+        await SecureStorage.instance.write('userId', _userId!);
+      }
+    }
+
+    // 3. carrega perfil do cache normalmente
     _profile = await AuthCacheService.loadProfile();
 
+    // 4. se tiver tudo, já notifica UI
     if (_idToken != null && _userId != null) {
-      // notifica imediatamente → UI já mostra nome, foto, etc
       notifyListeners();
 
-      // tenta atualizar depois
+      // 5. executa refresh e sincroniza perfil
       unawaited(_refreshAuth());
       unawaited(loadProfile());
     }
@@ -94,12 +107,19 @@ class GlobalState extends ChangeNotifier {
     _refreshToken = res['refreshToken'];
     _userId = res['localId'] ?? res['userId'] ?? res['uid'];
 
-    // salva também secure
+    // 1. salva primeiro no secure storage
     await SecureStorage.instance.write('idToken', _idToken!);
     await SecureStorage.instance.write('refreshToken', _refreshToken!);
     await SecureStorage.instance.write('userId', _userId!);
 
-    // agenda refresh oculto
+    // 2. sincroniza automaticamente para SharedPreferences
+    await AuthCacheService.saveSession(
+      userId: _userId!,
+      idToken: _idToken!,
+      refreshToken: _refreshToken!,
+    );
+
+    // 3. agenda refresh automático
     final expiresIn = int.tryParse(res['expiresIn']?.toString() ?? '') ?? 3600;
     _scheduleRefresh(Duration(seconds: expiresIn));
   }
@@ -127,11 +147,11 @@ class GlobalState extends ChangeNotifier {
         _idToken = res['id_token'];
         _refreshToken = res['refresh_token'];
 
-        // atualiza storage seguro
+        // 1. atualiza secure storage (fonte principal)
         await SecureStorage.instance.write('idToken', _idToken!);
         await SecureStorage.instance.write('refreshToken', _refreshToken!);
 
-        // atualiza SharedPreferences também
+        // 2. sincroniza também com SharedPreferences
         await AuthCacheService.saveSession(
           userId: _userId!,
           idToken: _idToken!,
@@ -142,7 +162,6 @@ class GlobalState extends ChangeNotifier {
             int.tryParse(res['expires_in']?.toString() ?? '') ?? 3600;
 
         _scheduleRefresh(Duration(seconds: expiresIn));
-
         notifyListeners();
       } else {
         logout();
