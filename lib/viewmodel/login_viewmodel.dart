@@ -70,7 +70,7 @@ class LoginViewModel with FormValidator {
 
     if (ok && context.mounted) {
       Navigator.of(context).pushNamedAndRemoveUntil(
-        showRegister.value ? AppRoutes.editProfile : AppRoutes.home,
+        showRegister.value ? AppRoutes.editProfile : AppRoutes.decider,
         (_) => false,
         arguments: showRegister.value
             ? EditProfileViewArguments(
