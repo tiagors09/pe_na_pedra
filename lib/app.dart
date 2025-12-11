@@ -3,7 +3,6 @@ import 'package:pe_na_pedra/utils/app_routes.dart';
 import 'package:pe_na_pedra/utils/app_theme.dart';
 import 'package:pe_na_pedra/views/calendar_view.dart';
 import 'package:pe_na_pedra/views/edit_profile_view.dart';
-import 'package:pe_na_pedra/views/home_view.dart';
 import 'package:pe_na_pedra/views/initial_route_decider_view.dart';
 import 'package:pe_na_pedra/views/login_view.dart';
 import 'package:pe_na_pedra/views/hikkers_view.dart';
