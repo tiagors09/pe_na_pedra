@@ -12,7 +12,7 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
   ]);
 
-  usePathUrlStrategy();
+  setUrlStrategy(null);
 
   runApp(
     GlobalStateProvider(
